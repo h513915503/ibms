@@ -14,6 +14,7 @@
 }
 #lease-detail-wrapper .btn-edit {
 	margin-left: auto;
+	margin-right: 24px;
 }
 .btn-throw-lease {
 	color: red;
