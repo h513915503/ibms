@@ -8,10 +8,19 @@ body {
  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+li {
+	list-style: none;
+}
+
 a {
 	text-decoration: none;
 }
 
 i {
 	font-style: normal;
+}
+
+.disabled {
+	opacity: .5;
+	pointer-events: none;
 }
