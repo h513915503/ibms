@@ -3,7 +3,6 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 72px;
 	padding: 0 24px;
 	color: #FFF;
 	font-size: 24px;
@@ -78,7 +77,7 @@
 
 <template>
 	<div id="app">
-		<el-header class="header">
+		<el-header class="header" height="72px">
 			<div class="info">
 				<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
 				中宙物业 - 益展大厦
@@ -135,7 +134,7 @@
 							{
 								text: '办公租赁',
 								path: '/lease',
-								allPath: ['/lease']
+								allPath: ['/lease', '/lease/add']
 							},
 							{
 								text: '停车场管理',
