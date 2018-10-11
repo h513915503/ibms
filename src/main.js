@@ -13,6 +13,8 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+process.env.NODE_ENV === 'development' && (window.log = console.log.bind(console))
+
 new Vue({
 	router,
 	store,
