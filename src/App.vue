@@ -3,7 +3,11 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	width: 100%;
 	padding: 0 24px;
+	position: fixed;
+	top: 0;
+	z-index: 2;
 	color: #FFF;
 	font-size: 24px;
 	background-color: #222;
@@ -22,10 +26,18 @@
 	font-size: 20px;
 	cursor: pointer;
 }
+.el-container {
+	padding-top: 72px;
+	padding-left: 240px;
+}
 .aside {
 	width: 240px;
-	height: calc(100vh - 72px);
-	padding-top: 16px;
+	height: 100%;
+	padding-top: 88px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1;
 	overflow: auto;
 	box-sizing: border-box;
 	background-color: #404040;
@@ -138,8 +150,8 @@
 							},
 							{
 								text: '停车场管理',
-								path: '/ab',
-								allPath: ['/lease1111']
+								path: '/parking-lot',
+								allPath: ['/parking-lot']
 							}
 						]
 					},
