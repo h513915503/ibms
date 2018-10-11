@@ -1,23 +1,4 @@
 <style scoped>
-.tabs {
-	display: flex;
-	align-items: center;
-	padding: 12px 0;
-	margin: 24px;
-	color: #000;
-	font-size: 16px;
-	background-color: #FFF;
-}
-.tabs-item {
-	margin: 0 30px;
-	text-align: center;
-
-	& i {
-		display: block;
-		margin-bottom: 15px;
-		font-size: 24px;
-	}
-}
 .container {
 	margin: 24px;
 }
@@ -68,32 +49,19 @@
 
 <template>
 	<div id="lease-wrapper">
-		<div class="tabs">
-			<div class="tabs-item">
-				<i v-text="totalArea"></i>
-				<span>总面积</span>
-			</div>
-			<div class="tabs-item">
-				<i v-text="leaseArea"></i>
-				<span>可租赁面积</span>
-			</div>
-			<div class="tabs-item">
-				<i v-text="occupancyUnit"></i>
-				<span>入住单位</span>
-			</div>
-		</div>
+		<tab-bar :list="tabs"></tab-bar>
 
 		<div class="container">
-			<el-button type="primary">+入住单位</el-button>
+			<el-button type="primary" @click="go">+入住单位</el-button>
 
-			<ul class="company-list">
+			<ul class="company-list" @click="redirec">
 				<li v-for="item of companyList">
 					<div class="info">
 						<span>{{item.floor}}层</span>
 						<span>{{item.totalArea}}㎡</span>
 					</div>
 					<div class="room-list">
-						<div class="box" v-for="item of item.room">
+						<div class="box" data-id="10" v-for="item of item.room">
 							<p>
 								{{item.roomNumber}}
 								<span>共{{item.area}}㎡</span>
@@ -108,12 +76,28 @@
 </template>
 
 <script>
+	import tabBar from '@/components/tab-bar.vue'
+
 	export default {
 		data() {
 			return {
-				totalArea: 1223,
-				leaseArea: 100,
-				occupancyUnit: 10,
+				tabs: [
+					{
+						number: 1000,
+						text: '总面积'
+					},
+					{
+						number: 1000,
+						text: '可租赁面积'
+					},
+					{
+						number: 1000,
+						text: '入驻单位'
+					}
+				],
+				// totalArea: 1223,
+				// leaseArea: 100,
+				// occupancyUnit: 10,
 
 				companyList: [
 					{
@@ -170,6 +154,25 @@
 						]
 					}
 				]
+			}
+		},
+
+		components: {
+			tabBar
+		},
+
+		methods: {
+			go() {
+				this.$router.push('/lease/add')
+			},
+			redirec(e) {
+				let target = e.target
+
+				while (! target.dataset.id) {
+					target = target.parentNode
+				}
+
+				this.$router.push(`/lease/detail/${target.dataset.id}`)
 			}
 		}
 	}
