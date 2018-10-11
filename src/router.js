@@ -7,6 +7,8 @@ import Lease from './views/lease/Index.vue'
 import LeaseAdd from './views/lease/Add.vue'
 import LeaseDetail from './views/lease/Detail.vue'
 
+import ParkingLot from './views/parking-lot/Index.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -33,6 +35,12 @@ export default new Router({
 			path: '/lease/detail/:id',
 			name: 'lease-detail',
 			component: LeaseDetail
-		}
+		},
+
+		{
+			path: '/parking-lot',
+			name: 'parking-lot',
+			component: ParkingLot
+		},
 	]
 })
