@@ -3,9 +3,9 @@ import Router from 'vue-router'
 
 import Overview from './views/overview/Index.vue'
 
-import Lease from './views/field/Lease.vue'
-import LeaseAdd from './views/field/LeaseAdd.vue'
-import LeaseDetail from './views/field/LeaseDetail.vue'
+import Lease from './views/lease/Index.vue'
+import LeaseAdd from './views/lease/Add.vue'
+import LeaseDetail from './views/lease/Detail.vue'
 
 Vue.use(Router)
 
