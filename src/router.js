@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Overview from './views/overview/Index.vue'
-
 import Lease from './views/lease/Index.vue'
 import LeaseAdd from './views/lease/Add.vue'
 import LeaseDetail from './views/lease/Detail.vue'
@@ -12,6 +11,7 @@ import ParkingLotAdd from './views/parking-lot/Add.vue'
 import ParkingLotDetail from './views/parking-lot/Detail.vue'
 
 import Proprietor from './views/proprietor/Index.vue'
+import LightManagement from './views/lightManage/LightManagement.vue'
 
 Vue.use(Router)
 
@@ -62,5 +62,10 @@ export default new Router({
 			name: 'proprietor',
 			component: Proprietor
 		},
+		{
+			path: '/lightManagement',
+			name: 'lightManagement',
+			component: LightManagement
+		}
 	]
 })

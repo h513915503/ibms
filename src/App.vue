@@ -183,8 +183,8 @@
 						items: [
 							{
 								text: '灯管理',
-								path: '/adfs',
-								allPath: ['/le234ase']
+								path: '/lightManagement',
+								allPath: ['/lightManagement']
 							},
 							{
 								text: '空调管理',
