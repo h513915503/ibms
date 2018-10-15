@@ -28,8 +28,8 @@
 
         <div class="container">
             <div class="operator">
-                <el-button type="primary">+ 灯</el-button>
-                <el-button>批量注册</el-button>
+                <!-- <el-button type="primary" @click="go">+ 灯</el-button> -->
+                <el-button>导入</el-button>
                 <el-input
                     class="search-input"
                     placeholder="灯编号/品牌/型号"
@@ -133,6 +133,9 @@
         methods: {
             filterHandler(value, row, column) {
 
+            },
+            go() {
+                this.$router.push('/light/lightAdd')
             }
         },
         components: {

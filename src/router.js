@@ -12,7 +12,13 @@ import ParkingLotDetail from './views/parking-lot/Detail.vue'
 
 import Proprietor from './views/proprietor/Index.vue'
 
+import Visitor from './views/visitors/visitor.vue'
+import AddNewVisitor from './views/visitors/addVisitor.vue'
+
+import PersonnelRecord from './views/personnelRecord/personnel.vue'
+
 import LightManagement from './views/lightManage/LightManagement.vue'
+import LightAdd from './views/lightManage/lightAdd.vue'
 
 Vue.use(Router)
 
@@ -67,6 +73,26 @@ export default new Router({
 			path: '/lightManagement',
 			name: 'lightManagement',
 			component: LightManagement
+		},
+		{
+			path: '/visitor',
+			name: 'visitor',
+			component: Visitor
+		},
+		{
+			path: '/visitor/addVisitor',
+			name: 'addVisitor',
+			component: AddNewVisitor
+		},
+		{
+			path: '/personnel',
+			name: 'personnel',
+			component: PersonnelRecord
+		},
+		{
+			path: '/light/lightAdd',
+			name: 'lightAdd',
+			component: LightAdd
 		}
 	]
 })
