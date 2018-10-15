@@ -188,13 +188,13 @@
 							},
 							{
 								text: '空调管理',
-								path: '/asdsdffds',
-								allPath: ['/le23423ase']
+								path: '/airConditioner',
+								allPath: ['/airConditioner']
 							},
 							{
 								text: '设备故障',
-								path: '/asfsdfds',
-								allPath: ['/le2342ase']
+								path: '/deviceErrors',
+								allPath: ['/deviceErrors']
 							}
 						]
 					}

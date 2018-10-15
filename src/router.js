@@ -20,6 +20,10 @@ import PersonnelRecord from './views/personnelRecord/personnel.vue'
 import LightManagement from './views/lightManage/LightManagement.vue'
 import LightAdd from './views/lightManage/lightAdd.vue'
 
+import AirConditioner from './views/airConditionerManage/AirConditioner.vue'
+
+import DeviceErrors from './views/deviceErrors/DeviceErrors.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -93,6 +97,16 @@ export default new Router({
 			path: '/light/lightAdd',
 			name: 'lightAdd',
 			component: LightAdd
+		},
+		{
+			path: '/airConditioner',
+			name: 'airConditioner',
+			component: AirConditioner
+		},
+		{
+			path: '/deviceErrors',
+			name: 'deviceErrors',
+			component: DeviceErrors
 		}
 	]
 })
