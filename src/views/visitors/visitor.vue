@@ -4,7 +4,7 @@
     }
     .container {
         padding: 24px;
-        margin: 24px;
+        margin-top: 20px;
         box-sizing: border-box;
         background-color: #FFF;
     }
@@ -29,6 +29,31 @@
             flex-shrink: 0;
             margin-right: 10px;
         }
+    }
+    .status {
+        display: flex;
+        align-items: center;
+
+        &::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            margin-right: 10px;
+            border-radius: 50%;
+            background-color: green;
+        }
+    }
+    .error::before {
+        background: #F5222D;
+    }
+    .normal::before {
+        background: #52C41A;
+    }
+    .left::before {
+        background: #BFBFBF;
+    }
+    .hangout::before {
+        background: #F5222D;
     }
     .page-wrapper {
         margin-top: 20px;
@@ -65,7 +90,14 @@
                     <el-table-column label="被访单位" prop="company"></el-table-column>
                     <el-table-column label="被访人" prop="name"></el-table-column>
                     <el-table-column label="被访人手机号码" prop="phone"></el-table-column>
-                    <el-table-column label="状态" prop="status" :filters="[]" :filter-method="filterHandler"></el-table-column>
+                    <el-table-column label="状态" prop="status" :filters="[]" :filter-method="filterHandler">
+                        <template slot-scope="scope">
+                            <span class="status error" v-if="scope.row.status === 0">异常</span>
+                            <span class="status normal" v-else-if="scope.row.status === 1">正常</span>
+                            <span class="status hangout" v-else-if="scope.row.status === 2">乱走</span>
+                            <span class="status left" v-else>已离开</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="访问时间" prop="time" sortable></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
@@ -115,7 +147,7 @@
                         company: 'alibaba group',
                         name: 'song yang',
                         phone: '1234245353',
-                        status: '已离开',
+                        status: 0,
                         time: '2432441',
                     },
                     {
@@ -125,7 +157,7 @@
                         company: 'alibaba group',
                         name: 'song yang',
                         phone: '1234245353',
-                        status: '已离开',
+                        status: 1,
                         time: '2432441',
                     },
                     {
@@ -135,7 +167,7 @@
                         company: 'alibaba group',
                         name: 'song yang',
                         phone: '1234245353',
-                        status: '已离开',
+                        status: 2,
                         time: '2432441',
                     },
                     {
@@ -145,7 +177,7 @@
                         company: 'alibaba group',
                         name: 'song yang',
                         phone: '1234245353',
-                        status: '已离开',
+                        status: 3,
                         time: '2432441',
                     }
                 ],

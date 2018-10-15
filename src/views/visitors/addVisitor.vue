@@ -14,6 +14,36 @@
     }
 </style>
 
+<style>
+/* 上传组件样式 */
+/* .el-form-item__content {
+    line-height: 0 !important;
+} */
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 102px;
+    height: 102px;
+    line-height: 102px !important;
+    text-align: center;
+  }
+  .avatar {
+    width: 102px;
+    height: 102px;
+    display: block;
+  }
+</style>
+
 <template>
     <div id="visitor-add">
         <el-breadcrumb separator="/">
@@ -54,9 +84,18 @@
                     </el-date-picker>
 				</el-form-item>
 				<el-form-item label="人脸信息">
-					<el-input v-model="form.detaliPosition" placeholder="如：走廊，茶水间，楼梯间等"></el-input>
+					<el-upload
+                        class="avatar-uploader"
+                        action="https://jsonplaceholder.typicode.com/posts/"
+                        :show-file-list="false"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="beforeAvatarUpload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
 				</el-form-item>
 				<el-form-item>
+                    <p>请确认访客信息真实性后再点击“确定”</p>
 					<el-button type="primary" @click="submit">确定</el-button>
 					<el-button>取消</el-button>
 				</el-form-item>
