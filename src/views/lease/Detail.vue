@@ -13,12 +13,8 @@
 	margin-left: auto;
 	margin-right: 24px;
 }
-.btn-throw-lease {
-	color: red;
-	background-color: #EEE;
-}
 .item {
-	margin-bottom: 40px;
+	margin-bottom: 30px;
 	color: #919191;
 	font-size: 16px;
 
@@ -59,14 +55,14 @@ strong {
 				<el-button @click="back">返回</el-button>
 				<el-button class="btn-edit">编辑</el-button>
 
-				  <el-popover placement="bottom-end" title="该公司确定退租了吗？" width="400" trigger="click" content="公司退租后，该公司在园区的信息将被删除。">
-    					<el-button slot="reference" class="btn-throw-lease">退租</el-button>
+				<el-popover popper-class="reset" v-model="visible" placement="bottom-end" title="该公司确定退租了吗？" width="400" trigger="click">
+					<el-button slot="reference" class="btn-throw-lease">退租</el-button>
 
-    					<p class="popover-content">公司退租后，该公司在园区的信息将被删除。</p>
-    					<div class="popover-btn-wrapper">
-    						<el-button size="small">取消</el-button>
-							<el-button size="small" class="btn-throw-lease">确定</el-button>
-    					</div>
+					<p class="popover-content">公司退租后，该公司在园区的信息将被删除。</p>
+					<div class="popover-btn-wrapper">
+						<el-button @click="visible = false">取消</el-button>
+						<el-button class="btn-throw-lease" @click="throwLease">确定</el-button>
+					</div>
   				</el-popover>
 			</div>
 
@@ -108,6 +104,8 @@ strong {
 	export default {
 		data() {
 			return {
+				visible: false,
+
 				leaseCompany: '韩国鍟化贸易有限公司绍兴代表处',
 				roomNumberStart: '101',
 				roomNumberEnd: '120',
@@ -123,6 +121,9 @@ strong {
 		methods: {
 			back() {
 				this.$router.replace('/lease')
+			},
+			throwLease() {
+				this.visible = false
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import store from './store'
 
 import 'normalize.css'
 import '@/css/common.css'
+import '@/css/element-reset.css'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'

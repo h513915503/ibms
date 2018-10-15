@@ -50,17 +50,11 @@
 
 		<div class="container">
 			<el-form ref="form" :model="form" label-width="210px" label-position="right">
+				<el-form-item label="租赁房间：">
+					<span v-text="selectRooms"></span>
+				</el-form-item>
 				<el-form-item label="租赁单位：">
 					<el-input v-model="form.leaseCompany" placeholder="租赁单位全称"></el-input>
-				</el-form-item>
-				<el-form-item label="租赁房间：">
-					<ul class="room-list" @click="removeRoom" v-if="rooms.length">
-						<li v-for="(item, index) of rooms">
-							{{item}}
-							<span :data-index="index">x</span>
-						</li>
-					</ul>
-					<el-input v-model="form.roomNumber" placeholder="输入房间号后按Enter完成" @keyup.enter.native="handleRoomChange"></el-input>
 				</el-form-item>
 				<el-form-item label="租约起止日期：">
 					 <el-date-picker v-model="form.date" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -78,8 +72,10 @@
 					<el-input v-model="form.hrPhone" placeholder="手机号码或座机"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button :class="{disabled: ! isDisabled}" type="primary" @click="submit">确定</el-button>
-					<el-button>取消</el-button>
+					<el-button :disabled="! isDisabled" type="primary" @click="submit" v-if="! submiting">确定</el-button>
+					<el-button disabled type="primary" v-else>提交中...</el-button>
+
+					<el-button @click="back">取消</el-button>
 				</el-form-item>
 			</el-form>
 		</div>
@@ -87,12 +83,14 @@
 </template>
 
 <script>
+	import getResponses from '@/api'
+
 	export default {
 		data() {
 			return {
+				submiting: false,
 				form: {
 					leaseCompany: '',
-					roomNumber: '',
 					date: '',
 					propertyPerson: '',
 					propertyPersonPhone: '',
@@ -105,29 +103,60 @@
 
 		computed: {
 			isDisabled() {
-				return this.form.leaseCompany && this.rooms.length && this.form.date && this.form.propertyPerson && this.form.propertyPersonPhone && this.form.hr && this.form.hrPhone
+				return this.form.leaseCompany && this.form.date && this.form.propertyPerson && this.form.propertyPersonPhone && this.form.hr && this.form.hrPhone
+			},
+			selectRoom() {
+				return this.$store.state.selectRoom
+			},
+			selectRooms() {
+				log(JSON.stringify(this.selectRoom))
+				return this.selectRoom.map((item) => {
+					if (item.isAll) {
+						return `${item.floorNumber}层`
+					} else {
+						return item.roomList.join('、')
+					}
+				}).join('、')
+				//return this.$store.state.selectRoom.join('、')
+			}
+		},
+
+		created() {
+			const selectRoom = localStorage.getItem('selectRoom')
+
+			if (selectRoom) {
+				this.$store.commit('setSelectRoom', JSON.parse(selectRoom))
 			}
 		},
 
 		methods: {
-			handleRoomChange() {
-				const number = this.form.roomNumber
+			async submit() {
+				const params = {
+					leaseCompany: this.leaseCompany,
+					propertyPerson: this.propertyPersonPhone,
+					propertyPersonPhone: this.propertyPersonPhone,
+					hr: this.hr,
+					date: this.date,
+					hrPhone: this.hrPhone
+				}
 
-				if (! number) {
+				this.submiting = true
+
+				const data = await getResponse('/', params)
+
+				this.submiting = false
+
+				if (! data) {
 					return
 				}
 
-				this.rooms.push(number)
+				// 移除数据
+				localStorage.removeItem('selectRoom')
 
-				this.form.roomNumber = ''
+				this.back()
 			},
-			removeRoom(e) {
-				const {tagName, dataset: {index}} = e.target
-
-				tagName === 'SPAN' && this.rooms.splice(index, 1)
-			},
-			submit() {
-
+			back() {
+				this.$router.push('/lease')
 			}
 		}
 	}
