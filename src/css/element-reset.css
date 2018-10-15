@@ -1,0 +1,16 @@
+.el-popover.reset {
+	padding: 32px;
+
+	& .el-popover__title {
+		font-weight: bold;
+	}
+
+	& .el-button {
+		padding: 8px 17px;
+	}
+
+	& .btn-throw-lease {
+		color: #F5222D;
+		background-color: rgba(0, 0, 0, .04);
+	}
+}
