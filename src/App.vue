@@ -15,6 +15,7 @@
 .info {
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 }
 .logo {
 	width: 24px;
@@ -82,7 +83,9 @@
 	background-color: #AAA;
 }
 .el-main {
-	padding: 0;
+	padding: 24px;
+	min-height: calc(100vh - 72px);
+	box-sizing: border-box;
 	background-color: #F5F5F5;
 }
 </style>
@@ -90,7 +93,7 @@
 <template>
 	<div id="app">
 		<el-header class="header" height="72px">
-			<div class="info">
+			<div class="info" @click="go">
 				<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
 				中宙物业 - 益展大厦
 			</div>
@@ -113,7 +116,7 @@
 			<el-aside class="aside" width="240px">
 				<dl>
 					<template v-for="item of aside">
-						<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '概述'" @click="go"></dt>
+						<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
 						<dt v-text="item.title" v-else></dt>
 
 						<dd v-for="item of item.items">
@@ -136,7 +139,7 @@
 			return {
 				aside: [
 					{
-						title: '概述',
+						title: '概览',
 						items: [],
 						allPath: ['/']
 					},
@@ -151,7 +154,7 @@
 							{
 								text: '停车场管理',
 								path: '/parking-lot',
-								allPath: ['/parking-lot']
+								allPath: ['/parking-lot', '/parking-lot/add']
 							}
 						]
 					},
@@ -160,8 +163,8 @@
 						items: [
 							{
 								text: '业主管理',
-								path: '/ac',
-								allPath: ['/lea232se']
+								path: '/proprietor',
+								allPath: ['/proprietor']
 							},
 							{
 								text: '访客登记',
@@ -187,11 +190,6 @@
 								text: '空调管理',
 								path: '/asdsdffds',
 								allPath: ['/le23423ase']
-							},
-							{
-								text: '新风管理',
-								path: '/asdfgfdds',
-								allPath: ['/le234ase']
 							},
 							{
 								text: '设备故障',

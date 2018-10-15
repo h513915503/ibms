@@ -1,7 +1,4 @@
 <style scoped>
-#lease-add {
-	padding: 24px;
-}
 .container {
 	padding: 24px;
 	margin-top: 20px;
@@ -47,7 +44,7 @@
 	<div id="lease-add">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item :to="{path: '/'}">场地</el-breadcrumb-item>
-			<el-breadcrumb-item :to="{path: '/lease'}">办公租赁</a></el-breadcrumb-item>
+			<el-breadcrumb-item :to="{path: '/lease'}">办公租赁</el-breadcrumb-item>
 			<el-breadcrumb-item>新增入住单位</el-breadcrumb-item>
 		</el-breadcrumb>
 

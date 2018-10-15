@@ -4,7 +4,6 @@
 }
 .container {
 	padding: 24px;
-	margin: 24px;
 	box-sizing: border-box;
 	background-color: #FFF;
 }
@@ -53,7 +52,7 @@
 				</div>
 			</div>
 
-			<el-table :data="carList">
+			<el-table :data="carList" @click.native="handleTable">
 				<el-table-column prop="number" label="车牌号"></el-table-column>
 				<el-table-column prop="name" label="车主姓名"></el-table-column>
 				<el-table-column prop="phone" label="车主手机号码"></el-table-column>
@@ -63,7 +62,7 @@
 				<el-table-column label="操作">
 		  			<template slot-scope="scope">
 				        <el-button type="text" size="small">续租</el-button>
-				        <el-button type="text" size="small">查看详情</el-button>
+				        <el-button type="text" size="small" data-type="1">查看详情</el-button>
 			      </template>
 			    </el-table-column>
 			</el-table>
@@ -162,7 +161,24 @@
 
 		methods: {
 			go() {
-				this.$router.push('/lease/add')
+				this.$router.push('/parking-lot/add')
+			},
+			handleTable(e) {
+				let target = e.target
+
+				while (target.dataset && ! target.dataset.type) {
+					target = target.parentNode
+				}
+
+				if (! target.dataset) {
+					return
+				}
+
+				const {type} = target.dataset
+
+				if (+ type === 1) {
+					this.$router.push(`/parking-lot/detail/${100}`)
+				}
 			},
 			redirec(e) {
 				let target = e.target

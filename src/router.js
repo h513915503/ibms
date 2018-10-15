@@ -8,6 +8,10 @@ import LeaseAdd from './views/lease/Add.vue'
 import LeaseDetail from './views/lease/Detail.vue'
 
 import ParkingLot from './views/parking-lot/Index.vue'
+import ParkingLotAdd from './views/parking-lot/Add.vue'
+import ParkingLotDetail from './views/parking-lot/Detail.vue'
+
+import Proprietor from './views/proprietor/Index.vue'
 
 Vue.use(Router)
 
@@ -41,6 +45,22 @@ export default new Router({
 			path: '/parking-lot',
 			name: 'parking-lot',
 			component: ParkingLot
+		},
+		{
+			path: '/parking-lot/add',
+			name: 'parking-lot-add',
+			component: ParkingLotAdd
+		},
+		{
+			path: '/parking-lot/detail/:id',
+			name: 'parking-lot-detail',
+			component: ParkingLotDetail
+		},
+
+		{
+			path: '/proprietor',
+			name: 'proprietor',
+			component: Proprietor
 		},
 	]
 })

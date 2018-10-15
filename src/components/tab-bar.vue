@@ -2,14 +2,14 @@
 .tabs {
 	display: flex;
 	align-items: center;
-	padding: 12px 0;
-	margin: 24px;
+	padding: 17px 0;
+	margin-bottom: 24px;
 	color: #000;
 	font-size: 16px;
 	background-color: #FFF;
 }
 .tabs-item {
-	margin: 0 30px;
+	margin: 0 50px;
 	text-align: center;
 
 	& i {
