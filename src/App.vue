@@ -168,13 +168,13 @@
 							},
 							{
 								text: '访客登记',
-								path: '/as',
-								allPath: ['/le234ase']
+								path: '/visitor',
+								allPath: ['/visitor', '/visitor/addVisitor']
 							},
 							{
 								text: '人员出入记录',
-								path: '/asdf',
-								allPath: ['/le23423ase']
+								path: '/personnel',
+								allPath: ['/personnel']
 							}
 						]
 					},
@@ -184,7 +184,7 @@
 							{
 								text: '灯管理',
 								path: '/lightManagement',
-								allPath: ['/lightManagement']
+								allPath: ['/lightManagement', '/light/lightAdd']
 							},
 							{
 								text: '空调管理',
