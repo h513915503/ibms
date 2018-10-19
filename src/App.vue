@@ -92,44 +92,48 @@
 
 <template>
 	<div id="app">
-		<el-header class="header" height="72px">
-			<div class="info" @click="go">
-				<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
-				中宙物业 - 益展大厦
-			</div>
+		<router-view v-if="$route.meta.login === true"/>
+		<template v-else>
+			<el-header class="header" height="72px">
+				<div class="info" @click="go">
+					<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
+					中宙物业 - 益展大厦
+				</div>
 
-			<el-dropdown trigger="click">
-				<span class="el-dropdown-link">
-					下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
-				</span>
-				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item>黄金糕</el-dropdown-item>
-					<el-dropdown-item>狮子头</el-dropdown-item>
-					<el-dropdown-item>螺蛳粉</el-dropdown-item>
-					<el-dropdown-item>双皮奶</el-dropdown-item>
-					<el-dropdown-item>蚵仔煎</el-dropdown-item>
-				</el-dropdown-menu>
-			</el-dropdown>
-		</el-header>
+				<el-dropdown trigger="click" @command="handleCommand">
+					<span class="el-dropdown-link">
+						张宇<i class="el-icon-arrow-down el-icon--right"></i>
+					</span>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item command="/modifyPsw">修改密码</el-dropdown-item>
+						<el-dropdown-item command="/login">退出</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+			</el-header>
 
-		<el-container>
-			<el-aside class="aside" width="240px">
-				<dl>
-					<template v-for="item of aside">
-						<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
-						<dt v-text="item.title" v-else></dt>
+			<el-container>
+				<el-aside class="aside" width="240px">
+					<dl>
+						<template v-for="item of aside">
+							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
+							<!-- <dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '物业人员管理'" @click="go"></dt>
+							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '岗位管理'" @click="go"></dt> -->
+							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-else-if="item.title === '物业人员管理'" @click="goProperty"></dt>
+							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-else-if="item.title === '岗位管理'" @click="goPost"></dt>
+							<dt v-text="item.title" v-else></dt>
 
-						<dd v-for="item of item.items">
-							<router-link :to="item.path" :class="{actived: item.allPath.includes($route.path)}" v-text="item.text"></router-link>
-						</dd>
-					</template>
-				</dl>
-			</el-aside>
+							<dd v-for="item of item.items">
+								<router-link :to="item.path" :class="{actived: item.allPath.includes($route.path)}" v-text="item.text"></router-link>
+							</dd>
+						</template>
+					</dl>
+				</el-aside>
 
-			<el-main>
-				<router-view/>
-			</el-main>
-		</el-container>
+				<el-main>
+					<router-view/>
+				</el-main>
+			</el-container>
+		</template>
 	</div>
 </template>
 
@@ -142,6 +146,16 @@
 						title: '概览',
 						items: [],
 						allPath: ['/']
+					},
+					{
+						title: '物业人员管理',
+						items: [],
+						allPath: ['/propertyManagement', '/addProperty']
+					},
+					{
+						title: '岗位管理',
+						items: [],
+						allPath: ['/postManagement', '/addPost']
 					},
 					{
 						title: '场地',
@@ -206,6 +220,16 @@
 		methods: {
 			go() {
 				this.$router.push('/')
+			},
+			goProperty() {
+				this.$router.push('/propertyManagement')
+			},
+			goPost() {
+				this.$router.push('/postManagement')
+			},
+			handleCommand(command) {
+				log(123)
+				this.$router.push(command)
 			}
 		}
 	}

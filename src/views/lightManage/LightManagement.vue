@@ -85,7 +85,7 @@
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
                     :on-exceed="handleExceed">
-                    <el-button size="small" type="primary"><i class="el-icon-upload2" /> 导入</el-button>
+                    <el-button type="primary"><i class="el-icon-upload2" /> 导入</el-button>
                 </el-upload>
                 <div class="search-content">
                     <el-input placeholder="姓名/手机号码"></el-input>

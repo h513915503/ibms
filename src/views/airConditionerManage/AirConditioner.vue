@@ -58,7 +58,7 @@
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
                     :on-exceed="handleExceed">
-                    <el-button size="small" type="primary"><i class="el-icon-upload2" /> 导入</el-button>
+                    <el-button type="primary"><i class="el-icon-upload2" /> 导入</el-button>
                 </el-upload>
                 <div class="search-content">
                     <el-input placeholder="编号/品牌/型号"></el-input>

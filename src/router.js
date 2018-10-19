@@ -24,6 +24,15 @@ import AirConditioner from './views/airConditionerManage/AirConditioner.vue'
 
 import DeviceErrors from './views/deviceErrors/DeviceErrors.vue'
 
+import PropertyManagement from './views/propertyManagement/PropertyManagement.vue'
+import AddProperty from './views/propertyManagement/AddProperty.vue'
+
+import PostManagement from './views/postManagement/PostManagement.vue'
+import AddPost from './views/postManagement/AddPost.vue'
+
+import ModifyPsw from './views/login/ModifyPsw.vue'
+import Login from './views/login/Login'
+
 Vue.use(Router)
 
 export default new Router({
@@ -107,6 +116,42 @@ export default new Router({
 			path: '/deviceErrors',
 			name: 'deviceErrors',
 			component: DeviceErrors
+		},
+		{
+			path: '/propertyManagement',
+			name: 'propertyManagement',
+			component: PropertyManagement
+		},
+		{
+			path: '/addProperty',
+			name: 'addProperty',
+			component: AddProperty
+		},
+		{
+			path: '/postManagement',
+			name: 'postManagement',
+			component: PostManagement
+		},
+		{
+			path: '/addPost',
+			name: 'addPost',
+			component: AddPost
+		},
+		{
+			path: '/modifyPsw',
+			name: 'modifyPsw',
+			component: ModifyPsw,
+			meta: {
+				login: true
+			}
+		},
+		{
+			path: '/login',
+			name: 'login',
+			component: Login,
+			meta: {
+				login: true
+			}
 		}
 	]
 })
