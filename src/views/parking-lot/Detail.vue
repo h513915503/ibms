@@ -1,4 +1,7 @@
 <style scoped>
+#parking-lot-detail-wrapper {
+	padding: 24px;
+}
 .container {
 	padding: 24px;
 	margin-top: 20px;

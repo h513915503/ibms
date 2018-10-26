@@ -32,3 +32,36 @@ input {
 	opacity: .5;
 	pointer-events: none;
 }
+
+.no-data {
+	color: rgba(0, 0, 0, .65);
+	font-size: 16px;
+}
+
+.cu-checkbox {
+	display: block;
+	width: 20px;
+	height: 20px;
+	position: relative;
+	cursor: pointer;
+	border: 1px solid rgba(0, 0, 0, .15);
+
+	& span {
+		display: none;
+		width: 62%;
+		height: 20%;
+		border-left: 1px solid #1890FF;
+		border-bottom: 1px solid #1890FF;
+		position: absolute;
+		left: 50%;
+		transform: translate(-50%, 100%) rotate(-45deg);
+	}
+
+	& input {
+		display: none;
+	}
+
+	& input:checked + span {
+		display: block;
+	}
+}

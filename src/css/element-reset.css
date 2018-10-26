@@ -14,3 +14,43 @@
 		background-color: rgba(0, 0, 0, .04);
 	}
 }
+
+#app .el-breadcrumb__inner.is-link {
+	color: rgba(0, 0, 0, .45);
+}
+#app .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+	color: rgba(0, 0, 0, .65);
+}
+
+#app .el-radio__inner {
+	width: 16px;
+	height: 16px;
+}
+#app .el-radio__inner::after {
+	width: 8px;
+	height: 8px;
+	background-color: #409EFF;
+}
+#app .el-radio__input.is-checked .el-radio__inner {
+	background-color: #FFF;
+}
+
+#app .el-table {
+	color: rgba(0, 0, 0, .65);
+}
+#app .el-table thead {
+	color: rgba(0, 0, 0, .85);
+}
+
+/* #app .el-form-item__label {
+	padding: 0 8px 0 0;
+}
+
+#app .el-form-item {
+	margin-bottom: 24px;
+}
+
+#app .el-input__inner {
+	height: 32px;
+	line-height: 32px;
+} */

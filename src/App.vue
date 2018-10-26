@@ -10,7 +10,7 @@
 	z-index: 2;
 	color: #FFF;
 	font-size: 24px;
-	background-color: #222;
+	background-color: #00294F;
 }
 .info {
 	display: flex;
@@ -41,7 +41,7 @@
 	z-index: 1;
 	overflow: auto;
 	box-sizing: border-box;
-	background-color: #404040;
+	background-color: #004175;
 
 	& dt {
 		margin-bottom: 16px;
@@ -83,7 +83,7 @@
 	background-color: #AAA;
 }
 .el-main {
-	padding: 24px;
+	padding: 0px;
 	min-height: calc(100vh - 72px);
 	box-sizing: border-box;
 	background-color: #F5F5F5;
@@ -161,7 +161,7 @@
 						title: '场地',
 						items: [
 							{
-								text: '办公租赁',
+								text: '楼宇运营管理',
 								path: '/lease',
 								allPath: ['/lease', '/lease/add']
 							},

@@ -2,84 +2,69 @@
 #parking-lot-wrapper {
 	min-width: 1000px;
 }
-.container {
-	padding: 24px;
-	box-sizing: border-box;
+.header {
+	padding: 0 24px;
 	background-color: #FFF;
 }
-.search-wrapper {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 40px;
+.tabs {
+	margin-bottom: 10px;
 }
-.search-content {
-	display: flex;
-	justify-content: space-between;
-}
-.btn-search {
-	margin-left: 20px;
-}
-.calendar-label {
-	display: flex;
-	align-items: center;
-	margin-right: 20px;
 
-	& span {
-		flex-shrink: 0;
-		margin-right: 10px;
-	}
+.tab-wrapper {
+	display: flex;
 }
-.page-wrapper {
-	margin-top: 20px;
-	text-align: right;
+.tab-item {
+	margin-right: 50px;
+	color: rgba(0, 0, 0, .65);
+	font-size: 14px;
+	cursor: pointer;
+	line-height: 46px;
+}
+.tab-item.actived {
+	color: #1890FF;
+	position: relative;
+
+	&::after {
+		content: "";
+		width: 130%;
+		height: 2px;
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		background-color: currentcolor;
+		transform: translateX(-50%);
+	}
 }
 </style>
 
 <template>
 	<div id="parking-lot-wrapper">
-		<tab-bar :list="tabs"></tab-bar>
+		<header class="header">
+			<tab-bar :list="tabs"></tab-bar>
 
-		<div class="container">
-			<div class="search-wrapper">
-				<el-button type="primary" @click="go">+包月车辆</el-button>
-				<div class="search-content">
-					<label class="calendar-label">
-						<span>租期到期时间：</span>
-						<el-date-picker v-model="date" type="date" placeholder="选择日期"></el-date-picker>
-					</label>
-					<el-input v-model="number" placeholder="车牌号"></el-input>
-					<el-button type="primary" class="btn-search" @click="go">查询</el-button>
-				</div>
+			<div class="tab-wrapper">
+				<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="currentIndex = index"></div>
 			</div>
+		</header>
 
-			<el-table :data="carList" @click.native="handleTable">
-				<el-table-column prop="number" label="车牌号"></el-table-column>
-				<el-table-column prop="name" label="车主姓名"></el-table-column>
-				<el-table-column prop="phone" label="车主手机号码"></el-table-column>
-				<el-table-column prop="company" label="所在单位" width="320"></el-table-column>
-				<el-table-column prop="place" label="车位"></el-table-column>
-				<el-table-column prop="time" label="到期时间" sortable></el-table-column>
-				<el-table-column label="操作">
-		  			<template slot-scope="scope">
-				        <el-button type="text" size="small">续租</el-button>
-				        <el-button type="text" size="small" data-type="1">查看详情</el-button>
-			      </template>
-			    </el-table-column>
-			</el-table>
-
-			<div class="page-wrapper">
-				<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
-			</div>
-		</div>
+		<parking-space v-show="currentIndex === 0"></parking-space>
+		<car-list v-show="currentIndex === 1"></car-list>
+		<car-record v-show="currentIndex === 2"></car-record>
 	</div>
 </template>
 
 <script>
 	import tabBar from '@/components/tab-bar.vue'
+	import parkingSpace from '@/components/parking-lot/parking-space.vue'
+	import carList from '@/components/parking-lot/car-list.vue'
+	import carRecord from '@/components/parking-lot/car-record.vue'
 
 	export default {
 		data() {
 			return {
+				currentIndex: 0,
+				tab: ['车位维护', '包月车辆', '车辆出入记录'],
+
 				tabs: [
 					{
 						number: 1000,
@@ -95,71 +80,26 @@
 					},
 					{
 						number: 1000,
-						text: '临时停放车辆'
+						text: '未租空闲车位'
 					}
 				],
 
 				date: '',
 				number: '',
-
-				carList: [
-					{
-						number: '浙A · RM33V',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						place: '-2 层 · A区',
-						time: '2018-12-12'
-					},
-					{
-						number: '浙A · RM33V',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						place: '-2 层 · A区',
-						time: '2018-12-12'
-					},
-					{
-						number: '浙A · RM33V',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						place: '-2 层 · A区',
-						time: '2018-12-12'
-					},
-					{
-						number: '浙A · RM33V',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						place: '-2 层 · A区',
-						time: '2018-12-12'
-					},
-					{
-						number: '浙A · RM33V',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						place: '-2 层 · A区',
-						time: '2018-12-12'
-					},
-					{
-						number: '浙A · RM33V',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						place: '-2 层 · A区',
-						time: '2018-12-12'
-					}
-				]
 			}
 		},
 
 		components: {
-			tabBar
+			tabBar,
+			parkingSpace,
+			carList,
+			carRecord
 		},
 
 		methods: {
+			handleClick() {
+
+			},
 			go() {
 				this.$router.push('/parking-lot/add')
 			},

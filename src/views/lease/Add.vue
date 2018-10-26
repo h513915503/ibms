@@ -1,4 +1,7 @@
 <style scoped>
+#lease-add-wrapper {
+	padding: 24px;
+}
 .container {
 	padding: 24px;
 	margin-top: 20px;
@@ -31,9 +34,49 @@
 		margin-left: 10px;
 	}
 }
+
+.floor-list {
+	margin-bottom: 15px;
+
+	& li {
+		display: flex;
+		margin-bottom: 32px;
+		position: relative;
+	}
+
+	& .space {
+		margin: 0 10px;
+		color: rgba(0, 0, 0, .25);
+	}
+
+	& .el-select, .el-input {
+		width: 160px;
+	}
+
+	& .area {
+		margin-left: 30px;
+		color: #595959;
+		font-size: 14px;
+	}
+
+	& .area.error {
+		color: red;
+	}
+}
+.error-tips {
+	position: absolute;
+	top: 40px;
+	right: 430px;
+	color: red;
+}
+.operation {
+	display: flex;
+	justify-content: space-between;
+	width: 540px;
+}
 </style>
 <style>
-#lease-add .el-form-item__label {
+#lease-add-wrapper .el-form-item__label {
 	color: #000;
 	font-size: 16px;
 	font-weight: bold;
@@ -41,7 +84,7 @@
 </style>
 
 <template>
-	<div id="lease-add">
+	<div id="lease-add-wrapper">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item :to="{path: '/'}">场地</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/lease'}">办公租赁</el-breadcrumb-item>
@@ -50,8 +93,24 @@
 
 		<div class="container">
 			<el-form ref="form" :model="form" label-width="210px" label-position="right">
-				<el-form-item label="租赁房间：">
-					<span v-text="selectRooms"></span>
+				<el-form-item label="租赁场地：">
+					<ul class="floor-list">
+						<li v-for="item of list">
+							<el-select v-model="item.floorNumber">
+								<el-option :label="item.number + '层'" :value="item.id" v-for="item of item.floorList"></el-option>
+							</el-select>
+							<span class="space">-</span>
+							<el-input v-model="item.roomNumber" placeholder="门牌号"></el-input>
+							<span class="space">-</span>
+							<input class="el-input el-input__inner" v-model="item.area" placeholder="可租面积：1000㎡" @blur="blur(item)" @input="change($event, item)" />㎡
+							<span class="area" :class="{error: item.error}">可租面积：{{item.leaseArea}}㎡</span>
+							<span class="error-tips" v-if="item.error">超出可租赁面积</span>
+						</li>
+					</ul>
+					<div class="operation">
+						<el-button type="text" @click="addFloor">添加新楼层</el-button>
+						<span>总面积：{{1000}}㎡</span>
+					</div>
 				</el-form-item>
 				<el-form-item label="租赁单位：">
 					<el-input v-model="form.leaseCompany" placeholder="租赁单位全称"></el-input>
@@ -88,6 +147,8 @@
 	export default {
 		data() {
 			return {
+				checkArea: true,
+
 				submiting: false,
 				form: {
 					leaseCompany: '',
@@ -97,39 +158,102 @@
 					hr: '',
 					hrPhone: ''
 				},
-				rooms: [],
+				list: [
+					{
+						error: false,
+						leaseArea: 1000,
+						roomNumber: '',
+						area: 1000,
+						floorNumber: 1,
+						floorList: [
+							{
+								id: 1,
+								number: 1
+							},
+							{
+								id: 2,
+								number: 2
+							},
+							{
+								id: 3,
+								number: 3
+							},
+							{
+								id: 4,
+								number: 4
+							},
+							{
+								id: 5,
+								number: 5
+							}
+						]
+					}
+				]
 			}
 		},
 
 		computed: {
 			isDisabled() {
+				if (! this.checkArea) {
+					return false
+				}
+
 				return this.form.leaseCompany && this.form.date && this.form.propertyPerson && this.form.propertyPersonPhone && this.form.hr && this.form.hrPhone
-			},
-			selectRoom() {
-				return this.$store.state.selectRoom
-			},
-			selectRooms() {
-				log(JSON.stringify(this.selectRoom))
-				return this.selectRoom.map((item) => {
-					if (item.isAll) {
-						return `${item.floorNumber}层`
-					} else {
-						return item.roomList.join('、')
-					}
-				}).join('、')
-				//return this.$store.state.selectRoom.join('、')
 			}
 		},
 
 		created() {
-			const selectRoom = localStorage.getItem('selectRoom')
 
-			if (selectRoom) {
-				this.$store.commit('setSelectRoom', JSON.parse(selectRoom))
-			}
 		},
 
 		methods: {
+			blur(item) {
+				//item.area > item.leaseArea ? item.error = true : item.error = false
+
+				if (item.area > item.leaseArea) {
+					item.error = true
+					this.checkArea = false
+				} else {
+					item.error = false
+					this.checkArea = true
+				}
+			},
+			change(e, item) {
+				item.area = e.target.value.replace(/\D/g, '')
+				e.target.value = item.area
+			},
+			addFloor() {
+				const floorNumber = this.list.length + 1
+
+				this.list.push({
+					leaseArea: 1000,
+					roomNumber: '',
+					area: '',
+					floorNumber,
+					floorList: [
+						{
+							id: 1,
+							number: 1
+						},
+						{
+							id: 2,
+							number: 2
+						},
+						{
+							id: 3,
+							number: 3
+						},
+						{
+							id: 4,
+							number: 4
+						},
+						{
+							id: 5,
+							number: 5
+						}
+					]
+				})
+			},
 			async submit() {
 				const params = {
 					leaseCompany: this.leaseCompany,
@@ -149,9 +273,6 @@
 				if (! data) {
 					return
 				}
-
-				// 移除数据
-				localStorage.removeItem('selectRoom')
 
 				this.back()
 			},

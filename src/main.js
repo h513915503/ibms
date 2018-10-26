@@ -14,6 +14,17 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 全局 loading
+import loading from '@/components/loading'
+
+Vue.component('loading', loading)
+
+//import all svg
+const requireAllSvg = requireContext => requireContext.keys().map(requireContext)
+const req = require.context('./assets/svg', true, /\.svg$/)
+
+requireAllSvg(req)
+
 process.env.NODE_ENV === 'development' && (window.log = console.log.bind(console))
 
 new Vue({
