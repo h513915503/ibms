@@ -41,7 +41,7 @@
 				<template v-if="stage === 0">
 					<div class="btn-wrapper">
 						<el-button @click="addRoom">+ 楼层</el-button>
-						<el-button type="primary" @click="redirectAdd">+ 租赁单位</el-button>
+						<el-button type="primary" @click="redirectAdd" v-if="floorList.length > 1">+ 租赁单位</el-button>
 					</div>
 
 					<ul class="floor-list">
@@ -60,15 +60,6 @@
 									<el-button type="primary" @click="handleFloorChange(item, true)">确定</el-button>
 									<el-button @click="handleFloorChange(item, false)">取消</el-button>
 								</div>
-								<!-- <ul class="room-list">
-									<li v-for="items of item.roomList" v-if="items.type === 0">
-										<p v-text="items.roomNumber"></p>
-										<p class="input-wrapper">
-											<input class="input" type="text" v-model.number="items.area" @input="item.isModify = true">
-											㎡
-										</p>
-									</li>
-								</ul> -->
 							</div>
 
 							<div class="show-wrapper" v-else>
@@ -89,20 +80,26 @@
 								</ul>
 
 								<div class="icon-wrapper">
-									<i class="icon icon-other"></i>
-									<el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="isDelete = false">
+									<i class="icon icon-other" @click="showCopy(item.floorNumber)"></i>
+
+									<el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="popoverModalStatus = false">
 									  	<div class="icon-more" slot="reference" @click="currentFloorNumber = item.floorNumber"></div>
 									  	<div class="more-icon-wrapper">
 											<i class="icon icon-edit" @click="editFloor(index)"></i>
-											<i class="icon icon-delete" @click="isDelete = true"></i>
+											<i class="icon icon-delete" @click="popoverModalStatus = true"></i>
 
-											<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" v-if="isDelete && item.floorNumber === currentFloorNumber">
-												<el-button slot="ok" @click="isDelete = false">取消</el-button>
+											<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" :popoverModalStatus.sync="popoverModalStatus">
+												<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 												<el-button type="primary" slot="cancel" class="ok" @click="deleteFloor(index)">确定</el-button>
 											</popover>
 										</div>
 									</el-popover>
 								</div>
+
+								<copy-floor title="复制楼层到" v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false">
+									<el-button slot="ok" @click="copyModalStatus = false">取消</el-button>
+									<el-button type="primary" slot="cancel" class="ok" @click="copyFloor(index)">确定</el-button>
+								</copy-floor>
 							</div>
 						</li>
 					</ul>
@@ -129,17 +126,17 @@
 
 <script>
 	import tabBar from '@/components/tab-bar.vue'
-	import popover from '@/components/popover.vue'
+	import copyFloor from '@/components/copyFloor.vue'
 
 	export default {
 		data() {
 			return {
-				loading: true,
+				loading: false,
 				isDelete: false,
-				index: 1,
+				index: 0,
 
-				totalArea: 0,
-				leaseableArea: 0,
+				copyModalStatus: false,
+				popoverModalStatus: false,
 
 				stage: 0,
 				tab: ['楼宇租赁', '报表分析'],
@@ -170,26 +167,6 @@
 						floorNumber: 1,
 						totalArea: 1000,
 						companyList: []
-					},
-					{
-						isEdit: false,
-
-						floorNumber: 10,
-						totalArea: 1000,
-						companyList: [
-							{
-								roomNumber: 201,
-								companyName: '杭州中毅股权投资基金管理有限公司',
-								expires: '2018-12-12',
-								day: 30
-							},
-							{
-								roomNumber: 201,
-								companyName: '杭州中毅股权投资基金管理有限公司',
-								expires: '2018-12-12',
-								day: 3
-							}
-						]
 					}
 				],
 
@@ -224,13 +201,7 @@
 
 		components: {
 			tabBar,
-			popover
-		},
-
-		computed: {
-			selectRoom() {
-				return this.$store.state.selectRoom
-			}
+			copyFloor
 		},
 
 		filters: {
@@ -241,15 +212,10 @@
 			}
 		},
 
-		watch: {
-			totalArea(value) {
-				this.tabs[0].number = value
-			}
-		},
-
 		created() {
 			this.save(this.floorList[0])
 
+			this.loading = true
 			setTimeout(() => {
 				this.loading = false
 			}, 20)
@@ -271,97 +237,8 @@
 			updateTotalArea() {
 				this.totalArea = this.floorList.map((item) => item.totalArea).reduce((prev, next) => prev + next)
 			},
-			// change(it, item) {
-			// 	const roomList = []
-
-			// 	if (it.checked) {
-			// 		const index = this.selectRoom.findIndex((current) => current.floorNumber === item.floorNumber)
-
-			// 		if (index !== -1) {
-			// 			this.selectRoom[index].roomList.push(it.roomNumber)
-			// 			this.selectRoom[index].isAll = this.selectRoom[index].roomList.length === item.roomList.length
-			// 		} else {
-			// 			roomList.push(it.roomNumber)
-
-			// 			this.selectRoom.push({
-			// 				isAll: roomList.length === item.roomList.length,
-			// 				floorNumber: item.floorNumber,
-			// 				roomList
-			// 			})
-			// 		}
-
-			// 		// 检测是否全选
-			// 		const ind = this.selectRoom.findIndex((current) => current.floorNumber === item.floorNumber)
-
-			// 		ind !== -1 && (item.allChecked = this.selectRoom[ind].isAll)
-			// 	} else {
-			// 		this.selectRoom.forEach((current) => {
-			// 			if (current.floorNumber === item.floorNumber) {
-			// 				current.isAll = false
-
-			// 				current.roomList.splice(current.roomList.findIndex((number) => number === it.roomNumber), 1)
-			// 			}
-			// 		})
-
-			// 		// 判断 roomList 是否为空
-			// 		const i = this.selectRoom.findIndex((current) => current.roomList.length === 0)
-
-			// 		i !== -1 && this.selectRoom.splice(i, 1)
-
-			// 		// 取消全选
-			// 		item.allChecked = false
-			// 	}
-			// },
-			// handleCheckboxAll(item) {
-			// 	if (item.allChecked) {
-			// 		item.roomList.forEach((current) => {
-			// 			current.checked = true
-
-			// 			this.change(current, item)
-			// 		})
-			// 	} else {
-			// 		item.roomList.forEach((current) => {
-			// 			current.checked = false
-
-			// 			this.change(current, item)
-			// 		})
-			// 	}
-			// },
-			// handleRoomNumChange(value) {
-			// 	const item = this.floorList[this.currentFloorNumber]
-
-			// 	let num = value
-			// 	let roomNumber = + `${item.floorNumber}01`
-
-			// 	if (item.isModify) {
-			// 		const length = item.roomList.length
-
-			// 		// 删除房间
-			// 		if (length > value) {
-			// 			item.roomList.pop()
-			// 		} else {
-			// 			item.roomList.push({
-			// 				type: 0,
-			// 				roomNumber: item.roomList[length - 1].roomNumber + 1,
-			// 				area: 0,
-			// 				checked: false
-			// 			})
-			// 		}
-			// 	} else {
-			// 		item.roomList = []
-
-			// 		while (num --) {
-			// 			item.roomList.push({
-			// 				checked: false,
-			// 				type: 0,
-			// 				area: ~~ (item.totalArea / value),
-			// 				roomNumber: roomNumber++
-			// 			})
-			// 		}
-			// 	}
-			// },
 			addRoom() {
-				const index = this.floorList.length + 1
+				const index = this.floorList.slice(-1)[0].floorNumber + 1
 
 				this.floorList.push({
 					isEdit: true,
@@ -379,17 +256,27 @@
 				this.currentFloorNumber = index
 				this.floorList[index].isEdit = true
 			},
+			showCopy(floorNumber) {
+				this.copyModalStatus = true
+				this.currentFloorNumber = floorNumber
+			},
+			copyFloor(index) {
+				this.copyModalStatus = false
+
+				const item = JSON.parse(JSON.stringify(this.floorList[index]))
+
+				item.floorNumber = this.floorList.slice(-1)[0].floorNumber + 1
+
+				this.floorList.push(item)
+			},
 			deleteFloor(index) {
-				this.isDelete = false
+				this.popoverModalStatus = false
 				this.floorList.splice(index, 1)
 			},
 			go() {
 				this.$router.push('/lease/add')
 			},
 			redirectAdd() {
-				// 保存在本地
-				localStorage.setItem('selectRoom', JSON.stringify(this.selectRoom))
-
 				this.$router.push('/lease/add')
 			},
 			redirec(e) {
