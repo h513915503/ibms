@@ -46,7 +46,7 @@
 	& dt {
 		margin-bottom: 16px;
 		padding-left: 24px;
-		color: #999;
+		color: rgba(255, 255, 255, .45);
 		font-size: 20px;
 		line-height: 36px;
 	}
@@ -57,7 +57,7 @@
 
 	& dd {
 		margin-bottom: 16px;
-		color: #FFF;
+		color: rgba(255, 255, 255, .85);
 		font-size: 16px;
 		cursor: pointer;
 	}
@@ -70,7 +70,7 @@
 	}
 
 	& a:hover, & a.actived, & dt.actived, & dt.cursor:hover {
-		color: #000;
+		color: rgba(0, 0, 0, .85);
 		background-color: #FFF;
 	}
 }
@@ -115,15 +115,15 @@
 				<el-aside class="aside" width="240px">
 					<dl>
 						<template v-for="item of aside">
-							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
+							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
 							<!-- <dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '物业人员管理'" @click="go"></dt>
 							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '岗位管理'" @click="go"></dt> -->
-							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-else-if="item.title === '物业人员管理'" @click="goProperty"></dt>
-							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-else-if="item.title === '岗位管理'" @click="goPost"></dt>
+							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '物业人员管理'" @click="goProperty"></dt>
+							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '岗位管理'" @click="goPost"></dt>
 							<dt v-text="item.title" v-else></dt>
 
 							<dd v-for="item of item.items">
-								<router-link :to="item.path" :class="{actived: item.allPath.includes($route.path)}" v-text="item.text"></router-link>
+								<router-link :to="item.path" :class="{actived: item.reg.test($route.path)}" v-text="item.text"></router-link>
 							</dd>
 						</template>
 					</dl>
@@ -145,17 +145,17 @@
 					{
 						title: '概览',
 						items: [],
-						allPath: ['/']
+						reg: /\/$/
 					},
 					{
 						title: '物业人员管理',
 						items: [],
-						allPath: ['/propertyManagement', '/addProperty']
+						reg: /\/propertyManagement|\/addProperty/
 					},
 					{
 						title: '岗位管理',
 						items: [],
-						allPath: ['/postManagement', '/addPost']
+						reg: /\/postManagement|\/addPost/
 					},
 					{
 						title: '场地',
@@ -163,12 +163,12 @@
 							{
 								text: '楼宇运营管理',
 								path: '/lease',
-								allPath: ['/lease', '/lease/add']
+								reg: /^\/lease/,
 							},
 							{
 								text: '停车场管理',
 								path: '/parking-lot',
-								allPath: ['/parking-lot', '/parking-lot/add']
+								reg: /\/parking-lot/
 							}
 						]
 					},
@@ -178,17 +178,17 @@
 							{
 								text: '业主管理',
 								path: '/proprietor',
-								allPath: ['/proprietor']
+								reg: /\/proprietor/
 							},
 							{
 								text: '访客登记',
 								path: '/visitor',
-								allPath: ['/visitor', '/visitor/addVisitor']
+								reg: /\/visitor/
 							},
 							{
 								text: '人员出入记录',
 								path: '/personnel',
-								allPath: ['/personnel']
+								reg: /\/personnel/
 							}
 						]
 					},
@@ -198,17 +198,17 @@
 							{
 								text: '灯管理',
 								path: '/lightManagement',
-								allPath: ['/lightManagement', '/light/lightAdd']
+								reg: /\/lightManagement|\/light\/lightAdd/
 							},
 							{
 								text: '空调管理',
 								path: '/airConditioner',
-								allPath: ['/airConditioner']
+								reg: /\/airConditioner/
 							},
 							{
 								text: '设备故障',
 								path: '/deviceErrors',
-								allPath: ['/deviceErrors']
+								reg: /\/deviceErrors/
 							}
 						]
 					}
