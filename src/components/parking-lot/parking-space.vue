@@ -2,7 +2,7 @@
 .parking-space {
 	padding: 24px;
 }
-.el-button {
+.btn-add {
 	margin-bottom: 24px;
 }
 .list li {
@@ -126,9 +126,9 @@
 	}
 }
 .show-wrapper:hover .icon-wrapper {
-	display: flex;
+	display: block;
 }
-.icon-wrapper {
+/* .icon-wrapper {
 	display: none;
 	flex-direction: column;
 	justify-content: space-between;
@@ -140,16 +140,86 @@
 	right: 0;
 	box-sizing: border-box;
 	border-left: 1px dashed #E9E9E9;
+} */
+
+
+.icon-wrapper {
+	display: none;
+	height: 100%;
+	padding: 14px 12px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	box-sizing: border-box;
+	background-image: linear-gradient(to bottom, #E9E9E9 50%, transparent 50%);
+	background-repeat: repeat-y;
+	background-size: 1px 10px;
+
+	& .icon-more {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		cursor: pointer;
+		background: url(~@/assets/more.png) center no-repeat;
+		background-size: 100%;
+	}
+}
+.icon-other {
+	display: block;
+	width: 20px;
+	height: 20px;
+	margin-bottom: 28px;
+	cursor: pointer;
+	background: url(~@/assets/other.png) center no-repeat;
+	background-size: 100%;
+}
+.more-icon-wrapper {
+	display: flex;
+	padding: 13px 21px;
+	position: absolute;
+	bottom: 0;
+	right: 30px;
+	border-radius: 4px;
+	box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .15);
+	background-color: #F5F5F5;
+
+	& .icon {
+		width: 24px;
+		height: 24px;
+	}
+
+	& .icon-delete {
+		margin-left: 25px;
+	}
+
+	& .popover-wrapper {
+		top: 80px;
+		right: 0;
+	}
+}
+.icon-edit {
+	cursor: pointer;
+	background: url(~@/assets/edit.png) center no-repeat;
+	background-size: 100%;
+}
+.icon-delete {
+	cursor: pointer;
+	background: url(~@/assets/delete.png) center no-repeat;
+	background-size: 100%;
+}
+.copy-wrapper {
+	top: 120px;
+	right: 20px;
 }
 </style>
 
 <template>
 	<div class="parking-space">
-		<el-button type="primary" @click="add">+ 车位</el-button>
+		<el-button class="btn-add" type="primary" @click="add">+ 车位</el-button>
 
 		<p class="no-data" v-if="! list.length">暂无车位信息。</p>
 		<ul class="list" v-else>
-			<li :class="{area: item.type === 1}" v-for="item of list">
+			<li :class="{area: type === 1}" v-for="(item, index) of list">
 				<div class="edit-wrapper" v-if="item.isEdit">
 					<div class="info">
 						<div class="item">
@@ -163,15 +233,15 @@
 					</div>
 					<div class="info2">
 						<span>车位：</span>
-						<el-radio v-model="item.type" :label="0">按号</el-radio>
-  						<el-radio v-model="item.type" :label="1">按区</el-radio>
+						<el-radio v-model="type" :label="0">按号</el-radio>
+  						<el-radio v-model="type" :label="1">按区</el-radio>
 
   						<div class="number-wrapper" v-if="item.type === 0">
   							<el-input-number v-model="item.numberStart" @change="handleNumberStartChange" :min="1" :max="item.parkingSpaceNum" label="描述文字"></el-input-number> ~
   							<el-input-number v-model="item.numberEnd" @change="handleNumberEndChange" :min="1" :max="item.parkingSpaceNum" label="描述文字"></el-input-number> 号
   						</div>
 
-  						<ul class="area-list" v-if="item.type === 1">
+  						<ul class="area-list" v-if="type === 1">
   							<li class="area-item" v-for="area of item.areaList">
   								<p>
   									<input class="index" type="text" v-model="area.index"> 区
@@ -180,7 +250,7 @@
   									<input type="text" v-model="area.numberStart"> ~ <input type="text" v-model="area.numberEnd">
   								</p>
   							</li>
-  							<li class="more-area" v-if="item.type === 1" @click="addArea(item)"></li>
+  							<li class="more-area" v-if="isAdd" @click="addArea(item)"></li>
   						</ul>
 
 					</div>
@@ -212,9 +282,26 @@
 						</div>
 
 						<div class="icon-wrapper">
-							<span @click="edit(item)">编</span>
-							<span @click="edit(item)">辑</span>
+							<i class="icon icon-other" @click="showCopy(item.floorNumber)"></i>
+
+							<el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="isDelete = false">
+							  	<div class="icon-more" slot="reference" @click="currentFloorNumber = item.floorNumber"></div>
+							  	<div class="more-icon-wrapper">
+									<i class="icon icon-edit" @click="editFloor(index)"></i>
+									<i class="icon icon-delete" @click="popoverModalStatus = true"></i>
+
+									<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" :popoverModalStatus.sync="popoverModalStatus">
+										<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
+										<el-button type="primary" slot="cancel" class="ok" @click="deleteFloor(index)">确定</el-button>
+									</popover>
+								</div>
+							</el-popover>
 						</div>
+
+						<copy-floor title="复制车位到" v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false">
+							<el-button slot="ok" @click="copyModalStatus = false">取消</el-button>
+							<el-button type="primary" slot="cancel" class="ok" @click="copyFloor(index)">确定</el-button>
+						</copy-floor>
 					</div>
 					<template v-else>
 						<div class="show-wrapper" v-for="area of item.areaList">
@@ -240,8 +327,26 @@
 							</div>
 
 							<div class="icon-wrapper">
-								<span @click="edit(item)">编辑</span>
+								<i class="icon icon-other" @click="showCopy(item.floorNumber)"></i>
+
+								<el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="isDelete = false">
+								  	<div class="icon-more" slot="reference" @click="currentFloorNumber = item.floorNumber"></div>
+								  	<div class="more-icon-wrapper">
+										<i class="icon icon-edit" @click="editFloor(index)"></i>
+										<i class="icon icon-delete" @click="popoverModalStatus = true"></i>
+
+										<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" v-if="isDelete && item.floorNumber === currentFloorNumber">
+											<el-button slot="ok" @click="isDelete = false">取消</el-button>
+											<el-button type="primary" slot="cancel" class="ok" @click="deleteFloor(index)">确定</el-button>
+										</popover>
+									</div>
+								</el-popover>
 							</div>
+
+							<!-- <copy-floor v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false">
+								<el-button slot="ok" @click="copyModalStatus = false">取消</el-button>
+								<el-button type="primary" slot="cancel" class="ok" @click="copyFloor(index)">确定</el-button>
+							</copy-floor> -->
 						</div>
 					</template>
 				</template>
@@ -251,22 +356,43 @@
 </template>
 
 <script>
+	import copyFloor from '@/components/copyFloor.vue'
+
 	export default {
 		data() {
 			return {
+				currentFloorNumber: 0,
+				isDelete: false,
+
+				copyModalStatus: false,
+				popoverModalStatus: false,
+
+				type: 0,
 				list: []
 			}
 		},
 
+		computed: {
+			isAdd() {
+				return this.type === 1
+			}
+		},
+
+		components: {
+			copyFloor
+		},
+
 		methods: {
 			add() {
+				const floorNumber = this.list.length ? this.list.slice(0)[0].floorNumber + 1 : 1
+
 				this.list.unshift({
 					isEdit: true,
 					type: 0,
 					numberStart: 1,
-					numberEnd: 30,
-					floorNumber: 1,
-					parkingSpaceNum: 30,
+					numberEnd: 10,
+					floorNumber,
+					parkingSpaceNum: 10,
 
 					num1: 0,
 					num2: 0,
@@ -276,7 +402,7 @@
 						{
 							index: 'A',
 							numberStart: 1,
-							numberEnd: 30
+							numberEnd: 10
 						}
 					]
 				})
@@ -290,6 +416,25 @@
 				this.$parkingSpaceNum = item.parkingSpaceNum
 				this.$numberStart = item.numberStart
 				this.$numberEnd = item.numberEnd
+			},
+			editFloor(index) {
+				this.list[index].isEdit = true
+			},
+			deleteFloor() {
+
+			},
+			showCopy(floorNumber) {
+				this.copyModalStatus = true
+				this.currentFloorNumber = floorNumber
+			},
+			copyFloor(index) {
+				this.copyModalStatus = false
+
+				const item = JSON.parse(JSON.stringify(this.list[index]))
+
+				item.floorNumber = this.list.slice(0)[0].floorNumber + 1
+
+				this.list.unshift(item)
 			},
 			handleFloorNumberChange() {
 
@@ -306,7 +451,8 @@
 			addArea(item) {
 				let start = 96
 				let zi = []
-				let i = item.areaList.length + 1
+				let i = 0//item.areaList.length + 1
+				let max = item.areaList.length + 1
 
 
 				while (start++ < 122) {
@@ -317,22 +463,32 @@
 
 				item.areaList = []
 
-				let average = item.parkingSpaceNum / i
-				while (i--) {
-					// let end = item.parkingSpaceNum
-					// let start = end - average + 1
+				let average = Math.ceil(item.parkingSpaceNum / max)
 
-					// if (i !== 0) {
-					// 	start = end + 1
-					// 	end =
-					// }
+				while (i < max) {
+					let start = 1
+					let end = average
+
+					if (i !== 0) {
+						// start = average + 1
+						// end = start + average
+
+						start = item.areaList[i - 1].numberEnd + 1
+						end = start + average - 1
+					}
+
+					if (i === max - 1) {
+						end = item.parkingSpaceNum
+					}
 
 
-					item.areaList.unshift({
+					item.areaList.push({
 						index: zi[i],
-						numberStart: 1,
-						numberEnd: 30
+						numberStart: start,
+						numberEnd: end
 					})
+
+					i++
 				}
 			},
 			confirm(item) {
