@@ -42,6 +42,12 @@
 	color: rgba(0, 0, 0, .85);
 }
 
+#app .el-form-item__label {
+	color: #000;
+	font-size: 14px;
+	font-weight: bold;
+}
+
 /* #app .el-form-item__label {
 	padding: 0 8px 0 0;
 }
