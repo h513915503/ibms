@@ -43,7 +43,7 @@
 			<tab-bar :list="tabs"></tab-bar>
 
 			<div class="tab-wrapper">
-				<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="currentIndex = index"></div>
+				<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
 			</div>
 		</header>
 
@@ -96,7 +96,19 @@
 			carRecord
 		},
 
+		created() {
+			//log(this.$options)
+
+			if (this.$root.$currentIndex) {
+				this.currentIndex = this.$root.$currentIndex
+			}
+		},
+
 		methods: {
+			switchIndex(index) {
+				this.currentIndex = index
+				this.$root.$currentIndex = index
+			},
 			handleClick() {
 
 			},
