@@ -19,6 +19,11 @@ import loading from '@/components/loading'
 
 Vue.component('loading', loading)
 
+// 全局 popover
+import popover from '@/components/popover'
+
+Vue.component('popover', popover)
+
 //import all svg
 const requireAllSvg = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('./assets/svg', true, /\.svg$/)
