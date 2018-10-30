@@ -1,9 +1,9 @@
 const path = require('path')
 
 module.exports = {
-	// devServer: {
-	// 	proxy: 'http://apitest-sass.jinghao.com'
-	// },
+	devServer: {
+		proxy: 'http://192.168.0.115:3000'
+	},
 	chainWebpack: (config) => {
 		const svgRule = config.module.rule('svg').include.add(path.join(__dirname, 'src/assets/svg')).end()
 
