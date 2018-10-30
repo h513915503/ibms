@@ -1,13 +1,17 @@
 <style scoped>
 .popover-wrapper {
-	padding: 29px 32px;
+	padding: 24px;
 	position: absolute;
-	top: 60px;
-	right: 0;
 	font-size: 16px;
 	border-radius: 4px;
-	box-shadow: 0 4px 12px 0px rgba(0, 0, 0, .2);
+	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
 	background-color: #FFF;
+	transition: all .15s;
+	transform-origin: 100% 0;
+}
+.scale-enter, .scale-leave-active {
+	opacity: 0;
+	transform: scale(.7);
 }
 h4 {
 	display: flex;
@@ -39,7 +43,7 @@ p {
 	display: flex;
 	justify-content: flex-end;
 }
-.el-button {
+/* .el-button {
 	width: 65px;
 	padding: 0;
 	line-height: 32px;
@@ -48,34 +52,49 @@ p {
 	color: #F5222D;
 	border-color: #D9D9D9;
 	background-color: rgba(0, 0, 0, .04);
-}
+} */
 </style>
 
 <template>
-	<div class="popover-wrapper">
-		<h4 class="close" v-if="name === 'close'">
-			<svg>
-				<use xlink:href="#close"></use>
-			</svg>
-			{{title}}
-		</h4>
-		<h4 class="question" v-if="name === 'question'">
-			<svg>
-				<use xlink:href="#question"></use>
-			</svg>
-			{{title}}
-		</h4>
+	<transition name="scale">
+		<div class="popover-wrapper" v-if="popoverModalStatus" ref="popover">
+			<h4 class="close" v-if="name === 'close'">
+				<svg>
+					<use xlink:href="#close"></use>
+				</svg>
+				{{title}}
+			</h4>
+			<h4 class="question" v-if="name === 'question'">
+				<svg>
+					<use xlink:href="#question"></use>
+				</svg>
+				{{title}}
+			</h4>
 
-		<p v-text="content"></p>
-		<div class="btn-wrapper">
-			<slot name="ok"></slot>
-			<slot name="cancel"></slot>
+			<p v-text="content"></p>
+			<div class="btn-wrapper">
+				<slot name="ok"></slot>
+				<slot name="cancel"></slot>
+			</div>
 		</div>
-	</div>
+	</transition>
 </template>
 
 <script>
 	export default {
-		props: ['name', 'title', 'content']
+		props: ['name', 'title', 'content', 'popoverModalStatus'],
+
+		mounted() {
+			document.addEventListener('click', (e) => {
+				if (! this.$refs.popover) {
+					return
+				}
+				if (this.$refs.popover.contains(e.target)) {
+					return
+				}
+
+				this.$emit('update:popoverModalStatus', false)
+			}, true)
+		}
 	}
 </script>
