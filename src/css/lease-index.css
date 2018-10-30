@@ -422,3 +422,12 @@
 		text-align: center;
 	}
 }
+
+.popover-wrapper {
+	top: 70px;
+	right: 0px;
+}
+.copy-wrapper {
+	top: 80px;
+	right: 50px;
+}
