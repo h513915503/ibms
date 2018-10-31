@@ -93,7 +93,7 @@
 <template>
 	<div id="app">
 		<router-view v-if="$route.meta.login === true"/>
-		<router-view v-if="$route.meta.dashboard === true" />
+		<router-view v-else-if="$route.meta.dashboard === true" />
 		<template v-else>
 			<el-header class="header" height="72px">
 				<div class="info" @click="goDashboard">
