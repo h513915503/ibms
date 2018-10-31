@@ -1,6 +1,7 @@
 #overview-wrapper {
 	min-width: 1200px;
 	padding: 24px;
+	padding-bottom: 0;
 	box-sizing: border-box;
 }
 .bootstrap {
@@ -27,9 +28,12 @@ p {
 	min-width: 1152px;
 	margin-bottom: 24px;
 }
+.col:last-child {
+	margin-bottom: 0;
+}
 .box {
 	flex: 1;
-	padding: 24px;
+	padding: 20px 24px;
 	border-radius: 2px;
 	background-color: #FFF;
 	vertical-align: top;
@@ -188,18 +192,40 @@ p {
 	}
 
 	& .people-num {
-		position: absolute;
-		top: 100px;
-		left: 0;
-		z-index: 10;
+		margin-top: 33px;
+		margin-bottom: 10px;
 		color: rgba(0, 0, 0, .85);
 		font-size: 24px;
+
+		& span {
+			display: inline-flex;
+			align-items: center;
+			margin-left: 48px;
+			color: rgba(0, 0, 0, .45);
+			font-size: 16px;
+
+			&::after {
+				content: "";
+				margin-left: 4px;
+				border-right: 5px solid transparent;
+				border-left: 5px solid transparent;
+				border-bottom: 5px solid rgba(0, 0, 0, .45);
+			}
+		}
+
+		& span.down::after {
+			border-bottom: none;
+			border-top: 5px solid rgba(0, 0, 0, .45);
+		}
 	}
 
 	& .right {
 		margin-left: 40px;
 		counter-reset: num;
 	}
+}
+.people-chart {
+	height: 70px;
 }
 .statistics {
 	display: flex;
@@ -217,7 +243,7 @@ p {
 
 	& li {
 		display: flex;
-		margin-bottom: 18px;
+		margin-bottom: 24px;
 		color: rgba(0, 0, 0, .65);
 		counter-increment: num;
 
@@ -225,7 +251,7 @@ p {
 			content: counter(num);
 			display: inline-block;
 			width: 20px;
-			margin-right: 20px;
+			margin-right: 24px;
 			color: #FFF;
 			font-size: 12px;
 			text-align: center;
@@ -254,7 +280,7 @@ p {
 
 	& .bar {
 		display: flex;
-		margin-bottom: 30px;
+		margin-bottom: 24px;
 		border-bottom: 1px solid #E8E8E8;
 	}
 
@@ -326,6 +352,8 @@ p {
 .char-wrapper {
 	display: flex;
 	justify-content: space-between;
+	align-items: flex-start;
+	position: relative;
 
 	& .ranking-list {
 		width: 250px;
@@ -334,8 +362,13 @@ p {
 		& .num {
 			margin-left: auto;
 		}
+
+		& p {
+			color: rgba(0, 0, 0, .85);
+		}
 	}
 }
 .energy-chart {
 	flex: 1;
+	height: 225px;
 }
