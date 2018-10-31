@@ -106,7 +106,7 @@
 					</span>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="/modifyPsw">修改密码</el-dropdown-item>
-						<el-dropdown-item command="/login">退出</el-dropdown-item>
+						<el-dropdown-item command="/logout">退出</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-header>
@@ -228,7 +228,14 @@
 				this.$router.push('/postManagement')
 			},
 			handleCommand(command) {
-				log(123)
+				if (command === '/logout') {
+					sessionStorage.removeItem('uid')
+
+					location.reload()
+
+					return
+				}
+
 				this.$router.push(command)
 			}
 		}
