@@ -22,10 +22,13 @@ p {
 	font-size: 16px;
 }
 
-.box {
-	display: inline-block;
-	padding: 24px;
+.col {
+	display: flex;
 	margin-bottom: 24px;
+}
+.box {
+	flex: 1;
+	padding: 24px;
 	border-radius: 2px;
 	background-color: #FFF;
 	vertical-align: top;
@@ -44,7 +47,7 @@ p {
 	}
 }
 .box.device, .box.env, .box.car, .box.people {
-	width: 564px;
+	min-width: 564px;
 	box-sizing: border-box;
 }
 
@@ -174,19 +177,38 @@ p {
 	margin-left: 24px;
 
 	& .left {
-		width: 268px;
+		flex: 1;
 		height: 200px;
+		position: relative;
+	}
+
+	& .people-num {
+		position: absolute;
+		top: 100px;
+		left: 0;
+		z-index: 10;
+		color: rgba(0, 0, 0, .85);
+		font-size: 24px;
 	}
 
 	& .right {
+		flex-shrink: 0;
+		margin-left: 40px;
 		counter-reset: num;
+	}
+}
+.statistics {
+	display: flex;
+	justify-content: space-between;
+}
 
-		& p {
+.ranking-list {
+
+	& p {
 			margin-bottom: 24px;
 			color: rgba(0, 0, 0, .45);
 			font-size: 14px;
 		}
-	}
 
 	& li {
 		display: flex;
@@ -217,7 +239,86 @@ p {
 		background-color: #F0F2F5;
 	}
 }
-.statistics {
+
+.energy {
+	display: block;
+	padding: 24px;
+	margin-bottom: 24px;
+	background-color: #FFF;
+
+	& .bar {
+		display: flex;
+		padding-bottom: 9px;
+		margin-bottom: 30px;
+		border-bottom: 1px solid #E8E8E8;
+	}
+
+	& .tab-bar {
+		display: flex;
+
+		& .item {
+			padding-bottom: 14px;
+			margin-right: 50px;
+			position: relative;
+			color: rgba(0, 0, 0, .65);
+			font-size: 16px;
+			cursor: pointer;
+
+			&::after {
+				display: none;
+				content: "";
+				width: 120%;
+				height: 2px;
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				background-color: currentcolor;
+				transform: translateX(-50%);
+			}
+		}
+
+		& .item.actived {
+			color: #1890FF;
+
+			&::after {
+				display: block;
+			}
+		}
+	}
+
+	& .operation {
+		margin-left: auto;
+
+		& .btn-text {
+			display: inline-block;
+			margin-right: 24px;
+			color: rgba(0, 0, 0, .65);
+			font-size: 14px;
+			cursor: pointer;
+		}
+
+		& .btn-text.actived {
+			color: #1890FF;
+		}
+	}
+
+	& .el-input {
+		width: 256px;
+	}
+}
+.char-wrapper {
 	display: flex;
 	justify-content: space-between;
+
+	& .ranking-list {
+		width: 250px;
+		margin-left: 100px;
+
+		& .num {
+			margin-left: auto;
+		}
+	}
+}
+.energy-chart {
+	flex: 1;
 }
