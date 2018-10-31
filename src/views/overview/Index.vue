@@ -91,7 +91,7 @@
 							<div class="btn-text" :class="{actived: dateType === 2}" @click="dateType = 2">本月</div>
 							<div class="btn-text" :class="{actived: dateType === 3
 							}" @click="dateType = 3">全年</div>
-							<el-date-picker v-model="date" type="date" placeholder="选择周"></el-date-picker>
+							<el-date-picker v-model="date" type="date" placeholder="选择时间"></el-date-picker>
 						</div>
 					</div>
 					<div class="char-wrapper">
@@ -133,9 +133,10 @@
 					</div>
 
 					<div class="box people">
-						<h5>人流量情况</h5>
+
 						<div class="statistics">
 							<div class="left">
+								<h5>人流量情况</h5>
 								<div class="people-num">{{peopleNum | format}}</div>
 								<div ref="people-chart"></div>
 							</div>
