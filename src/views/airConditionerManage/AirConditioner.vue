@@ -97,9 +97,13 @@
 </template>
 
 <script>
+    import fetch from '@/api/index.js'
     import tabBar from '@/components/tab-bar.vue'
 
     export default {
+        created() {
+            this.getTableData();
+        },
         data() {
             return {
                 tabs: [
@@ -161,6 +165,11 @@
             filterHandler(value, row, column) {
 
             },
+            getTableData() {
+                this.$http.post('/getAirConditioner', {}).then(res => {
+
+                })
+            }
         },
         components: {
             tabBar
