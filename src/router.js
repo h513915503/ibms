@@ -35,7 +35,7 @@ import Login from './views/login/Login'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
 	mode: 'history',
 	base: process.env.BASE_URL,
 	routes: [
@@ -155,3 +155,25 @@ export default new Router({
 		}
 	]
 })
+
+router.beforeEach((to, from, next) => {
+	const uid = sessionStorage.getItem('uid')
+
+	if (to.path === '/login') {
+		if (uid) {
+			next('/')
+		} else {
+			next()
+		}
+
+		return
+	}
+
+	if (uid) {
+		next()
+	} else {
+		next('/login')
+	}
+})
+
+export default router
