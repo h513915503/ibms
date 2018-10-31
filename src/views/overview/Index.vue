@@ -14,118 +14,154 @@
 			</div>
 
 			<div class="container" v-if="index === 1">
-				<div class="box device">
-					<h5>设备</h5>
-					<strong>{{fault}}个故障待解决</strong>
-					<div class="ratio-wrapper">
-						<div class="running" :style="{width: runningWidth + '%'}"></div>
-						<div class="fault" :style="{width: faultWidth + '%'}"></div>
-						<div class="no-run" :style="{width: noRunWidth + '%'}"></div>
+				<div class="col">
+					<div class="box device">
+						<h5>设备</h5>
+						<strong>{{fault}}个故障待解决</strong>
+						<div class="ratio-wrapper">
+							<div class="running" :style="{width: runningWidth + '%'}"></div>
+							<div class="fault" :style="{width: faultWidth + '%'}"></div>
+							<div class="no-run" :style="{width: noRunWidth + '%'}"></div>
+						</div>
+						<div class="status-wrapper">
+							<div>
+								运行中
+								<span>{{running | format}}</span>
+							</div>
+							<div>
+								故障中
+								<span>{{fault | format}}</span>
+							</div>
+							<div>
+								未运行
+								<span>{{noRun | format}}</span>
+							</div>
+						</div>
 					</div>
-					<div class="status-wrapper">
-						<div>
-							运行中
-							<span>{{running | format}}</span>
-						</div>
-						<div>
-							故障中
-							<span>{{fault | format}}</span>
-						</div>
-						<div>
-							未运行
-							<span>{{noRun | format}}</span>
+
+					<div class="box env">
+						<h5>环境</h5>
+						<strong>{{envStatus | envFormat}}</strong>
+						<div class="info-wrapper">
+							<div class="left">
+								<div class="item">
+									室内湿度
+									<span v-text="a"></span>
+								</div>
+								<div class="item">
+									CO2
+									<span v-text="b"></span>
+								</div>
+								<div class="item">
+									CO
+									<span v-text="c"></span>
+								</div>
+								<div class="item">
+									室内温度
+									<span v-text="d"></span>
+								</div>
+								<div class="item">
+									水压
+									<span v-text="e"></span>
+								</div>
+							</div>
+							<div class="right">
+								<div class="item">
+									室外温度
+									<span v-text="a"></span>
+								</div>
+								<div class="item">
+									室外湿度
+									<span v-text="d"></span>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="box env">
-					<h5>环境</h5>
-					<strong>{{envStatus | envFormat}}</strong>
-					<div class="info-wrapper">
-						<div class="left">
-							<div class="item">
-								室内湿度
-								<span v-text="a"></span>
-							</div>
-							<div class="item">
-								CO2
-								<span v-text="b"></span>
-							</div>
-							<div class="item">
-								CO
-								<span v-text="c"></span>
-							</div>
-							<div class="item">
-								室内温度
-								<span v-text="d"></span>
-							</div>
-							<div class="item">
-								水压
-								<span v-text="e"></span>
-							</div>
+				<div class="col energy">
+					<div class="bar">
+						<div class="tab-bar">
+							<div class="item" :class="{actived: currentResourceType === 0}" @click="currentResourceType = 0">电能耗</div>
+							<div class="item" :class="{actived: currentResourceType === 1}" @click="currentResourceType = 1">水能耗</div>
 						</div>
-						<div class="right">
-							<div class="item">
-								室外温度
-								<span v-text="a"></span>
-							</div>
-							<div class="item">
-								室外湿度
-								<span v-text="d"></span>
-							</div>
+						<div class="operation">
+							<div class="btn-text" :class="{actived: dateType === 0}" @click="dateType = 0">今日</div>
+							<div class="btn-text" :class="{actived: dateType === 1}" @click="dateType = 1">本周</div>
+							<div class="btn-text" :class="{actived: dateType === 2}" @click="dateType = 2">本月</div>
+							<div class="btn-text" :class="{actived: dateType === 3
+							}" @click="dateType = 3">全年</div>
+							<el-date-picker v-model="date" type="date" placeholder="选择周"></el-date-picker>
 						</div>
 					</div>
-				</div>
-
-				<div class="box car">
-					<h5>车位出租情况</h5>
-					<div class="chars">
-						<svg-progress title="包月车位" color="#1890FF" :num="aaa" :progress="aProgress"></svg-progress>
-						<svg-progress title="临时停放" color="#2FC25B" :num="bbb" :progress="bProgress"></svg-progress>
-						<svg-progress title="空闲车位" color="#FACC14" :num="ccc" :progress="cProgress"></svg-progress>
-					</div>
-					<div class="num-wrapper">
-						<div class="item">
-							总车位
-							<span v-text="aa"></span>
-						</div>
-						<div class="item">
-							已停放
-							<span v-text="bb"></span>
-						</div>
-						<div class="item">
-							停放率
-							<span v-text="cc"></span>
-						</div>
-					</div>
-				</div>
-
-				<div class="box people">
-					<h5>人流量情况</h5>
-					<div class="statistics">
-						<div class="left" ref="people-chart"></div>
-						<div class="right">
+					<div class="char-wrapper">
+						<div class="energy-chart" ref="energy-chart"></div>
+						<div class="ranking-list">
 							<p>人流量时段排名</p>
 							<ul>
 								<li v-for="item of list">
 									<span>{{item.start}}点~{{item.end}}点</span>
-									<span>{{item.num | format}}</span>
+									<span class="num">{{item.num | format}}</span>
 								</li>
 							</ul>
 						</div>
 					</div>
-					<div class="num-wrapper">
-						<div class="item">
-							当前园区总人数
-							<span>{{aaaa | format}}</span>
+				</div>
+
+				<div class="col">
+					<div class="box car">
+						<h5>车位出租情况</h5>
+						<div class="chars">
+							<svg-progress title="包月车位" color="#1890FF" :num="aaa" :progress="aProgress"></svg-progress>
+							<svg-progress title="临时停放" color="#2FC25B" :num="bbb" :progress="bProgress"></svg-progress>
+							<svg-progress title="空闲车位" color="#FACC14" :num="ccc" :progress="cProgress"></svg-progress>
 						</div>
-						<div class="item">
-							今日入园人数
-							<span>{{bbbb | format}}</span>
+						<div class="num-wrapper">
+							<div class="item">
+								总车位
+								<span v-text="aa"></span>
+							</div>
+							<div class="item">
+								已停放
+								<span v-text="bb"></span>
+							</div>
+							<div class="item">
+								停放率
+								<span v-text="cc"></span>
+							</div>
 						</div>
-						<div class="item">
-							今日出园人数
-							<span>{{cccc | format}}</span>
+					</div>
+
+					<div class="box people">
+						<h5>人流量情况</h5>
+						<div class="statistics">
+							<div class="left">
+								<div class="people-num">{{peopleNum | format}}</div>
+								<div ref="people-chart"></div>
+							</div>
+							<div class="right ranking-list">
+								<p>人流量时段排名</p>
+								<ul>
+									<li v-for="item of list">
+										<span>{{item.start}}点~{{item.end}}点</span>
+										<span>{{item.num | format}}</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="num-wrapper">
+							<div class="item">
+								当前园区总人数
+								<span>{{aaaa | format}}</span>
+							</div>
+							<div class="item">
+								今日入园人数
+								<span>{{bbbb | format}}</span>
+							</div>
+							<div class="item">
+								今日出园人数
+								<span>{{cccc | format}}</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -159,6 +195,10 @@
 				bb: 310,
 				cc: '55.4%',
 
+				date: '',
+				dateType: 0,
+				currentResourceType: 0,
+
 				aaa: 280,
 				bbb: 310,
 				ccc: 250,
@@ -169,6 +209,7 @@
 				aaaa: 1580,
 				bbbb: 6310,
 				cccc: 5543,
+				peopleNum: 12321,
 				list: [
 					{
 						start: 8,
@@ -227,23 +268,27 @@
 		},
 
 		mounted() {
-			const option = {
+			var option = {
 			    xAxis: {
 			        type: 'category',
 			        boundaryGap: false,
-			        data: [6, 8, 10, 12, 14]
+			        data: [0, 2,4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
 			    },
-			     yAxis: {},
-			    series: [{
-			        data: [820, 932, 901, 934, 1290, 1330, 1320],
-			        type: 'line',
-			        areaStyle: {}
-			    }],
+			    yAxis: {
+			        type: 'value',
+			        // splitNumber: 4
+			    },
 
-			    smooth: true
+			    series: [{
+			        data: [0, 2,4, 300, 500, 1000, 800, 600, 800, 708, 20, 500, 24],
+			        type: 'line',
+			        areaStyle: {},
+			         smooth: true,
+			    }]
 			};
 
-			echarts.init(this.$refs['people-chart']).setOption(option)
+ 			echarts.init(this.$refs['energy-chart']).setOption(option);
+
 		},
 
 		methods: {
