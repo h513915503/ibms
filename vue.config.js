@@ -7,6 +7,18 @@ module.exports = {
 	chainWebpack: (config) => {
 		const svgRule = config.module.rule('svg').include.add(path.join(__dirname, 'src/assets/svg')).end()
 
+		const imagesRule = config.module.rule('images').test(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/)
+
+		imagesRule.use('url-loader').loader('url-loader').options({
+			limit: 4096,
+			fallback: {
+				loader: 'file-loader',
+				options: {
+				name: 'img/[name].[hash:8].[ext]'
+				}
+			}
+        })
+
 		svgRule.uses.clear()
 
 		svgRule.use('svg-sprite-loader').loader('svg-sprite-loader').options({
