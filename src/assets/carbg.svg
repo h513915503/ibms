@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="243px" height="200px" viewBox="0 0 243 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>卡片背景 copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="70.5687083 2.40947554 113.649928 2 120.833683 5.53592676 227.109828 5.67750222 232 7.96291949 232 180.789983 223.324367 188 7.85259138 188 3 185.69137 3 9.49166667 10.3724812 2.20008312"></polygon>
+        <filter x="-4.6%" y="-5.6%" width="109.2%" height="111.3%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.725798628   0 0 0 0 0.879189369   0 0 0 0 0.976801658  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-B3到1F-告警" transform="translate(-326.000000, -472.000000)">
+            <g id="车位与车流量" transform="translate(-12.000000, 380.000000)">
+                <g id="Group-26" transform="translate(342.000000, 97.000000)">
+                    <g id="卡片背景-copy">
+                        <g id="Mask-Copy">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                            <path stroke="#46ABEB" stroke-width="1" d="M10.5772508,2.70079844 L3.5,9.7003911 L3.5,185.375545 L7.96546776,187.5 L223.143721,187.5 L231.5,180.555387 L231.5,8.28115417 L226.99844,6.17735428 L120.716982,6.03577174 L113.535792,2.50110741 L70.5734605,2.90945296 L70.5669691,2.90947252 L10.5772508,2.70079844 Z" stroke-linejoin="square" fill-opacity="0.1" fill="#0E7CC2" fill-rule="evenodd"></path>
+                        </g>
+                        <polygon id="Rectangle-Copy" fill="#B6D2E3" transform="translate(8.500000, 7.000000) scale(-1, -1) translate(-8.500000, -7.000000) " points="0 14 0 10.236772 6.30195836 10.236772 12.714722 4.01626611 12.714722 9.09494702e-13 17 9.09494702e-13 17 5.49248475 8.5 14"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
