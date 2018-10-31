@@ -57,16 +57,16 @@
                 :model="form"
                 :rules="rules"
                 label-width="140px" label-position="right">
-                <el-form-item label="账号：" prop="username">
-                    <el-input v-model="form.username" placeholder="请输入">
-                    </el-input>
+                <el-form-item label="手机号：" prop="username">
+                    <input class="el-input el-input__inner" v-model="form.phone" maxlength="11" placeholder="请输入" @input="change" />
                 </el-form-item>
-                <el-form-item label="密码：" prop="password">
-                    <el-input v-model="form.username" placeholder="请输入密码">
+                <el-form-item :label="label" prop="password">
+                    <el-input v-model="form.password" placeholder="请输入密码" @keyup.native.enter="login">
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-					<el-button>登录</el-button>
+                    <el-button :disabled="isDisabled" type="primary" v-if="! logining" @click="login">登录</el-button>
+					<el-button disabled type="primary" v-else>登录中...</el-button>
 				</el-form-item>
             </el-form>
         </div>
@@ -74,16 +74,64 @@
 </template>
 
 <script>
+    import getResponses from '@/api'
+
     export default {
         data() {
             return {
+                label: '密码：\u3000',
+
                 form: {
-                    username: '',
+                    phone: '',
                     password: ''
                 },
                 rules: {
 
+                },
+
+                logining: false
+            }
+        },
+
+        computed: {
+            isDisabled() {
+                if (this.form.phone.length === 11 && this.form.password) {
+                    return false
                 }
+
+                return true
+            }
+        },
+
+        methods: {
+            change(e) {
+                this.form.phone = e.target.value.replace(/\D/g, '')
+                e.target.value = this.form.phone
+            },
+            async login() {
+                if (! /^1\d{10}/.test(this.form.phone)) {
+                    this.$message.error('请输入正确的手机号码')
+                    return
+                }
+
+                const params = {
+                    phone: this.form.phone,
+                    password: this.form.password
+                }
+
+                this.logining = true
+
+                const data = await getResponses('/login', params)
+
+                this.logining = false
+
+                if (! data) {
+                    return
+                }
+
+                sessionStorage.setItem('uid', 111)
+
+                //location.reload()
             }
         }
     }
