@@ -93,9 +93,10 @@
 <template>
 	<div id="app">
 		<router-view v-if="$route.meta.login === true"/>
+		<router-view v-if="$route.meta.dashboard === true" />
 		<template v-else>
 			<el-header class="header" height="72px">
-				<div class="info" @click="go">
+				<div class="info" @click="goDashboard">
 					<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
 					中宙物业 - 益展大厦
 				</div>
@@ -118,6 +119,7 @@
 							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
 							<!-- <dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '物业人员管理'" @click="go"></dt>
 							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '岗位管理'" @click="go"></dt> -->
+							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '能耗'" @click="goEnergy"></dt>
 							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '物业人员管理'" @click="goProperty"></dt>
 							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '岗位管理'" @click="goPost"></dt>
 							<dt v-text="item.title" v-else></dt>
@@ -156,6 +158,11 @@
 						title: '岗位管理',
 						items: [],
 						reg: /\/postManagement|\/addPost/
+					},
+					{
+						title: '能耗',
+						items: [],
+						reg: /\/energyConsumption/
 					},
 					{
 						title: '场地',
@@ -227,9 +234,15 @@
 			goPost() {
 				this.$router.push('/postManagement')
 			},
+			goEnergy() {
+				this.$router.push('/energyConsumption')
+			},
 			handleCommand(command) {
 				log(123)
 				this.$router.push(command)
+			},
+			goDashboard() {
+				this.$router.push('/dashboard')
 			}
 		}
 	}

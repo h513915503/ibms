@@ -33,6 +33,10 @@ import AddPost from './views/postManagement/AddPost.vue'
 import ModifyPsw from './views/login/ModifyPsw.vue'
 import Login from './views/login/Login'
 
+import EnergyConsumption from './views/energyConsumption/EnergyConsumption.vue'
+
+import Dashboard from './views/Dashboard/Dashboard.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -138,6 +142,11 @@ export default new Router({
 			component: AddPost
 		},
 		{
+			path: '/energyConsumption',
+			nane: 'energyConsumption',
+			component: EnergyConsumption
+		},
+		{
 			path: '/modifyPsw',
 			name: 'modifyPsw',
 			component: ModifyPsw,
@@ -151,6 +160,14 @@ export default new Router({
 			component: Login,
 			meta: {
 				login: true
+			}
+		},
+		{
+			path: '/dashboard',
+			name: 'dashboard',
+			component: Dashboard,
+			meta: {
+				dashboard: true
 			}
 		}
 	]
