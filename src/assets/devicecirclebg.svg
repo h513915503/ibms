@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="184px" height="184px" viewBox="0 0 184 184" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>圆圈背景</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="2.77953396%" x2="50%" y2="97.1945503%" id="linearGradient-1">
+            <stop stop-color="#C2F5FB" stop-opacity="0.5" offset="0%"></stop>
+            <stop stop-color="#659FFF" stop-opacity="0.5" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="2.77953396%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#AFF2FB" offset="0%"></stop>
+            <stop stop-color="#659FFF" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-3" cx="85" cy="85" r="75"></circle>
+        <filter x="-16.3%" y="-16.3%" width="132.7%" height="132.7%" filterUnits="objectBoundingBox" id="filter-4">
+            <feMorphology radius="2" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feMorphology radius="2" operator="erode" in="SourceAlpha" result="shadowInner"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowInner" result="shadowInner"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="shadowInner" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feGaussianBlur stdDeviation="7.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="2.77953396%" x2="50%" y2="100%" id="linearGradient-5">
+            <stop stop-color="#AFF2FB" stop-opacity="0.5" offset="0%"></stop>
+            <stop stop-color="#659FFF" stop-opacity="0.5" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-6" cx="85" cy="85" r="65"></circle>
+        <filter x="-11.9%" y="-11.9%" width="123.8%" height="123.8%" filterUnits="objectBoundingBox" id="filter-7">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feMorphology radius="1" operator="erode" in="SourceAlpha" result="shadowInner"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowInner" result="shadowInner"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="shadowInner" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="2.77953396%" x2="50%" y2="97.0255209%" id="linearGradient-8">
+            <stop stop-color="#AFF2FB" stop-opacity="0.2" offset="0%"></stop>
+            <stop stop-color="#659FFF" stop-opacity="0.2" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="2.77953396%" x2="50%" y2="100%" id="linearGradient-9">
+            <stop stop-color="#C2F5FB" offset="0%"></stop>
+            <stop stop-color="#659FFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="2.77953396%" x2="50%" y2="100%" id="linearGradient-10">
+            <stop stop-color="#C2F5FB" stop-opacity="0.2" offset="0%"></stop>
+            <stop stop-color="#659FFF" stop-opacity="0.2" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-B3到1F-告警" transform="translate(-1955.000000, -124.000000)">
+            <g id="设备与能耗" transform="translate(1940.000000, 20.000000)">
+                <g id="Group-29" transform="translate(22.000000, 111.000000)">
+                    <g id="数字">
+                        <g id="圆圈背景">
+                            <path d="M85,170 C131.944204,170 170,131.944204 170,85 C170,38.0557963 131.944204,0 85,0 C38.0557963,0 0,38.0557963 0,85 C0,131.944204 38.0557963,170 85,170 Z" id="Oval-3-Copy-5" stroke="url(#linearGradient-1)" stroke-dasharray="1,10,1,10"></path>
+                            <g id="Oval-3">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                                <use stroke="url(#linearGradient-2)" stroke-width="4" xlink:href="#path-3"></use>
+                            </g>
+                            <g id="Oval-3-Copy-2">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-7)" xlink:href="#path-6"></use>
+                                <use stroke="url(#linearGradient-5)" stroke-width="1" xlink:href="#path-6"></use>
+                            </g>
+                            <circle id="Oval-3-Copy-4" stroke="url(#linearGradient-8)" fill-opacity="0.1" fill="#274D5C" cx="85" cy="85" r="55"></circle>
+                            <path d="M85,157 C124.764502,157 157,124.764502 157,85 C157,45.235498 124.764502,13 85,13 C45.235498,13 13,45.235498 13,85 C13,124.764502 45.235498,157 85,157 Z" id="Oval-3-Copy" stroke="url(#linearGradient-9)" stroke-width="3" stroke-dasharray="20,20,20,20"></path>
+                            <path d="M85,145 C118.137085,145 145,118.137085 145,85 C145,51.862915 118.137085,25 85,25 C51.862915,25 25,51.862915 25,85 C25,118.137085 51.862915,145 85,145 Z" id="Oval-3-Copy-3" stroke="url(#linearGradient-10)" stroke-width="3" stroke-dasharray="40,40,40,40"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

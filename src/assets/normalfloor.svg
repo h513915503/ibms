@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="403px" height="66px" viewBox="0 0 403 66" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>单层楼-正常</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-1.9%" y="-13.2%" width="103.8%" height="126.3%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.65285343   0 0 0 0 0.826300698   0 0 0 0 0.936676233  0 0 0 1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.1">
+        <g id="首页-2F到17F-正常" transform="translate(-1456.000000, -204.000000)" fill="#51A4D9" stroke-width="0.5">
+            <g id="单层楼-正常" filter="url(#filter-1)" transform="translate(1461.000000, 209.000000)">
+                <path d="M57.7554809,19.9015812 L1.10676983,55.7524498 L334.926454,55.7524498 L392.119339,20.1829498 L57.7554809,19.9015812 Z" id="Rectangle-4-Copy-11" stroke="#3F7190"></path>
+                <path d="M57.1517035,0.25 L57.9294651,19.3980457 L392.75,19.7497373 L392.75,0.25 L57.1517035,0.25 Z" id="Rectangle-4-Copy-9" stroke="#3F7190"></path>
+                <path d="M0.491592827,36.1498704 L0.491592827,55.5360707 L57.4230848,19.5167173 L56.6482075,0.453220669 L0.491592827,36.1498704 Z" id="Rectangle-4-Copy-10" stroke="#3F7190"></path>
+                <path d="M0.486600491,36.25 L0.486600491,55.75 L334.75,55.75 L334.75,36.25 L0.486600491,36.25 Z" id="Rectangle-4-Copy" stroke="#B2DCF6"></path>
+                <path d="M335.25,36.1304205 L335.25,55.5501434 L392.75,19.7939422 L392.75,0.449357566 L335.25,36.1304205 Z" id="Rectangle-4-Copy-4" stroke="#B2DCF6"></path>
+                <path d="M56.963331,0.25 L1.08907733,35.7518542 L334.920913,35.7518542 L392.123103,0.25 L56.963331,0.25 Z" id="Rectangle-4-Copy-7" stroke="#B2DCF6"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="851px" height="530px" viewBox="0 0 851 530" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>楼</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-0.8%" y="-1.9%" width="101.6%" height="104.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-1.9%" y="-6.7%" width="103.8%" height="113.4%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.192860252   0 0 0 0 0.305125985   0 0 0 0 0.376567815  0 0 0 1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-1.9%" y="-2.0%" width="103.8%" height="103.9%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.574778254   0 0 0 0 0.824535246   0 0 0 0 0.983471514  0 0 0 1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-B3到1F-告警" transform="translate(-630.000000, -153.000000)">
+            <g id="楼" filter="url(#filter-1)" transform="translate(629.000000, 159.000000)">
+                <g id="地下楼层-copy" transform="translate(209.000000, 402.000000)" fill="#51A4D9">
+                    <g id="楼主体" filter="url(#filter-2)" fill-opacity="0.1">
+                        <path d="M57.0376411,75.5 L1.9809575,110.940915 L335.961466,111.499752 L391.314125,75.5 L57.0376411,75.5 Z" id="Rectangle-4-Copy-11" stroke="#193A4F"></path>
+                        <rect id="Rectangle-4-Copy-9" stroke="#193A4F" x="58.5" y="0.5" width="334" height="74"></rect>
+                        <path d="M0.5,37.0517797 L0.5,111.100287 L57.5,75.655009 L57.5,0.909084356 L0.5,37.0517797 Z" id="Rectangle-4-Copy-10" stroke="#123246"></path>
+                        <rect id="Rectangle-4-Copy" stroke="#3A7BA5" x="0.5" y="37.5" width="334" height="74"></rect>
+                        <path d="M335.5,37.0517797 L335.5,111.100287 L392.5,75.655009 L392.5,0.909084356 L335.5,37.0517797 Z" id="Rectangle-4-Copy-4" stroke="#3A7BA5"></path>
+                        <path d="M57.0376411,1.5 L1.9809575,36.9409146 L335.961466,37.4997518 L391.314125,1.5 L57.0376411,1.5 Z" id="Rectangle-4-Copy-7" stroke="#3A7BA5"></path>
+                    </g>
+                    <g id="楼中" transform="translate(0.000000, 20.000000)" fill-opacity="0.05" stroke="#51A4D9" stroke-opacity="0.1">
+                        <path d="M56.8731891,40.5 L1.81650554,75.9409146 L335.797014,76.4997518 L391.149673,40.5 L56.8731891,40.5 Z" id="Rectangle-4-Copy-24"></path>
+                        <path d="M56.8731891,20.5 L1.81650554,55.9409146 L335.797014,56.4997518 L391.149673,20.5 L56.8731891,20.5 Z" id="Rectangle-4-Copy-25"></path>
+                        <path d="M56.8731891,0.5 L1.81650554,35.9409146 L335.797014,36.4997518 L391.149673,0.5 L56.8731891,0.5 Z" id="Rectangle-4-Copy-26"></path>
+                    </g>
+                </g>
+                <g id="Group-3" transform="translate(426.695341, 385.772623) rotate(-3.000000) translate(-426.695341, -385.772623) translate(4.695341, 295.772623)" fill="#51A4D9" fill-opacity="0.1">
+                    <ellipse id="Oval-7" cx="422" cy="89.5809011" rx="322" ry="68.4602009"></ellipse>
+                    <ellipse id="Oval-7-Copy-2" cx="422" cy="89.5809011" rx="422" ry="89.5809011"></ellipse>
+                    <ellipse id="Oval-7-Copy" cx="422" cy="89.5809011" rx="209" ry="44.4263006"></ellipse>
+                </g>
+                <g id="地上楼层-copy" transform="translate(207.835548, 0.000000)">
+                    <g id="楼主体" filter="url(#filter-3)">
+                        <path d="M0.823919479,37.1693872 L0.500852446,381.171072 L57.5,345.190363 L57.5,0.913406009 L0.823919479,37.1693872 Z" id="Rectangle-4-Copy-6" stroke="#36607B"></path>
+                        <path d="M57.0376411,345.5 L1.9809575,380.940915 L335.961466,381.499752 L391.314125,345.5 L57.0376411,345.5 Z" id="Rectangle-4-Copy-7" stroke="#36607B" fill-opacity="0.1" fill="#51A4D9"></path>
+                        <path d="M202.821839,0.5 L57.5,0.5 L57.5,345.5 L391.5,345.5 L391.5,265.845455 L202.821839,265.845455 L202.821839,0.5 Z" id="Combined-Shape-Copy" stroke="#36607B" fill-opacity="0.1" fill="#51A4D9"></path>
+                        <path d="M145.821839,36.5 L0.5,36.5 L0.5,381.5 L334.5,381.5 L334.5,300.845455 L145.821839,300.845455 L145.821839,36.5 Z" id="Combined-Shape" stroke="#6DBCEE" fill-opacity="0.1" fill="#51A4D9"></path>
+                        <path d="M335.5,300.706549 L335.5,381.100287 L392.5,345.655009 L392.5,265.891287 L335.5,300.706549 Z" id="Rectangle-4-Copy-4" stroke="#6DBCEE" fill-opacity="0.1" fill="#51A4D9"></path>
+                        <path d="M146.824176,37.170549 L146.824176,300.327584 L203.5,265.189045 L203.5,0.914732186 L146.824176,37.170549 Z" id="Rectangle-4-Copy-5" stroke="#6DBCEE" fill-opacity="0.1" fill="#51A4D9"></path>
+                        <path d="M57.882314,0.5 L1.70689328,36.5 L146.117686,36.5 L202.293107,0.5 L57.882314,0.5 Z" id="Rectangle-4-Copy-3" stroke="#6DBCEE" fill-opacity="0.05" fill="#51A4D9"></path>
+                        <path d="M204.196003,265.5 L147.823939,300.019266 L335.1295,301.498844 L391.453705,265.5 L204.196003,265.5 Z" id="Rectangle-4-Copy-2" stroke="#6DBCEE" fill-opacity="0.1" fill="#51A4D9"></path>
+                    </g>
+                    <g id="楼中" transform="translate(0.000000, 20.000000)" fill="#51A4D9" fill-opacity="0.05" stroke="#51A4D9" stroke-opacity="0.1">
+                        <path d="M57.0376411,305.5 L1.9809575,340.940915 L335.961466,341.499752 L391.314125,305.5 L57.0376411,305.5 Z" id="Rectangle-4-Copy-24"></path>
+                        <path d="M57.0376411,285.5 L1.9809575,320.940915 L335.961466,321.499752 L391.314125,285.5 L57.0376411,285.5 Z" id="Rectangle-4-Copy-25"></path>
+                        <path d="M57.0376411,265.5 L1.9809575,300.940915 L335.961466,301.499752 L391.314125,265.5 L57.0376411,265.5 Z" id="Rectangle-4-Copy-26"></path>
+                        <path d="M57.0376411,245.5 L1.9809575,280.940915 L335.961466,281.499752 L391.314125,245.5 L57.0376411,245.5 Z" id="Rectangle-4-Copy-27"></path>
+                        <path d="M57.882314,0.5 L1.70689328,36.5 L146.117686,36.5 L202.293107,0.5 L57.882314,0.5 Z" id="Rectangle-4-Copy-12"></path>
+                        <path d="M57.882314,20.5 L1.70689328,56.5 L146.117686,56.5 L202.293107,20.5 L57.882314,20.5 Z" id="Rectangle-4-Copy-13"></path>
+                        <path d="M57.882314,40.5 L1.70689328,76.5 L146.117686,76.5 L202.293107,40.5 L57.882314,40.5 Z" id="Rectangle-4-Copy-14"></path>
+                        <path d="M57.882314,60.5 L1.70689328,96.5 L146.117686,96.5 L202.293107,60.5 L57.882314,60.5 Z" id="Rectangle-4-Copy-15"></path>
+                        <path d="M57.882314,80.5 L1.70689328,116.5 L146.117686,116.5 L202.293107,80.5 L57.882314,80.5 Z" id="Rectangle-4-Copy-16"></path>
+                        <path d="M57.882314,100.5 L1.70689328,136.5 L146.117686,136.5 L202.293107,100.5 L57.882314,100.5 Z" id="Rectangle-4-Copy-17"></path>
+                        <path d="M57.882314,120.5 L1.70689328,156.5 L146.117686,156.5 L202.293107,120.5 L57.882314,120.5 Z" id="Rectangle-4-Copy-18"></path>
+                        <path d="M57.882314,140.5 L1.70689328,176.5 L146.117686,176.5 L202.293107,140.5 L57.882314,140.5 Z" id="Rectangle-4-Copy-19"></path>
+                        <path d="M57.882314,160.5 L1.70689328,196.5 L146.117686,196.5 L202.293107,160.5 L57.882314,160.5 Z" id="Rectangle-4-Copy-20"></path>
+                        <path d="M57.882314,180.5 L1.70689328,216.5 L146.117686,216.5 L202.293107,180.5 L57.882314,180.5 Z" id="Rectangle-4-Copy-21"></path>
+                        <path d="M57.8856266,200.5 L1.669142,237.5 L146.114373,237.5 L202.330858,200.5 L57.8856266,200.5 Z" id="Rectangle-4-Copy-22"></path>
+                        <path d="M57.8856266,224.5 L1.669142,261.5 L146.114373,261.5 L202.330858,224.5 L57.8856266,224.5 Z" id="Rectangle-4-Copy-23"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

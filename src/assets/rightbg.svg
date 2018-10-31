@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="621px" height="1062px" viewBox="0 0 621 1062" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>卡片背景</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="584.026622 1041.49984 598.41358 1025 598.41358 1033.15564 591.113634 1041.49984"></polygon>
+        <filter x="-123.0%" y="-110.1%" width="337.7%" height="310.1%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <polygon id="path-3" points="0 18.3211255 13.9870802 1.06312292 13.9870802 9.97692897 6.68713439 18.3211255"></polygon>
+        <filter x="-125.8%" y="-106.2%" width="343.8%" height="301.8%" filterUnits="objectBoundingBox" id="filter-4">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <polygon id="path-5" points="-1.8189894e-12 1041.3476 -1.8189894e-12 1038.40767 5.24539204 1038.40767 16.1023258 1031.27024 16.1023258 1019 18.9696275 1019 18.9696275 1032.51297 5.86145661 1041.3476"></polygon>
+        <filter x="-87.0%" y="-73.8%" width="274.0%" height="247.7%" filterUnits="objectBoundingBox" id="filter-6">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <polygon id="path-7" points="580.033278 36.1681996 580.033278 33.2282718 585.27867 33.2282718 596.135604 26.0908369 596.135604 13.820598 599.002905 13.820598 599.002905 27.3335641 585.894734 36.1681996"></polygon>
+        <filter x="-87.0%" y="-73.8%" width="274.0%" height="247.7%" filterUnits="objectBoundingBox" id="filter-8">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <polygon id="path-9" points="283.527454 17.0223853 283.527454 14.0221852 288.319307 14.0221852 308.150488 0.957968767 316.265473 0.957968767 316.265473 4.21772607 308.865827 4.21772607 289.194684 17.0672672"></polygon>
+        <filter x="-50.4%" y="-102.4%" width="200.8%" height="304.9%" filterUnits="objectBoundingBox" id="filter-10">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-B3到1F-告警" transform="translate(-1929.000000, -10.000000)">
+            <g id="设备与能耗" transform="translate(1940.000000, 20.000000)">
+                <g id="卡片背景">
+                    <path d="M20.1390274,3.12240565 L1.40994834,27.3094372 L1.40994834,1031.32597 L13.3985931,1040 L574.976479,1040 L594.696792,1016.99412 L597.150824,23.5553915 L585.590933,15.8913197 L307.10368,15.8913197 L288.867832,2.00689257 L176.778457,4.28933341 L176.750646,4.2895129 L20.1390274,3.12240565 Z" id="Mask-Copy" stroke="#46ABEB" stroke-width="2" fill-opacity="0.1" fill="#0E7CC2"></path>
+                    <g id="Rectangle">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#BDEEFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <g id="Rectangle-Copy" transform="translate(6.993540, 9.692124) scale(-1, -1) translate(-6.993540, -9.692124) ">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                        <use fill="#BDEEFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    </g>
+                    <g id="Rectangle-Copy-2" transform="translate(9.484814, 1030.173801) scale(-1, 1) translate(-9.484814, -1030.173801) ">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                        <use fill="#BDEEFF" fill-rule="evenodd" xlink:href="#path-5"></use>
+                    </g>
+                    <g id="Rectangle-Copy-3" transform="translate(589.518092, 24.994399) scale(1, -1) translate(-589.518092, -24.994399) ">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
+                        <use fill="#BDEEFF" fill-rule="evenodd" xlink:href="#path-7"></use>
+                    </g>
+                    <g id="Rectangle-Copy-4" transform="translate(299.896464, 9.012618) scale(1, -1) translate(-299.896464, -9.012618) ">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-10)" xlink:href="#path-9"></use>
+                        <use fill="#BDEEFF" fill-rule="evenodd" xlink:href="#path-9"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
