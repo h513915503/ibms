@@ -1,0 +1,419 @@
+@font-face {
+    font-family: 'DashBoardNumDemo';
+    src: url(../../public/font/SackersGothicStd-Square.otf);
+    font-weight: normal;
+    font-style: normal;
+}
+
+#dashboard-wrapper {
+    width:2560px;
+    height:1080px;
+    background:rgba(15,15,25,1);
+    /* padding: 20px; */
+}
+.container {
+    float: left;
+    height: 1080px;
+    /* border: 1px solid #ffffff; */
+}
+.left-content {
+    width: 25%;
+}
+.center-content {
+    width: 50%;
+}
+.right-content {
+    width: 25%;
+    height: 1020px;
+    background: url(~@/assets/rightbg.svg) center no-repeat;
+    background-size: 100% 100%;
+    margin-left: -60px;
+    margin-top: 20px;
+}
+.wheather {
+    width:601px;
+    height:319px;
+    margin-top: 20px;
+    background: url(~@/assets/wheatherbg.svg) center no-repeat;
+    background-size: 100% 100%;
+}
+.wheather-icon {
+    width: 100%;
+    height: 120px;
+    float: left;
+}
+.icon {
+    background: url(~@/assets/duoyun.svg) center no-repeat;
+    width: 120px;
+    height: 120px;
+    margin: 40px 0 0 40px;
+    float: left;
+}
+.temp-num {
+    font-family: 'DashBoardNumDemo';
+    color: #ffffff;
+    font-size: 49px;
+    line-height: 195px;
+    float: left;
+    margin-left: 20px;
+    & span {
+        font-size: 28px;
+        margin-left: 16px;
+    }
+}
+.info {
+    font-size: 36px;
+    color: #ffffff;
+    float: right;
+    margin: 77px 107px;
+}
+.temperature {
+    color: #ffffff;
+    font-size: 24px;
+    padding: 185px 0 0 0;
+    & li {
+        display: inline-block;
+        margin-left: 38px;
+        width: 160px;
+        line-height: 50px;
+        & span {
+            font-size: 18px;
+        }
+    }
+}
+.car-parking {
+    width: 586px;
+    height: 682px;
+    margin-left: 9px;
+    margin-top: 30px;
+    background: url(~@/assets/carparking.svg) center no-repeat;
+    background-size: 100% 100%;
+}
+.parking-top {
+    /* width: 100%;
+    height: 50px; */
+    & p {
+        display: inline-block;
+        margin: 60px 30px 30px;
+        font-size: 36px;
+        font-weight:400;
+        color: rgba(185,224,249,1);
+    }
+}
+.parking-icon {
+    display: block;
+    width: 36px;
+    height: 36px;
+    float: left;
+    margin: 5px 20px;
+    background: url(~@/assets/parkingicon.svg) center no-repeat;
+    background-size: 100% 100%;
+}
+.picture1 {
+    width: 213px;
+    height: 195px;
+    margin-left: 34px;
+    margin-top: 24px;
+    display: inline-block;
+    background: url(~@/assets/carcircle.svg) center no-repeat;
+    background-size: 100% 100%;
+}
+.car-num {
+    margin: 46px 0 0 68px;;
+    display: inline-block;
+    font-weight: 600;
+    color:rgba(245, 166, 35,1);
+    font-size: 48px;
+}
+.rest {
+    display: inline-block;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight:400;
+    margin-left: 80px;
+    color:rgba(165,221,253,1);
+}
+.picture2 {
+    width: 232px;
+    height: 188px;
+    display: inline-block;
+    float: right;
+    margin-right: 59px;
+    background: url(~@/assets/carbg.svg) center no-repeat;
+    background-size: 100% 100%;
+    color: rgba(165,221,253,1);
+    /* line-height:50px; */
+    font-size: 24px;
+    & li {
+        margin: 42px 0 0 22px;
+    }
+}
+.month-rest, .now-rest {
+    font-family: 'DashBoardNumDemo';
+    font-size: 30px;
+    float: right;
+    margin: -3px 18px;
+}
+.car-flow-title {
+    color:rgba(185,224,249,1);
+    font-size:36px;
+    font-weight:400;
+}
+.car-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+    margin: 35px 0 0 35px;
+    background: url(~@/assets/caricon.svg) center no-repeat;
+    background-size: 100% 100%;
+    float: left;
+}
+.car-explain {
+    display: inline-block;
+    margin: 30px 0 0 20px;
+    float: left;
+}
+.chart-title {
+    clear: both;
+}
+.total {
+    font-family: 'DashBoardNumDemo';
+    color: #ffffff;
+    font-size: 48px;
+    display: inline-block;
+    margin: 10px 0 0 34px
+}
+.rank {
+    font-family: 'DashBoardNumDemo';
+    color: #ffffff;
+    margin-left: 160px;
+}
+.car-chart {
+    width: 538px;
+    height: 205px;
+}
+
+.main-building {
+    width: 1260px;
+    height: 688px;
+}
+.building-title {
+    font-size:64px;
+    text-align: center;
+    font-weight:400;
+    color:rgba(185,224,249,1);
+    line-height:90px;
+    letter-spacing:50px;
+    margin-top: 20px;
+    text-shadow:0px 0px 5px rgba(14,124,194,1);
+}
+.building {
+    width: 853px;
+    height: 514px;
+    background: url(~@/assets/building.svg) center no-repeat;
+    background-size: 100% 100%;
+    margin: 60px 0 0 -60px;
+}
+.img {
+    & li {
+        width: 393px;
+        height: 57px;
+        background: url(~@/assets/normalfloor.svg) center no-repeat;
+        background-size: 100% 100%;
+        margin-top: -41px;
+    }
+}
+.people-flow {
+    width: 1239px;
+    height: 328px;
+    margin-left: -50px;
+    background: url(~@/assets/personflow.svg) center no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: space-between;
+    & h5 {
+        font-size:36px;
+        font-weight: 400;
+        color:rgba(185, 224, 249, 1);
+        margin: 30px 0 0 70px;
+    }
+}
+.people-title {
+    flex-shrink: 0;
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background: url(~@/assets/personicon.svg) center no-repeat;
+        background-size: 100% 100%;
+        margin: 10px 10px 0 0;
+    }
+}
+.people-num {
+    font-family: 'DashBoardNumDemo';
+    font-size:48px;
+    margin: 10px 0 0 88px;
+    color:rgba(255,255,255,1);
+}
+.down {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 48px;
+    color:rgba(255,255,255,1);
+    font-size: 16px;
+    &::after {
+        content: "";
+        margin-left: 4px;
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        border-bottom: 5px solid rgba(255,255,255,1);
+    }
+}
+.people-chart {
+    width: 538px;
+    height: 205px;
+    margin-left: 40px;
+}
+.right {
+    flex-shrink: 0;
+    margin: 43px 124px 0 0;
+    & p {
+        margin-bottom: 24px;
+        color:rgba(185,224,249,1);
+        font-size: 36px;
+    }
+    & li {
+		display: flex;
+		margin-bottom: 24px;
+		color: rgba(255,255,255,1);
+		counter-increment: num;
+
+		&::before {
+			content: counter(num);
+			display: inline-block;
+			width: 20px;
+			margin-right: 24px;
+			color: #FFF;
+			font-size: 12px;
+			text-align: center;
+			border-radius: 50%;
+			background-color: #1890FF;
+            line-height: 20px;
+		}
+
+		& span:last-child {
+			margin-left: 310px;
+		}
+    }
+    & li:last-child {
+        &::before {
+            background-color: rgba(155,155,155,1);
+        }
+    }
+
+}
+
+.device-icon {
+    width: 48px;
+    height: 48px;
+    margin: 44px 0 0 60px;
+    background: url(~@/assets/deviceicon.svg) center no-repeat;
+    background-size: 100% 100%;
+    display: block;
+    float: left;
+}
+.device-explain {
+    font-size:36px;
+    font-weight:400;
+    color:rgba(185,224,249,1);
+    display: block;
+    float: left;
+    margin: 44px 0 0 24px;
+}
+.device-charts {
+    clear: both;
+    height: 170px;
+    margin-left: 50px;
+    padding-top: 30px;
+}
+.running, .error, .no-run {
+    width: 170px;
+    height: 170px;
+    background: url(~@/assets/devicecirclebg.svg) center no-repeat;
+    background-size: 100% 100%;
+    float: left;
+}
+.error {
+    margin: 0 12px;
+}
+.num {
+    font-family: 'DashBoardNumDemo';
+    font-size:36px;
+    font-weight:400;
+    color:rgba(80,227,194,1);
+    display: inline-block;
+    margin: 50px 0 0 39px;
+    width: 89px;
+    height: 43px;
+    text-align: center;
+}
+.explain {
+    font-size:24px;
+    font-weight:400;
+    display: inline-block;
+    color:rgba(165,221,253,1);
+    margin-left: 50px;
+}
+.error-num {
+    color: rgba(244,166,85,1);
+}
+.norun-num {
+    color: rgba(192,190,193,1);
+}
+.electric-icon {
+    width: 36px;
+    height: 36px;
+    background: url(~@/assets/electricicon.svg) center no-repeat;
+    margin: 50px 0 0 56px;
+}
+.water-icon {
+    background: url(~@/assets/watericon.svg) center no-repeat;
+}
+.ele-num {
+    font-family: 'DashBoardNumDemo';
+    clear: both;
+    font-size:48px;
+    color:rgba(255,255,255,1);
+    padding-top: 10px;
+    margin-left: 64px;
+}
+.down {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 80px;
+    color:rgba(255,255,255,1);
+    font-size: 16px;
+    &::after {
+        content: "";
+        margin-left: 4px;
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        border-bottom: 5px solid rgba(255,255,255,1);
+    }
+}
+.water-gage {
+    display: inline-flex;
+    align-items: center;
+    font-size: 16px;
+    margin-left: 90px;
+}
+.electric-charts {
+    width: 538px;
+    height: 205px;
+    margin-left: 40px;
+    color:rgba(255,255,255,1);
+}
+.water {
+    margin-top: -20px;
+}
