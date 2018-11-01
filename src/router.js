@@ -37,6 +37,8 @@ import EnergyConsumption from './views/energyConsumption/EnergyConsumption.vue'
 
 import Dashboard from './views/Dashboard/Dashboard.vue'
 
+import Environment from './views/environment/Index.vue'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -169,6 +171,12 @@ const router = new Router({
 			meta: {
 				dashboard: true
 			}
+		},
+
+		{
+			path: '/environment',
+			name: 'environment',
+			component: Environment
 		}
 	]
 })
