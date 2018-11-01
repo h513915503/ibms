@@ -1,72 +1,18 @@
+<style src="@/css/dashboard.css" scoped></style>
 <style scoped>
-#dashboard-wrapper {
-    width:2560px;
-    height:1080px;
-    background:rgba(15,15,25,1);
-    /* padding: 20px; */
-}
-.container {
-    float: left;
-    height: 1080px;
-    /* border: 1px solid #ffffff; */
-}
-.left-content {
-    width: 25%;
-}
-.center-content {
-    width: 50%;
-}
-.right-content {
-    width: 25%;
-}
-.wheather {
-    width:600px;
-    height:319px;
-    background: url(~@/assets/wheatherbg.svg) center no-repeat;
-    background-size: 100% 100%;
-}
-.wheather-icon {
-    width: 100%;
-    height: 120px;
+.one {
+    width: 393px;
+    height: 12px;
+    background: #ffffff;
     float: left;
 }
-.icon {
-    background: url(~@/assets/duoyun.svg) center no-repeat;
-    width: 120px;
-    height: 120px;
-    margin: 40px 0 0 40px;
+.two {
+    width: 100px;
+    height: 12px;
+    background: #ffffff;
     float: left;
-}
-.temp-num {
-    color: #ffffff;
-    font-size: 49px;
-    line-height: 195px;
-    float: left;
-    margin-left: 20px;
-    & span {
-        font-size: 28px;
-        margin-left: 16px;
-    }
-}
-.info {
-    font-size: 36px;
-    color: #ffffff;
-    float: right;
-    margin: 77px 107px;
-}
-.temperature {
-    color: #ffffff;
-    font-size: 24px;
-    padding: 185px 0 0 0;
-    & li {
-        display: inline-block;
-        margin-left: 38px;
-        width: 160px;
-        line-height: 50px;
-        & span {
-            font-size: 18px;
-        }
-    }
+    transform: skewY(158deg);
+    margin-top: -20px;
 }
 </style>
 
@@ -88,14 +34,117 @@
                     <li>CO 8pm</li>
                 </ul>
             </div>
-            <div class="car-parking"></div>
+            <div class="car-parking">
+                <div class="parking-top">
+                    <p><span class="parking-icon"></span>车位</p>
+                    <div class="parking-pic">
+                        <span class="picture1">
+                            <span class="car-num">234</span><br />
+                            <span class="rest">空闲</span>
+                        </span>
+                        <span class="picture2">
+                            <li>包月空闲 <span class="month-rest">230</span></li>
+                            <li>临时空闲 <span class="now-rest">334</span></li>
+                        </span>
+                    </div>
+                </div>
+                <div class="car-flow">
+                    <p class="car-flow-title">
+                        <span class="car-icon"></span>
+                        <span class="car-explain">车流量</span>
+                    </p>
+                    <p class="chart-title">
+                        <span class="total">234</span>
+                        <span class="rank">121</span>
+                    </p>
+                    <div class="car-chart" ref="car-chart"></div>
+                </div>
+            </div>
         </div>
         <div class="center-content container">
-            <div class="main-building"></div>
-            <div class="people-flow"></div>
+            <div class="main-building">
+                <p class="building-title">益展大厦数据大屏</p>
+                <div class="building"></div>
+                <!-- <ul class="img">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul> -->
+                <ul>
+                    <li>
+                        <div class="one"></div>
+                        <div class="two"></div>
+                    </li>
+                    <li>
+                        <div class="one"></div>
+                        <div class="two"></div>
+                    </li>
+                    <li>
+                        <div class="one"></div>
+                        <div class="two"></div>
+                    </li>
+                </ul>
+                
+            </div>
+            <div class="people-flow">
+                <div class="left">
+                    <h5 class="people-title">人流量</h5>
+                    <div class="people-num">
+                        {{peopleNum | format}}
+                        <span class="down">{{varyNum | format}}</span>
+                    </div>
+                    <div class="people-chart" ref="people-chart"></div>
+                </div>
+                <div class="right ranking-list">
+                    <p>人流量时段排名</p>
+                    <ul>
+                        <li v-for="item of list">
+                            <span>{{item.start}}点~{{item.end}}点</span>
+                            <span>{{item.num | format}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="right-content container">
-
+            <div class="device-content">
+                <span class="device-icon"></span>
+                <span class="device-explain">设备</span>
+                <div class="device-charts">
+                    <div class="running">
+                        <span class="running-num num">1234</span>
+                        <span class="explain">运行中</span>
+                    </div>
+                    <div class="error">
+                        <span class="error-num num">12</span>
+                        <span class="explain">故障中</span>
+                    </div>
+                    <div class="no-run">
+                        <span class="norun-num num">123</span>
+                        <span class="explain">未运行</span>
+                    </div>
+                </div>
+            </div>
+            <div class="electric">
+                <span class="device-explain electric-icon"></span>
+                <span class="device-explain electric-explain">电能耗（KW · h）</span>
+                <div class="ele-num">
+                    {{peopleNum | format}}
+                    <span class="down" style="margin-left:150px">{{varyNum | format}}</span>
+                </div>
+                <div class="electric-charts" ref="ele-chart"></div>
+            </div>
+            <div class="water">
+                <span class="device-explain electric-icon water-icon"></span>
+                <span class="device-explain electric-explain">水能耗（Ton）</span>
+                <div class="ele-num">
+                    {{peopleNum | format}}
+                    <span class="down">{{varyNum | format}}</span>
+                    <span class="water-gage">水压 0.6 MPa</span>
+                </div>
+                <div class="electric-charts" ref="water-chart"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -104,7 +153,158 @@
     
     export default {
         data() {
+            return {
+                peopleNum: 12321,
+				varyNum: 343,
+                list: [
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					},
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					},
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					},
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					}
+				]
+            }
+        },
+        filters: {
+            format(value) {
+				return (value + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+			},
+        },
+        mounted() {
+			this.generateCarChart();
+            this.generatePersonChart();
+            this.generateEleChart();
+        },
+        methods: {
+            generateCarChart() {
+                const option = {
+                // title: {
+                //     top: 0,
+                //     text
+                // },
+                    color: ['rgba(24, 144, 255, .2)'],
+                    grid: {
+                        top: 0,
+                        right: 15,
+                        bottom: 70,
+                        left: 45,
+                    },
+                    xAxis: {
+                        type: 'category',
+                        axisLabel: {
+                            color: 'rgba(255,255,255,1)'
+                        },
+                        axisLine: {
+                            lineStyle: false
+                        },
+                        boundaryGap: false,
+                        data: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
+                    },
+                    yAxis: {
+                        type: 'value',
+                        splitNumber : 3,
+                        show: false,
+                    },
+                    series: [{
+                        type: 'line',
+                        areaStyle: {},
+                        smooth: true,
+                        data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
+                    }]
+                };
 
+ 			    echarts.init(this.$refs['car-chart']).setOption(option);
+            },
+            generatePersonChart() {
+                const option = {
+                // title: {
+                //     top: 0,
+                //     text
+                // },
+                    color: ['rgba(24, 144, 255, .2)'],
+                    grid: {
+                        top: 0,
+                        right: 15,
+                        bottom: 70,
+                        left: 45,
+                    },
+                    xAxis: {
+                        type: 'category',
+                        axisLabel: {
+                            color: 'rgba(255,255,255,1)'
+                        },
+                        axisLine: {
+                            lineStyle: false
+                        },
+                        boundaryGap: false,
+                        data: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
+                    },
+                    yAxis: {
+                        type: 'value',
+                        splitNumber : 3,
+                        show: false,
+                    },
+                    series: [{
+                        type: 'line',
+                        areaStyle: {},
+                        smooth: true,
+                        data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
+                    }]
+                };
+
+ 			    echarts.init(this.$refs['people-chart']).setOption(option);
+            },
+            generateEleChart(resourceType = 0) {
+                const option = {
+                    color: ['#3398DB'],
+                    grid: {
+                        top: '15%',
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        axisLabel: {
+                            color: 'rgba(255,255,255,1)'
+                        },
+                        axisLine: {
+                            lineStyle: false
+                        },
+                        boundaryGap: false,
+                        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                    },
+                    yAxis: {
+                        show: false
+                    },
+                    series: [
+                        {
+                            name:'直接访问',
+                            type:'bar',
+                            // barWidth: '60%',
+                            data:[10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200]
+                        }
+                    ]
+                }
+                echarts.init(this.$refs['ele-chart']).setOption(option);
+                echarts.init(this.$refs['water-chart']).setOption(option);
+            }
         }
     }
 </script>
