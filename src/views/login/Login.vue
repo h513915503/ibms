@@ -131,7 +131,7 @@
 
                 sessionStorage.setItem('uid', 111)
 
-                //location.reload()
+                location.reload()
             }
         }
     }
