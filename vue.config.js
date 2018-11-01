@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
 	devServer: {
-		proxy: 'http://192.168.0.111:3000'
+		proxy: 'http://192.168.0.105:3000'
 	},
 	chainWebpack: (config) => {
 		const svgRule = config.module.rule('svg').include.add(path.join(__dirname, 'src/assets/svg')).end()
