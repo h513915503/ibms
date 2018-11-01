@@ -116,17 +116,17 @@
 				<el-aside class="aside" width="240px">
 					<dl>
 						<template v-for="item of aside">
-							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-if="item.title === '概览'" @click="go"></dt>
-							<!-- <dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '物业人员管理'" @click="go"></dt>
-							<dt class="cursor" :class="{actived: item.allPath.includes($route.path)}" v-text="item.title" v-if="item.title === '岗位管理'" @click="go"></dt> -->
-							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '能耗'" @click="goEnergy"></dt>
-							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '物业人员管理'" @click="goProperty"></dt>
-							<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" v-else-if="item.title === '岗位管理'" @click="goPost"></dt>
-							<dt v-text="item.title" v-else></dt>
+							<template v-if="item.items">
+								<dt v-text="item.title"></dt>
 
-							<dd v-for="item of item.items">
-								<router-link :to="item.path" :class="{actived: item.reg.test($route.path)}" v-text="item.text"></router-link>
-							</dd>
+								<dd v-for="item of item.items">
+									<router-link :to="item.path" :class="{actived: item.reg.test($route.path)}" v-text="item.text"></router-link>
+								</dd>
+							</template>
+							<template v-else>
+								<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" @click="go(item.type)"></dt>
+							</template>
+
 						</template>
 					</dl>
 				</el-aside>
@@ -146,22 +146,22 @@
 				aside: [
 					{
 						title: '概览',
-						items: [],
+						type: 0,
 						reg: /\/$/
 					},
 					{
 						title: '物业人员管理',
-						items: [],
+						type: 1,
 						reg: /\/propertyManagement|\/addProperty/
 					},
 					{
 						title: '岗位管理',
-						items: [],
+						type: 2,
 						reg: /\/postManagement|\/addPost/
 					},
 					{
 						title: '能耗',
-						items: [],
+						type: 3,
 						reg: /\/energyConsumption/
 					},
 					{
@@ -218,24 +218,21 @@
 								reg: /\/deviceErrors/
 							}
 						]
+					},
+					{
+						title: '环境',
+						type: 4,
+						reg: /\/environment$/
 					}
-
 				]
 			}
 		},
 
 		methods: {
-			go() {
-				this.$router.push('/')
-			},
-			goProperty() {
-				this.$router.push('/propertyManagement')
-			},
-			goPost() {
-				this.$router.push('/postManagement')
-			},
-			goEnergy() {
-				this.$router.push('/energyConsumption')
+			go(type) {
+				const types = ['/', '/propertyManagement', '/postManagement', '/energyConsumption', '/environment']
+
+				this.$router.push(types[type])
 			},
 			handleCommand(command) {
 				if (command === '/logout') {
