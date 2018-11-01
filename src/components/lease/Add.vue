@@ -71,9 +71,9 @@
 	<el-form ref="form" :model="form" label-width="210px" label-position="right">
 		<el-form-item label="租赁场地：">
 			<ul class="floor-list">
-				<li v-for="(item, index) of list">
+				<li v-for="(item, index) of list" :key="item.floorNumber">
 					<el-select v-model="item.floorNumber">
-						<el-option :label="item.floorNumber + '层'" :value="item.id" v-for="item of floorList"></el-option>
+						<el-option :label="item.floorNumber + '层'" :value="item.id" v-for="item of floorList" :key="item.id"></el-option>
 					</el-select>
 
 					<span class="space">-</span>
