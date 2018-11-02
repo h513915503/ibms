@@ -176,7 +176,6 @@
 }
 .chart-title {
     clear: both;
-<<<<<<< HEAD
     font-family: 'DashBoardNumDemo';
 }
 .total {
@@ -184,15 +183,6 @@
     font-size: 48px;
     display: inline-block;
     margin: 5px 80px 0 34px
-=======
-}
-.total {
-    font-family: 'DashBoardNumDemo';
-    color: #ffffff;
-    font-size: 48px;
-    display: inline-block;
-    margin: 10px 0 0 34px
->>>>>>> add:大屏css文件拆分
 }
 .rank {
     font-family: 'DashBoardNumDemo';
@@ -267,11 +257,7 @@
     margin: 10px 0 0 88px;
     color:rgba(255,255,255,1);
 }
-<<<<<<< HEAD
 /* .down {
-=======
-.down {
->>>>>>> add:大屏css文件拆分
     display: inline-flex;
     align-items: center;
     margin-left: 48px;
@@ -284,11 +270,7 @@
         border-left: 5px solid transparent;
         border-bottom: 5px solid rgba(255,255,255,1);
     }
-<<<<<<< HEAD
 } */
-=======
-}
->>>>>>> add:大屏css文件拆分
 .people-chart {
     width: 538px;
     height: 205px;
