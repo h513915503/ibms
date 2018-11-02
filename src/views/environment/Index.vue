@@ -272,7 +272,7 @@
 				        	lineStyle: {
 				        		color: '#D9D9D9'
 				        	}
-				        },
+						},
 				        data: monthes
 				    },
 					yAxis: {

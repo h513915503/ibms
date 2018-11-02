@@ -65,12 +65,12 @@
             <div class="main-building">
                 <p class="building-title">益展大厦数据大屏</p>
                 <div class="building"></div>
-                <ul class="img">
+                <!-- <ul class="img">
                     <li @click="getIndex(1)">1</li>
                     <li @click="getIndex(2)">3</li>
                     <li @click="getIndex(3)">2</li>
                     <li @click="getIndex(4)">4</li>
-                </ul>
+                </ul> -->
                 <!-- <ul>
                     <li>
                         <div class="one"></div>
