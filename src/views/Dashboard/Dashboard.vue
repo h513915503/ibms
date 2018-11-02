@@ -85,7 +85,6 @@
                         <div class="two"></div>
                     </li>
                 </ul> -->
-
             </div>
             <div class="people-flow">
                 <div class="left">
