@@ -85,6 +85,7 @@
 .el-main {
 	padding: 0px;
 	min-height: calc(100vh - 72px);
+	position: relative;
 	box-sizing: border-box;
 	background-color: #F5F5F5;
 }
@@ -162,7 +163,7 @@
 					{
 						title: '能耗',
 						type: 3,
-						reg: /\/energyConsumption/
+						reg: /\/energy-consumption/
 					},
 					{
 						title: '场地',
@@ -230,7 +231,7 @@
 
 		methods: {
 			go(type) {
-				const types = ['/', '/propertyManagement', '/postManagement', '/energyConsumption', '/environment']
+				const types = ['/', '/propertyManagement', '/postManagement', '/energy-consumption', '/environment']
 
 				this.$router.push(types[type])
 			},
