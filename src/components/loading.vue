@@ -1,21 +1,52 @@
 <style scoped>
-.loading {
-	width: 50px;
-	height: 50px;
-	position: fixed;
-	top: calc((((100vh - 72px) - 50px) / 2) - 100px);
-	left: calc((((100vw - 240px) - 50px) / 2) + 240px);
-	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPScyNHB4JyBoZWlnaHQ9JzI0cHgnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgc3Ryb2tlPSIjN2NjZmFmIiBmaWxsPSJub25lIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9InN0cm9rZS1kYXNob2Zmc2V0IiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZnJvbT0iMCIgdG89IjUwMiI+PC9hbmltYXRlPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9InN0cm9rZS1kYXNoYXJyYXkiIGR1cj0iMnMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiB2YWx1ZXM9IjE1MC42IDEwMC40OzEgMjUwOzE1MC42IDEwMC40Ij48L2FuaW1hdGU+PC9jaXJjbGU+PC9zdmc+) center no-repeat;
-	background-size: 100%;
+.loader {
+	width: 100px;
+	position: absolute;
+	top: 35%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	& .circular {
+		position: absolute;
+		top: 0;
+		left: 0;
+		animation: rotate 2s linear infinite;
+	}
+
+	circle {
+		animation: circle-dash 1.5s ease-in-out infinite;
+	}
+}
+
+@keyframes circle-dash {
+	0% {
+		stroke-dasharray: 1, 94;
+		stroke-dashoffset: 0;
+	}
+	50% {
+		stroke-dasharray: 100, 94;
+		stroke-dashoffset: -25px;
+	}
+	100% {
+		stroke-dasharray: 100, 94;
+		stroke-dashoffset: -94px;
+	}
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 </style>
 
 <template>
-	<div class="loading"></div>
+	<div class="loader">
+		<svg class="circular" viewBox="0 0 50 50">
+			<circle cx="25" cy="25" r="15" fill="none" stroke="#4A90E2" stroke-width="6%" stroke-linecap="round"/>
+		</svg>
+	</div>
 </template>
-
-<script>
-	export default {
-
-	}
-</script>
