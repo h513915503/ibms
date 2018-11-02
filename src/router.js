@@ -33,7 +33,7 @@ import AddPost from './views/postManagement/AddPost.vue'
 import ModifyPsw from './views/login/ModifyPsw.vue'
 import Login from './views/login/Login'
 
-import EnergyConsumption from './views/energyConsumption/EnergyConsumption.vue'
+import EnergyConsumption from './views/energy-consumption/Index.vue'
 
 import Dashboard from './views/Dashboard/Dashboard.vue'
 
@@ -144,8 +144,8 @@ const router = new Router({
 			component: AddPost
 		},
 		{
-			path: '/energyConsumption',
-			nane: 'energyConsumption',
+			path: '/energy-consumption',
+			nane: 'energy-consumption',
 			component: EnergyConsumption
 		},
 		{
