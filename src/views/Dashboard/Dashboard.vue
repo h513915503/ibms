@@ -55,7 +55,7 @@
                     </p>
                     <p class="chart-title">
                         <span class="total">234</span>
-                        <span class="rank">121</span>
+                        <span class="down">{{varyNum | format}}</span>
                     </p>
                     <div class="car-chart" ref="car-chart"></div>
                 </div>
@@ -65,26 +65,26 @@
             <div class="main-building">
                 <p class="building-title">益展大厦数据大屏</p>
                 <div class="building"></div>
-                <!-- <ul class="img">
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul> -->
-                <ul>
-                    <li>
-                        <div class="one"></div>
-                        <div class="two"></div>
-                    </li>
-                    <li>
-                        <div class="one"></div>
-                        <div class="two"></div>
-                    </li>
-                    <li>
-                        <div class="one"></div>
-                        <div class="two"></div>
-                    </li>
+                <ul class="img">
+                    <li @click="getIndex(1)">1</li>
+                    <li @click="getIndex(2)">3</li>
+                    <li @click="getIndex(3)">2</li>
+                    <li @click="getIndex(4)">4</li>
                 </ul>
+                <!-- <ul>
+                    <li>
+                        <div class="one"></div>
+                        <div class="two"></div>
+                    </li>
+                    <li>
+                        <div class="one"></div>
+                        <div class="two"></div>
+                    </li>
+                    <li>
+                        <div class="one"></div>
+                        <div class="two"></div>
+                    </li>
+                </ul> -->
                 
             </div>
             <div class="people-flow">
@@ -207,7 +207,9 @@
                     xAxis: {
                         type: 'category',
                         axisLabel: {
-                            color: 'rgba(255,255,255,1)'
+                            color: 'rgba(255,255,255,1)',
+                            show: true,
+							interval: 2
                         },
                         axisLine: {
                             lineStyle: false
@@ -222,6 +224,7 @@
                     },
                     series: [{
                         type: 'line',
+                        symbol: 'none',
                         areaStyle: {},
                         smooth: true,
                         data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
@@ -246,7 +249,9 @@
                     xAxis: {
                         type: 'category',
                         axisLabel: {
-                            color: 'rgba(255,255,255,1)'
+                            color: 'rgba(255,255,255,1)',
+                            show: true,
+							interval: 2
                         },
                         axisLine: {
                             lineStyle: false
@@ -261,6 +266,7 @@
                     },
                     series: [{
                         type: 'line',
+                        symbol: 'none',
                         areaStyle: {},
                         smooth: true,
                         data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
@@ -282,7 +288,9 @@
                     xAxis: {
                         type: 'category',
                         axisLabel: {
-                            color: 'rgba(255,255,255,1)'
+                            color: 'rgba(255,255,255,1)',
+                            show: true,
+							interval: 2
                         },
                         axisLine: {
                             lineStyle: false
@@ -304,6 +312,9 @@
                 }
                 echarts.init(this.$refs['ele-chart']).setOption(option);
                 echarts.init(this.$refs['water-chart']).setOption(option);
+            },
+            getIndex(index) {
+                console.log(index)
             }
         }
     }
