@@ -252,11 +252,11 @@ p {
 			display: inline-block;
 			width: 20px;
 			margin-right: 24px;
-			color: #FFF;
+			color: rgba(0, 0, 0, .65);
 			font-size: 12px;
 			text-align: center;
 			border-radius: 50%;
-			background-color: #1890FF;
+			background-color: #F0F2F5;
 			line-height: 20px;
 		}
 
@@ -265,9 +265,9 @@ p {
 		}
 	}
 
-	& li:last-child::before {
-		color: rgba(0, 0, 0, .65);
-		background-color: #F0F2F5;
+	& li:nth-child(-n+3)::before {
+		color: #FFF;
+		background-color: #1890FF;
 	}
 }
 
@@ -349,7 +349,7 @@ p {
 		line-height: 32px;
 	}
 }
-.char-wrapper {
+.chart-wrapper {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
