@@ -93,9 +93,9 @@
 							<el-date-picker v-model="date" type="date" placeholder="选择时间"></el-date-picker>
 						</div>
 					</div>
-					<div class="char-wrapper">
-						<!-- <p class="title">电能耗实况（KW · h）</p> -->
-						<div class="energy-chart" ref="energy-chart"></div>
+					<div class="chart-wrapper">
+						<chart class="energy-chart" :type="0" :splitNumber="3" :title="energyChartTitle" :grid="energyGrid" :data="energyChartData"></chart>
+
 						<div class="ranking-list">
 							<p>电能耗时段排名</p>
 							<ul>
@@ -141,7 +141,8 @@
 									{{peopleNum | format}}
 									<span class="down">{{varyNum | format}}</span>
 								</div>
-								<div class="people-chart" ref="people-chart"></div>
+								<!-- <div class="people-chart" ref="people-chart"></div> -->
+								<chart class="people-chart" :type="4" :yShow="false" :grid="peopleGrid" :xAxisData="peopleXAxisData" :data="peopleChartData"></chart>
 							</div>
 							<div class="right ranking-list">
 								<p>人流量时段排名</p>
@@ -175,6 +176,7 @@
 </template>
 
 <script>
+	import chart from '@/components/chart'
 	import svgProgress from '@/components/svg-progress'
 
 	export default {
@@ -201,6 +203,7 @@
 
 				date: '',
 				dateType: 0,
+				energyChartData: [],
 				currentResourceType: 0,
 
 				aaa: 280,
@@ -215,6 +218,7 @@
 				cccc: 5543,
 				peopleNum: 12321,
 				varyNum: 343,
+				peopleChartData: [20, 420, 140, 500, 100],
 				list: [
 					{
 						start: 8,
@@ -241,6 +245,7 @@
 		},
 
 		components: {
+			chart,
 			svgProgress
 		},
 
@@ -256,6 +261,31 @@
 			},
 			noRunWidth() {
 				return (this.noRun / this.totalWidth) * 100
+			},
+			energyChartTitle() {
+				return {
+					top: 0,
+					text: ['电能耗实况（KW · h）', '水能耗实况（tun）'][this.currentResourceType]
+				}
+			},
+			energyGrid() {
+				return {
+					top: 50,
+					right: 15,
+					bottom: 20,
+					left: 45,
+				}
+			},
+			peopleGrid() {
+				return {
+					top: 10,
+					right: 15,
+					bottom: 20,
+					left: 10,
+				}
+			},
+			peopleXAxisData() {
+				return [6, 8, 10, 12, 14]
 			}
 		},
 
@@ -278,157 +308,15 @@
 		},
 
 		created() {
-			//this.getData()
+			this.getData()
 		},
 
 		mounted() {
-			this.generateEnergyChart()
-			this.generatePeopleChart()
+			this.energyChartData = [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300]
+			this.peopleChartData = [20, 420, 140, 500, 100]
 		},
 
 		methods: {
-			generateEnergyChart(resourceType = 0, dateType = 0) {
-				const text = ['电能耗实况（KW · h）', '水能耗实况（tun）'][resourceType]
-				let xAxisData = []
-
-				// 设置当月天数
-				let monthes = []
-				const currentDate = new Date()
-				let day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0).getDate()
-
-				while (day--) {
-					monthes.unshift(day + 1)
-				}
-
-				const dateTypeMap = {
-					0: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
-					1: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-					2: monthes,
-					3: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-				}
-
-				xAxisData = dateTypeMap[dateType]
-
-				const option = {
-					title: {
-						top: 0,
-						text
-					},
-				    color: ['rgba(24, 144, 255, .2)'],
-					grid: {
-						top: 50,
-						right: 15,
-						bottom: 20,
-						left: 45,
-					},
-				    xAxis: {
-				        type: 'category',
-				        axisLabel: {
-				        	color: 'rgba(0, 0, 0, .65)'
-				        },
-				        axisLine: {
-				        	lineStyle: {
-				        		color: '#D9D9D9'
-				        	}
-				        },
-				        boundaryGap: false,
-				        data: xAxisData
-				    },
-					yAxis: {
-				        type: 'value',
-				        splitNumber : 3,
-				        axisLine: {
-				        	show: false
-				        },
-				        axisTick: {
-				        	show: false,
-				        	interval: 0,
-				        	length: 10
-				        },
-				        splitLine: {
-						    lineStyle: {
-						    	type: 'dashed',
-						    	color: '#e8e8e8'
-						    }
-				        }
-				    },
-				    series: [{
-				        type: 'line',
-				        areaStyle: {},
-				        smooth: true,
-				        data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
-				    }]
-				};
-
-				const instance = echarts.init(this.$refs['energy-chart'], null, {
-					renderer: 'svg'
-				})
-
-				instance.setOption(option)
-
-				window.addEventListener('resize', () => {
-					instance.resize()
-				})
-			},
-			generatePeopleChart() {
-				const option = {
-				    color: ['rgba(24, 144, 255, .2)'],
-					grid: {
-						top: 10,
-						right: 15,
-						bottom: 20,
-						left: 10,
-					},
-				    xAxis: {
-				        type: 'category',
-				        axisLabel: {
-				        	color: 'rgba(0, 0, 0, .65)'
-				        },
-				        axisLine: {
-				        	lineStyle: {
-				        		color: '#D9D9D9'
-				        	}
-				        },
-				        boundaryGap: false,
-				        data: [6, 8, 10, 12, 14]
-				    },
-					yAxis: {
-						show: false,
-				        type: 'value',
-				        splitNumber : 3,
-				        axisLine: {
-				        	show: false
-				        },
-				        axisTick: {
-				        	show: false,
-				        	interval: 0,
-				        	length: 10
-				        },
-				        splitLine: {
-						    lineStyle: {
-						    	type: 'dashed',
-						    	color: '#e8e8e8'
-						    }
-				        }
-				    },
-				    series: [{
-				        type: 'line',
-				        areaStyle: {},
-				        smooth: true,
-				        data: [20, 420, 140, 500, 100]
-				    }]
-				};
-
-				const instance = echarts.init(this.$refs['people-chart'], null, {
-					renderer: 'svg'
-				})
-
-				instance.setOption(option)
-
-				window.addEventListener('resize', () => {
-					instance.resize()
-				})
-			},
 			async getData() {
 				this.loading = true
 
