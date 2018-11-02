@@ -1,0 +1,171 @@
+.header {
+	background-color: #FFF;
+
+	& .tab-bar {
+		display: flex;
+		align-items: center;
+		padding: 0 24px;
+		border-bottom: 1px solid #E8E8E8;
+
+		& .item {
+			width: 88px;
+			height: 46px;
+			margin-right: 16px;
+			color: rgba(0, 0, 0, .65);
+			font-size: 14px;
+			text-align: center;
+			line-height: 46px;
+			cursor: pointer;
+			box-sizing: border-box;
+		}
+
+		& .actived {
+			color: #0E7CC2;
+			border-bottom: 2px solid currentcolor;
+		}
+	}
+}
+
+.content {
+	margin: 24px;
+	background-color: #FFF;
+}
+
+.energy {
+	display: block;
+	padding: 24px;
+	padding-top: 0;
+	margin-bottom: 24px;
+	background-color: #FFF;
+
+	& .bar {
+		display: flex;
+		margin-bottom: 24px;
+		border-bottom: 1px solid #E8E8E8;
+	}
+
+	& .tab-bar {
+		display: flex;
+		height: 50px;
+		line-height: 50px;
+
+		& .item {
+			margin-right: 50px;
+			position: relative;
+			color: rgba(0, 0, 0, .65);
+			font-size: 16px;
+			cursor: pointer;
+
+			&::after {
+				display: none;
+				content: "";
+				width: 120%;
+				height: 2px;
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				background-color: currentcolor;
+				transform: translateX(-50%);
+			}
+		}
+
+		& .item.actived {
+			color: #1890FF;
+
+			&::after {
+				display: block;
+			}
+		}
+	}
+
+	& .operation {
+		display: flex;
+		align-items: center;
+		margin-left: auto;
+
+		& .btn-text {
+			display: inline-block;
+			margin-right: 24px;
+			color: rgba(0, 0, 0, .65);
+			font-size: 14px;
+			cursor: pointer;
+		}
+
+		& .btn-text.actived {
+			color: #1890FF;
+		}
+	}
+
+	& .el-input {
+		width: 256px;
+	}
+
+	& >>> .el-input__inner {
+		height: 32px;
+		line-height: 32px;
+	}
+
+	& >>> .el-input__icon {
+		line-height: 32px;
+	}
+}
+.chart-wrapper {
+	display: flex;
+	justify-content: space-between;
+	position: relative;
+
+	& .ranking-list {
+		width: 250px;
+		margin-left: 89px;
+
+		& .num {
+			margin-left: auto;
+		}
+
+		& p {
+			color: rgba(0, 0, 0, .85);
+		}
+	}
+}
+.ranking-list {
+	flex-shrink: 0;
+
+	& p {
+			margin-bottom: 24px;
+			color: rgba(0, 0, 0, .45);
+			font-size: 14px;
+		}
+
+	& li {
+		display: flex;
+		margin-bottom: 24px;
+		color: rgba(0, 0, 0, .65);
+		counter-increment: num;
+
+		&::before {
+			content: counter(num);
+			display: inline-block;
+			width: 20px;
+			margin-right: 24px;
+			color: rgba(0, 0, 0, .65);
+			font-size: 12px;
+			text-align: center;
+			border-radius: 50%;
+			background-color: #F0F2F5;
+			line-height: 20px;
+		}
+
+		& span:last-child {
+			margin-left: 53px;
+		}
+	}
+
+	& li:nth-child(-n+3)::before {
+		color: #FFF;
+		background-color: #1890FF;
+	}
+}
+.chart {
+	flex: 1;
+	min-height: 528px;
+}
