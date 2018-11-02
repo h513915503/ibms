@@ -6,15 +6,18 @@ export default async function getResponses(url, params, method = 'POST') {
 	const formdata = qs.stringify(params)
 	const options = {
 		method,
+		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
-		}
+		},
+		body: formdata
 	}
 
-	if (method === 'POST') {
-		options.credentials = 'include'
-		options.body = formdata
-	} else {
+	if (method === 'GET') {
+		delete options.headers
+		delete options.credentials
+		delete options.body
+
 		url += '?' + formdata
 	}
 
