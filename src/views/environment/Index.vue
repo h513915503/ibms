@@ -44,7 +44,8 @@
 	padding-left: 70px;
 	color: #595959;
 	font-size: 16px;
-	background: url(https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K/r/www/aladdin/img/new_weath/bigicon/5.png) no-repeat left center;
+	background-repeat: no-repeat;
+	background-position: left center;
 	background-size: 50px;
 }
 .temperature {
@@ -121,7 +122,7 @@
 						</span>
 					</div>
 				</div>
-				<div class="weather">
+				<div class="weather" :style="{backgroundImage: 'url(' + weatherImage + ')'}">
 					<span class="temperature">{{temperature}}℃</span>
 					<span v-text="weatherType"></span>
 				</div>
@@ -137,7 +138,7 @@
 				</div>
 				<p class="type" v-text="type"></p>
 
-				<div class="chart-wrapper" ref="chart"></div>
+				<chart :type="2" color="#1890FF" :grid="grid" :splitNumber="5" :smooth="false" :areaStyle="null" :data="envData"></chart>
 			</div>
 		</template>
 	</div>
@@ -145,6 +146,7 @@
 
 <script>
 	import getResponses from '@/api'
+	import chart from '@/components/chart'
 
 	export default {
 		data() {
@@ -152,8 +154,10 @@
 				loading: false,
 
 				envType: 0,
+				envData: [],
 				temperature: '',
 				weatherType: '',
+				weatherImage: '',
 
 				datas: [
 					[{
@@ -188,6 +192,10 @@
 			}
 		},
 
+		components: {
+			chart
+		},
+
 		computed: {
 			currentDate() {
 				const date = new Date()
@@ -196,6 +204,14 @@
 			},
 			type() {
 				return ['温度℃', '湿度%', '温度℃', '湿度%', 'CO2 ppm', 'CO ppm', '水压 MPa'][this.currentIndex]
+			},
+			grid() {
+				return {
+					top: 20,
+					right: 30,
+					bottom: 50,
+					left: 50,
+				}
 			}
 		},
 
@@ -207,25 +223,26 @@
 
 		watch: {
 			currentIndex(value) {
-				this.$chart.setOption(this.generateOption(this.$d.reverse()))
+				this.envData = this.$d.reverse()
 			}
 		},
 
 		created() {
-			this.loading = true
-
-			Promise.all([this.getWeatherInfo(), this.getData()]).then(() => {
-				this.loading = false
-
-				this.$d = [9, 8, 6, 5, 2, 2, 2, 6, 8, 10, 15, 17, 19, 24, 27, 22, 18, 10, 20]
-
-				this.$nextTick(() => {
-					this.generateEnergyChart(this.$d)
-				})
-			})
+			this.getData()
 		},
 
 		methods: {
+			async getData() {
+				this.loading = true
+
+				const [, data] = await Promise.all([this.getWeatherInfo(), this.getEnvData()]).catch(() => {
+					this.loading = false
+				})
+
+				this.loading = false
+
+				this.envData = data
+			},
 			async getWeatherInfo() {
 				const params = {
 					location: '115.236.39.114',
@@ -236,80 +253,16 @@
 
 				this.temperature = now.tmp
 				this.weatherType = now.cond_txt
+				this.weatherImage = `https://cdn.heweather.com/cond_icon/${now.cond_code}.png`
 			},
-			async getData() {
+			async getEnvData() {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
-						resolve()
+						this.$d = [9, 8, 6, 5, 2, 2, 2, 6, 8, 10, 15, 17, 19, 24, 27, 22, 18, 10, 20]
+						resolve(this.$d)
 					}, 1000)
 				})
-			},
-			generateOption(data) {
-				// 设置当月天数
-				let monthes = []
-				const currentDate = new Date()
-				let day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0).getDate()
-
-				while (day--) {
-					monthes.unshift(day + 1)
-				}
-
-				return {
-					title: false,
-				    color: ['#0E7CC2'],
-					grid: {
-						top: 20,
-						right: 30,
-						bottom: 50,
-						left: 50,
-					},
-				    xAxis: {
-				        type: 'category',
-				        axisLabel: {
-				        	color: 'rgba(0, 0, 0, .65)'
-				        },
-				        axisLine: {
-				        	lineStyle: {
-				        		color: '#D9D9D9'
-				        	}
-				        },
-				        data: monthes
-				    },
-					yAxis: {
-				        type: 'value',
-				        splitNumber : 5,
-				        axisLine: {
-				        	show: false
-				        },
-				        axisTick: {
-				        	show: false,
-				        	interval: 0,
-				        	length: 10
-				        },
-				        splitLine: {
-						    lineStyle: {
-						    	type: 'dashed',
-						    	color: '#e8e8e8'
-						    }
-				        }
-				    },
-				    series: [{
-				        type: 'line',
-				        data
-				    }]
-				}
-			},
-			generateEnergyChart(data) {
-				this.$chart = echarts.init(this.$refs['chart'], null, {
-					renderer: 'svg'
-				})
-
-				this.$chart.setOption(this.generateOption(data))
-
-				window.addEventListener('resize', () => {
-					this.$chart.resize()
-				})
-			},
+			}
 		}
 	}
 </script>
