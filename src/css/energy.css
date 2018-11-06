@@ -119,12 +119,9 @@
 	}
 }
 .btn-export {
-	width: 74px;
-	padding: 0;
 	position: absolute;
 	top: 80px;
 	right: 330px;
-	line-height: 32px;
 }
 .chart-wrapper {
 	display: flex;
