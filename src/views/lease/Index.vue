@@ -65,17 +65,22 @@
 							<div class="show-wrapper" v-else>
 								<div class="floor-number">
 									<p>{{item.floorNumber}}层</p>
-									<span>剩{{item.totalArea}}㎡</span>
 								</div>
 
-								<p class="no-room" v-if="! item.companyList.length">暂未出租</p>
-								<ul class="company-list">
+								<p class="no-room">
+									<span>{{item.totalArea}}㎡</span>
+									还未出租
+								</p>
+								<ul class="company-list" v-if="item.companyList.length">
 									<li :class="{expires: item.day < 10}" v-for="item of item.companyList">
-										<p>
-											<span v-text="item.roomNumber"></span>
-											<span class="time">{{item.expires}} 到期，剩{{item.day}}天</span>
-										</p>
-										<p v-text="item.companyName"></p>
+										<span class="split-line"></span>
+										<div>
+											<p>
+												<span v-text="item.roomNumber"></span>
+												<span class="time">{{item.expires | format}} 到期，剩{{item.day}}天</span>
+											</p>
+											<p v-text="item.name"></p>
+										</div>
 									</li>
 								</ul>
 
@@ -105,20 +110,7 @@
 					</ul>
 				</template>
 
-				<div class="statistics" v-else>
-					<h1>
-						详细数据
-						<el-button>导出</el-button>
-					</h1>
-					<el-table border :data="statisticsData">
-						<el-table-column prop="floorNumber" label="楼层"></el-table-column>
-						<el-table-column prop="totalArea" label="总面积"></el-table-column>
-						<el-table-column prop="a" label="已出租"></el-table-column>
-						<el-table-column prop="b" label="即将到期"></el-table-column>
-						<el-table-column prop="c" label="未出租"></el-table-column>
-						<el-table-column prop="ratio" label="出租率"></el-table-column>
-					</el-table>
-				</div>
+				<chart v-if="stage === 1"></chart>
 			</div>
 		</template>
 	</div>
@@ -126,6 +118,7 @@
 
 <script>
 	import tabBar from '@/components/tab-bar.vue'
+	import chart from '@/components/lease/chart.vue'
 	import copyFloor from '@/components/copyFloor.vue'
 
 	export default {
@@ -133,12 +126,12 @@
 			return {
 				loading: false,
 				isDelete: false,
-				index: 0,
+				index: 1,
 
 				copyModalStatus: false,
 				popoverModalStatus: false,
 
-				stage: 0,
+				stage: 1,
 				tab: ['楼宇租赁', '报表分析'],
 
 				tabs: [
@@ -168,39 +161,13 @@
 						totalArea: 1000,
 						companyList: []
 					}
-				],
-
-				statisticsData: [
-					{
-						floorNumber: 17,
-						totalArea: 1000,
-						a: 400,
-						b: 300,
-						c: 220,
-						ratio: '40%'
-					},
-					{
-						floorNumber: 17,
-						totalArea: 1000,
-						a: 400,
-						b: 300,
-						c: 220,
-						ratio: '40%'
-					},
-					{
-						floorNumber: 17,
-						totalArea: 1000,
-						a: 400,
-						b: 300,
-						c: 220,
-						ratio: '40%'
-					}
 				]
 			}
 		},
 
 		components: {
 			tabBar,
+			chart,
 			copyFloor
 		},
 
@@ -208,7 +175,7 @@
 			format(value) {
 				const date = new Date()
 
-				return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
+				return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`.replace(/\b(\w)\b/, '0$1')
 			}
 		},
 
