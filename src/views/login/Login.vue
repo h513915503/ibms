@@ -131,7 +131,13 @@
 
                 sessionStorage.setItem('uid', 111)
 
-                location.reload()
+                const {redirectPath} = this.$route.query
+
+                if (redirectPath) {
+                    location.href = redirectPath
+                } else {
+                    location.reload()
+                }
             }
         }
     }
