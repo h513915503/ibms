@@ -20,16 +20,16 @@
 
 @keyframes circle-dash {
 	0% {
-		stroke-dasharray: 1, 94;
+		stroke-dasharray: 1, 75;
 		stroke-dashoffset: 0;
 	}
 	50% {
-		stroke-dasharray: 100, 94;
+		stroke-dasharray: 100, 75;
 		stroke-dashoffset: -25px;
 	}
 	100% {
-		stroke-dasharray: 100, 94;
-		stroke-dashoffset: -94px;
+		stroke-dasharray: 100, 75;
+		stroke-dashoffset: -75px;
 	}
 }
 
@@ -46,7 +46,7 @@
 <template>
 	<div class="loader">
 		<svg class="circular" viewBox="0 0 50 50">
-			<circle cx="25" cy="25" r="15" fill="none" stroke="#4A90E2" stroke-width="6%" stroke-linecap="round"/>
+			<circle cx="25" cy="25" r="12" fill="none" stroke="#4A90E2" stroke-width="6%" stroke-linecap="round"/>
 		</svg>
 	</div>
 </template>
