@@ -9,6 +9,7 @@ module.exports = {
 
 		const imagesRule = config.module.rule('images').test(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/)
 
+		imagesRule.exclude.add(path.join(__dirname, 'src/assets/svg'))
 		imagesRule.use('url-loader').loader('url-loader').options({
 			limit: 4096,
 			fallback: {

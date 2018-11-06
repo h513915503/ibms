@@ -184,7 +184,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
 	const uid = sessionStorage.getItem('uid')
 
-	if (to.path === '/login') {
+	if (to.path.includes('/login')) {
 		if (uid) {
 			next('/')
 		} else {
@@ -197,7 +197,7 @@ router.beforeEach((to, from, next) => {
 	if (uid) {
 		next()
 	} else {
-		next('/login')
+		next(`/login/?redirect=${encodeURIComponent(to.path)}`)
 	}
 })
 

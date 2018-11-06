@@ -138,7 +138,7 @@
 				</div>
 				<p class="type" v-text="type"></p>
 
-				<chart :type="2" color="#1890FF" :grid="grid" :splitNumber="5" :smooth="false" :areaStyle="null" :data="envData"></chart>
+				<chart :data="chartConfig"></chart>
 			</div>
 		</template>
 	</div>
@@ -154,7 +154,7 @@
 				loading: false,
 
 				envType: 0,
-				envData: [],
+				chartData: [],
 				temperature: '',
 				weatherType: '',
 				weatherImage: '',
@@ -205,12 +205,21 @@
 			type() {
 				return ['温度℃', '湿度%', '温度℃', '湿度%', 'CO2 ppm', 'CO ppm', '水压 MPa'][this.currentIndex]
 			},
-			grid() {
+			chartConfig() {
 				return {
-					top: 20,
-					right: 30,
-					bottom: 50,
-					left: 50,
+					xAxisType: 2,
+					color: ['#1890FF'],
+					smooth: false,
+					areaStyle: null,
+					splitNumber: 5,
+					show: true,
+					grid: {
+						top: 20,
+						right: 30,
+						bottom: 50,
+						left: 50,
+					},
+					data: this.chartData
 				}
 			}
 		},
@@ -223,7 +232,7 @@
 
 		watch: {
 			currentIndex(value) {
-				this.envData = this.$d.reverse()
+				this.chartData = this.$d.reverse()
 			}
 		},
 
@@ -241,7 +250,7 @@
 
 				this.loading = false
 
-				this.envData = data
+				this.chartData = data
 			},
 			async getWeatherInfo() {
 				const params = {

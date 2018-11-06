@@ -212,7 +212,7 @@
 .floor-list {
 	margin: 0 24px;
 }
-.floor-list li {
+.floor-list > li {
 	margin-bottom: 16px;
 	color: rgba(0, 0, 0, .65);
 	font-size: 16px;
@@ -221,35 +221,53 @@
 .show-wrapper {
 	display: flex;
 	align-items: flex-start;
-	padding: 30px 25px;
+	padding-left: 24px;
 	position: relative;
 
 	& .floor-number {
+		flex-shrink: 0;
+		margin-top: 24px;
 		margin-right: 64px;
-
-		& p {
-			margin-bottom: 15px;
-		}
 	}
 }
 .show-wrapper:hover .icon-wrapper {
-	display: block;
+	display: flex;
 }
 .no-room {
+	margin-top: 24px;
+	margin-bottom: 24px;
+	flex-shrink: 0;
 	color: #8C8C8C;
-	font-size: 20px;
+	font-size: 16px;
+
+	& span {
+		display: block;
+		margin-bottom: 16px;
+		color: #2FC25B;
+		font-size: 20px;
+	}
 }
 .company-list {
 	display: flex;
 	flex-wrap: wrap;
+	margin-left: 24px;
 
 	& li {
-		padding: 12px;
-		margin-right: 16px;
-		margin-bottom: 16px;
+		display: flex;
+		align-items: center;
+		margin-right: 24px;
+		position: relative;
 		color: #222;
 		font-size: 16px;
-		background-color: #E9E9E9;
+		cursor: pointer;
+		box-sizing: border-box;
+
+		& .split-line {
+			width: 1px;
+			height: 50%;
+			margin-right: 24px;
+			background-color: #E8E8E8;
+		}
 
 		& p:first-child {
 			display: flex;
@@ -261,21 +279,24 @@
 		}
 	}
 
-	& li.expires {
-		color: #FFF;
-		background-color: #FAAD14;
+	& li.expires .time {
+		color: #FAAD14;
+	}
 
-		& p:first-child {
-			color: #FFF;
-		}
+	& div {
+		padding: 16px;
+		margin: 8px 0;
+		border: 1px solid transparent;
+		transition: all .15s;
+	}
 
-		& .time {
-			color: #FFF;
-		}
+	& div:hover {
+		border-color: #80CAE8;
+		background-color: #E6F9FF;
 	}
 
 	& .time {
-		color: #919191;
+		color: #8C8C8C;
 		font-size: 14px;
 	}
 }
@@ -343,6 +364,8 @@
 }
 .icon-wrapper {
 	display: none;
+	justify-content: center;
+	flex-direction: column;
 	height: 100%;
 	padding: 14px 12px;
 	position: absolute;

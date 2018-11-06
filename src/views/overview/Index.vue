@@ -94,7 +94,7 @@
 						</div>
 					</div>
 					<div class="chart-wrapper">
-						<chart class="energy-chart" :type="0" :splitNumber="3" :title="energyChartTitle" :grid="energyGrid" :data="energyChartData"></chart>
+						<chart class="energy-chart" :data="energyChartConfig"></chart>
 
 						<div class="ranking-list">
 							<p>电能耗时段排名</p>
@@ -142,7 +142,7 @@
 									<span class="down">{{varyNum | format}}</span>
 								</div>
 								<!-- <div class="people-chart" ref="people-chart"></div> -->
-								<chart class="people-chart" :type="4" :yShow="false" :grid="peopleGrid" :xAxisData="peopleXAxisData" :data="peopleChartData"></chart>
+								<chart class="people-chart" :data="peopleChartConfig"></chart>
 							</div>
 							<div class="right ranking-list">
 								<p>人流量时段排名</p>
@@ -262,30 +262,45 @@
 			noRunWidth() {
 				return (this.noRun / this.totalWidth) * 100
 			},
-			energyChartTitle() {
+			energyChartConfig() {
 				return {
-					top: 0,
-					text: ['电能耗实况（KW · h）', '水能耗实况（tun）'][this.currentResourceType]
+					xAxisType: 0,
+					color: ['rgba(24, 144, 255, .2)'],
+					smooth: true,
+					areaStyle: {},
+					title: {
+						top: 0,
+						text: ['电能耗实况（KW · h）', '水能耗实况（tun）'][this.currentResourceType]
+					},
+					splitNumber: 3,
+					show: true,
+					grid: {
+						top: 50,
+						right: 15,
+						bottom: 20,
+						left: 45,
+					},
+					data: this.energyChartData
 				}
 			},
-			energyGrid() {
+			peopleChartConfig() {
 				return {
-					top: 50,
-					right: 15,
-					bottom: 20,
-					left: 45,
+					xAxisType: 4,
+					color: ['rgba(24, 144, 255, .2)'],
+					smooth: true,
+					areaStyle: {},
+					title: false,
+					splitNumber: 3,
+					xAxisData: [6, 8, 10, 12, 14],
+					show: false,
+					grid: {
+						top: 10,
+						right: 15,
+						bottom: 20,
+						left: 10,
+					},
+					data: this.peopleChartData
 				}
-			},
-			peopleGrid() {
-				return {
-					top: 10,
-					right: 15,
-					bottom: 20,
-					left: 10,
-				}
-			},
-			peopleXAxisData() {
-				return [6, 8, 10, 12, 14]
 			}
 		},
 

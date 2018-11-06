@@ -16,7 +16,7 @@
 					</div>
 				</header>
 
-				<div class="content energy" v-if="currentIndex === 0">
+				<div class="content energy" v-show="currentIndex === 0">
 					<div class="bar">
 						<div class="tab-bar">
 							<div class="item" :class="{actived: currentResourceType === 0}" @click="currentResourceType = 0">电能耗</div>
@@ -31,19 +31,23 @@
 						</div>
 					</div>
 					<div class="chart-wrapper">
-						<chart class="chart" :type="0" :title="energyChartTitle" :grid="energyGrid" :data="energyChartData"></chart>
+						<chart class="chart" :data="energyChartConfig"></chart>
 
 						<div class="ranking-list">
-							<p>电能耗时段排名</p>
+							<p>{{currentResourceType === 0 ? '电' : '水'}}能耗时段排名</p>
 							<ul>
-								<li v-for="item of energyRankingList">
+								<li v-for="item of rankingList">
 									<span>{{item.start}}点~{{item.end}}点</span>
 									<span class="num">{{item.num | format}}</span>
 								</li>
 							</ul>
 						</div>
 					</div>
+					<el-button class="btn-export">导出</el-button>
 				</div>
+
+                <company :currentIndex="currentIndex" v-show="currentIndex === 1"></company>
+				<devices :currentIndex="currentIndex" v-show="currentIndex === 2"></devices>
 			</div>
 		</template>
 	</div>
@@ -52,6 +56,8 @@
 <script>
 	import tabBar from '@/components/tab-bar.vue'
 	import chart from '@/components/chart'
+    import company from '@/components/energy-consumption/company.vue'
+	import devices from '@/components/energy-consumption/devices.vue'
 
 	export default {
 		data() {
@@ -105,6 +111,28 @@
 						end: 10,
 						num: 15234
 					}
+				],
+				waterRankingList: [
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					},
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					},
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					},
+					{
+						start: 8,
+						end: 10,
+						num: 15234
+					}
 				]
 
 			}
@@ -112,24 +140,44 @@
 
 		components: {
 			tabBar,
-			chart
+			chart,
+			company,
+            devices
 		},
 
 		computed: {
-			energyChartTitle() {
+			energyChartConfig() {
 				return {
-					top: 0,
-					text: ['电能耗（KW · h）', '水能耗实况（tun）'][this.currentResourceType]
+					xAxisType: 0,
+					color: ['rgba(24, 144, 255, .2)'],
+					smooth: true,
+					show: true,
+					splitNumber: 0,
+					areaStyle: {},
+					title: {
+						top: 0,
+						textStyle: {
+							color: 'rgba(0, 0, 0, .85)',
+							fontSize: '14'
+						},
+						text: ['电能耗（KW · h）', '水能耗实况（Tun）'][this.currentResourceType]
+					},
+					grid: {
+						top: 60,
+						right: 15,
+						bottom: 20,
+						left: 45,
+					},
+					data: this.energyChartData
 				}
 			},
-			energyGrid() {
-				return {
-					top: 50,
-					right: 15,
-					bottom: 20,
-					left: 45,
+			rankingList() {
+				if (this.currentResourceType === 0) {
+					return this.energyRankingList
 				}
-			},
+
+				return this.waterRankingList
+			}
 		},
 
 		filters: {
@@ -138,8 +186,15 @@
 			}
 		},
 
+		watch: {
+			currentResourceType(value) {
+				this.energyChartData = this.$d.reverse()
+			}
+		},
+
 		created() {
-			this.energyChartData = [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300]
+			this.$d = [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300]
+			this.energyChartData  = this.$d
 
 			this.getData()
 		},
