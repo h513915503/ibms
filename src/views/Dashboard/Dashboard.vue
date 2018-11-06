@@ -15,8 +15,8 @@
     margin-top: -20px;
 }
 .center-floor {
-    margin-left: 214px;
-    padding-top: 42px;
+    margin-left: 209px;
+    /* padding-top: 42px; */
 }
 .floor {
     color: #ffffff;
@@ -26,7 +26,7 @@
 .center-right {
     margin-left: 356px;
     color: #ffffff;
-    margin-top: -489px;
+    margin-top: -490px;
     transform: skewY(-31deg);
 } 
 .transform {
@@ -38,14 +38,13 @@
     height: 320px;
     background: rgba(185,224,249,0.1);
     margin-left: 730px;
-    margin-top: -232px;
+    margin-top: -502px;
 
     & img {
         margin: 40px 40px 0 40px;
     }
 }
 .detail-content {
-    font-family: 'DashBoardNumDemo';
     font-size:24px;
     font-weight:400;
     color:rgba(185,224,249,1);
@@ -61,10 +60,6 @@
 }
 .lastfloor {
     width: 328px;
-}
-.lastRightFloor {
-    margin-left: 180px;
-    margin-top: 
 }
 .left-li {
     width: 200px;
@@ -83,10 +78,10 @@
     }
 }
 .time-content {
-    width:356px;
-    height:127px;
-    font-weight:400;
-    color:rgba(255,255,255,1);
+    width: 356px;
+    height: 127px;
+    font-weight: 400;
+    color: rgba(255,255,255,1);
     margin: 80px 0 0 854px;
 }
 .detail-time {
@@ -97,6 +92,63 @@
 .detail-date {
     text-align: right;
     font-size: 36px;
+}
+.oneFour {
+    margin-left: 209px;
+}
+.bottom-floor {
+    color: #ffffff;
+    width: 334px;
+    height: 20px;
+}
+.right-oneFour {
+    margin-left: 544px;
+    margin-top: -93px;
+    transform: skewY(-31deg);
+}
+.right-bottom-floor {
+    width: 56px;
+    height: 20px;
+}
+.top-floor {
+    display: inline-block;
+    width: 145px;
+    height: 37px;
+    margin-left: 238px;
+    transform: skewX(-58deg);
+    margin-top: 5px;
+}
+.right-top {
+    display: block;
+    width: 187px;
+    height: 37px;
+    margin-left: 384px;
+    margin-top: 110px;
+    transform: skewX(-58deg);
+}
+.basement {
+    margin-left: 208px;
+}
+.basement-floor {
+    width: 337px;
+    height: 20px;
+}
+.basement-right {
+    margin-left: 544px;
+    margin-top: -77px;
+}
+.basement-right-floor {
+    width: 56px;
+    height: 20px;
+    transform: skewY(-31deg);
+}
+.basement-top {
+    display: block;
+    width: 337px;
+    height: 37px;
+    margin-left: 237px;
+    margin-top: 118px;
+    transform: skewX(-57deg);
 }
 </style>
 
@@ -150,11 +202,27 @@
                 <p class="building-title">益展大厦数据大屏</p>
                 <div class="building">
                     <div>
+                        <span class="top-floor" @click="getIndex(floor = 17)"></span>
                         <ul class="center-floor">
-                            <li class="floor" :class="{lastfloor: item.floor <= 4}" v-for="item of floorItem" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                            <li class="floor" v-for="item of floorItem" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                        </ul>
+                        <ul class="oneFour">
+                            <li class="bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
                         </ul>
                         <ul class="center-right">
-                            <li class="transform" :class="{lastRightFloor: item.floor <= 4}" v-for="item of floorItem" @click="getIndex(item.floor)" :key="item.index">{{ item.floor }}</li>
+                            <li class="transform" v-for="item of floorItem" @click="getIndex(item.floor)" :key="item.index">{{ item.floor }}</li>
+                        </ul>
+                        <span class="right-top" @click="getIndex(floor = 4)"></span>
+                        <ul class="right-oneFour">
+                            <li class="right-bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                        </ul>
+
+                        <span class="basement-top" @click="getIndex(floor = -1)"></span>
+                        <ul class="basement">
+                            <li class="basement-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                        </ul>
+                        <ul class="basement-right">
+                            <li class="basement-right-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
                         </ul>
                     </div>
 
@@ -281,10 +349,17 @@
                     { floor: 7, status: 1 },
                     { floor: 6, status: 0 },
                     { floor: 5, status: 0 },
+                ],
+                oneToFour: [
                     { floor: 4, status: 1 },
                     { floor: 3, status: 2 },
                     { floor: 2, status: 2 },
                     { floor: 1, status: 1 },
+                ],
+                bottomThree: [
+                    { floor: -1, status: 2 },
+                    { floor: -2, status: 2 },
+                    { floor: -3, status: 1 },
                 ]
             }
         },
@@ -421,7 +496,7 @@
                             lineStyle: false
                         },
                         boundaryGap: false,
-                        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
                     },
                     yAxis: {
                         show: false
@@ -431,7 +506,7 @@
                             name:'直接访问',
                             type:'bar',
                             // barWidth: '60%',
-                            data:[10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200]
+                            data:[10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 52]
                         }
                     ]
                 }
