@@ -1,6 +1,10 @@
 .header {
 	background-color: #FFF;
 
+	& .tabs {
+		margin-bottom: 14px;
+	}
+
 	& .tab-bar {
 		display: flex;
 		align-items: center;
@@ -36,6 +40,7 @@
 	padding: 24px;
 	padding-top: 0;
 	margin-bottom: 24px;
+	position: relative;
 	background-color: #FFF;
 
 	& .bar {
@@ -94,6 +99,10 @@
 		& .btn-text.actived {
 			color: #1890FF;
 		}
+
+		& .btn-text:nth-child(4) {
+			margin-right: 48px;
+		}
 	}
 
 	& .el-input {
@@ -109,6 +118,14 @@
 		line-height: 32px;
 	}
 }
+.btn-export {
+	width: 74px;
+	padding: 0;
+	position: absolute;
+	top: 80px;
+	right: 330px;
+	line-height: 32px;
+}
 .chart-wrapper {
 	display: flex;
 	justify-content: space-between;
@@ -116,7 +133,7 @@
 
 	& .ranking-list {
 		width: 250px;
-		margin-left: 89px;
+		margin-left: 48px;
 
 		& .num {
 			margin-left: auto;
@@ -168,4 +185,5 @@
 .chart {
 	flex: 1;
 	min-height: 528px;
+	margin-top: 10px;
 }
