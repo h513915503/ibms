@@ -5,50 +5,14 @@
 <script>
 	export default {
 		props: {
+			// data.xAxisType
 			// 0: 小时
 			// 1: 星期
 			// 2: 日期
 			// 3: 月份
 			// 4: 自定义
-			type: {
-				type: Number,
-				default: 0
-			},
-			title: {
-				type: [Boolean, Object],
-				default: false
-			},
-			color: {
-				type: String,
-				default: 'rgba(24, 144, 255, .2)'
-			},
-			smooth: {
-				type: Boolean,
-				default: true
-			},
-			splitNumber: {
-				type: Number,
-				default: 0
-			},
-			grid: {
-				type: Object,
-				required: true
-			},
-			yShow: {
-				type: Boolean,
-				default: true
-			},
-			xAxisData: {
-				type: Array
-			},
-			areaStyle: {
-				type: Object,
-				default: () => {
-					return {}
-				}
-			},
 			data: {
-				type: Array,
+				type: Object,
 				required: true
 			}
 		},
@@ -65,9 +29,9 @@
 
 		methods: {
 			generateOption() {
-				let xAxisData
+				let {xAxisType, double, xAxisData, title, smooth, areaStyle, splitNumber, show, color, grid, data} = this.data
 
-				if (this.type === 0) {
+				if (xAxisType === 0) {
 					let hours = []
 					let num = 0
 
@@ -79,11 +43,11 @@
 					xAxisData = hours
 				}
 
-				if (this.type === 1) {
+				if (xAxisType === 1) {
 					xAxisData = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 				}
 
-				if (this.type === 2) {
+				if (xAxisType === 2) {
 					// 设置当月天数
 					let days = []
 					const currentDate = new Date()
@@ -96,7 +60,7 @@
 					xAxisData = days
 				}
 
-				if (this.type === 3) {
+				if (xAxisType === 3) {
 					let monthes = []
 					let num = 1
 
@@ -108,14 +72,43 @@
 					xAxisData = monthes
 				}
 
-				if (this.type === 4) {
-					xAxisData = this.xAxisData
-				}
+				let yAxis = {
+			        type: 'value',
+			        show,
+			        splitNumber,
+			        axisLine: {
+			        	show: false
+			        },
+			        axisTick: {
+			        	show: false,
+			        	interval: 0,
+			        	length: 10
+			        },
+			        splitLine: {
+					    lineStyle: {
+					    	type: 'dashed',
+					    	color: '#E8E8E8'
+					    }
+			        }
+			    }
+			    let series = {
+			        type: 'line',
+			        areaStyle,
+			        smooth,
+			        data,
+		    	}
+
+			    if (double) {
+			    	yAxis = [yAxis, yAxis]
+
+			    	series.data = data[0]
+			    	series = [series, {... series, yAxisIndex: 1, data: data[1]}]
+			    }
 
 				return {
-					title: this.title,
-				    color: [this.color],
-					grid: this.grid,
+					title,
+				    color,
+					grid,
 				    xAxis: {
 				        type: 'category',
 				        axisLabel: {
@@ -140,39 +133,16 @@
 				        trigger: 'axis',
 				        //backgroundColor: '#000'
 				   	},
-					yAxis: {
-				        type: 'value',
-				        show: this.yShow,
-				        splitNumber: this.splitNumber,
-				        axisLine: {
-				        	show: false
-				        },
-				        axisTick: {
-				        	show: false,
-				        	interval: 0,
-				        	length: 10
-				        },
-				        splitLine: {
-						    lineStyle: {
-						    	type: 'dashed',
-						    	color: '#E8E8E8'
-						    }
-				        }
-				    },
-				    series: [{
-				        type: 'line',
-				        areaStyle: this.areaStyle,
-				        smooth: this.smooth,
-				        data: this.data
-				    }]
+					yAxis,
+				    series
 				}
 			},
-			generateChart(data) {
+			generateChart() {
 				this.$chart = echarts.init(this.$refs['chart'], null, {
 					renderer: 'svg'
 				})
 
-				this.$chart.setOption(this.generateOption(data))
+				this.$chart.setOption(this.generateOption())
 
 				window.addEventListener('resize', () => {
 					this.$chart.resize()
