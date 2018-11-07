@@ -27,8 +27,14 @@
 			this.generateChart()
 		},
 
+		destroyed() {
+			window.removeEventListener('resize', this.$resizeHandler)
+		},
+
 		methods: {
 			generateOption() {
+				return this.data
+
 				let {xAxisType, double, xAxisData, title, smooth, areaStyle, splitNumber, show, color, grid, data} = this.data
 
 				if (xAxisType === 0) {
@@ -144,9 +150,9 @@
 
 				this.$chart.setOption(this.generateOption())
 
-				window.addEventListener('resize', () => {
-					this.$chart.resize()
-				})
+				// 监听 resize
+				this.$resizeHandler = () => this.$chart.resize()
+				window.addEventListener('resize', this.$resizeHandler)
 			},
 		}
 	}
