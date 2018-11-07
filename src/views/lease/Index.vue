@@ -110,7 +110,7 @@
 					</ul>
 				</template>
 
-				<chart v-if="stage === 1"></chart>
+				<chart :currentIndex="stage" v-show="stage === 1"></chart>
 			</div>
 		</template>
 	</div>
@@ -131,7 +131,7 @@
 				copyModalStatus: false,
 				popoverModalStatus: false,
 
-				stage: 1,
+				stage: 0,
 				tab: ['楼宇租赁', '报表分析'],
 
 				tabs: [
