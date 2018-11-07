@@ -22,7 +22,7 @@ import LightAdd from './views/lightManage/lightAdd.vue'
 
 import AirConditioner from './views/airConditionerManage/AirConditioner.vue'
 
-import DeviceErrors from './views/deviceErrors/DeviceErrors.vue'
+import DeviceFault from './views/deviceFault/index.vue'
 
 import PropertyManagement from './views/propertyManagement/PropertyManagement.vue'
 import AddProperty from './views/propertyManagement/AddProperty.vue'
@@ -119,9 +119,9 @@ const router = new Router({
 			component: AirConditioner
 		},
 		{
-			path: '/deviceErrors',
-			name: 'deviceErrors',
-			component: DeviceErrors
+			path: '/device-fault',
+			name: 'device-fault',
+			component: DeviceFault
 		},
 		{
 			path: '/propertyManagement',
