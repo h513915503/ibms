@@ -1,7 +1,9 @@
 <style scoped>
 .lease-chart-wrapper {
+	min-height: 571px;
 	padding: 24px;
 	margin: 24px;
+	box-sizing: border-box;
 	background-color: #FFF;
 }
 header {
@@ -55,13 +57,7 @@ ul {
 		color: #8C8C8C;
 		font-size: 12px;
 
-		&::before {
-			content: "";
-			display: inline-block;
-			width: 8px;
-			height: 8px;
-			margin-right: 8px;
-		}
+
 
 		& span:nth-child(2) {
 			margin-left: 19px;
@@ -71,18 +67,24 @@ ul {
 			margin-left: auto;
 		}
 	}
+}
+.box li::before {
+	content: "";
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	margin-right: 8px;
+}
+.box li:nth-child(1)::before {
+	background-color: #9013FE;
+}
 
-	& li:nth-child(1)::before {
-		background-color: #9013FE;
-	}
+.box li:nth-child(2)::before {
+	background-color: #FAAD14;
+}
 
-	& li:nth-child(2)::before {
-		background-color: #FAAD14;
-	}
-
-	& li:nth-child(3)::before {
-		background-color: #2FC25B;
-	}
+.box li:nth-child(3)::before {
+	background-color: #2FC25B;
 }
 .pie-chart {
 	height: 200px;
@@ -95,6 +97,24 @@ ul {
 
 .right {
 	flex: 1;
+	padding-left: 24px;
+}
+.explain {
+	display: flex;
+	justify-content: space-between;
+	color: #8C8C8C;
+	font-size: 12px;
+
+	& ul {
+		display: flex;
+	}
+
+	& li {
+		margin-left: 24px;
+	}
+}
+.bar-chart {
+	height: 350px;
 }
 </style>
 
@@ -105,7 +125,8 @@ ul {
 			<el-button class="btn-export">导出</el-button>
 		</header>
 
-		<div class="content">
+		<loading v-if="loading"></loading>
+		<div class="content" v-else>
 			<div class="left">
 				<div class="title">
 					入驻单位
@@ -113,13 +134,13 @@ ul {
 				</div>
 				<p class="overview">
 					<span>总面积</span>
-					<span>{{totalArea}}m</span>
+					<span>{{totalArea}}㎡</span>
 					<span>{{ratio}}%</span>
 				</p>
-				<ul>
+				<ul class="box">
 					<li v-for="item of list">
 						<span v-text="item.text"></span>
-						<span>{{item.area}}m</span>
+						<span>{{item.area}}㎡</span>
 						<span>{{item.ratio}}%</span>
 					</li>
 				</ul>
@@ -128,7 +149,20 @@ ul {
 
 				<p class="tips">整栋楼</p>
 			</div>
-			<div class="right"></div>
+			<div class="right">
+				<div class="explain">
+					面积 ㎡
+					<ul class="box">
+						<li>已出租</li>
+						<li>即将到期</li>
+						<li>未出租</li>
+					</ul>
+				</div>
+
+				<chart class="bar-chart" :type="1" :data="barChartConfig"></chart>
+
+				<p class="tips">各楼层</p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -137,8 +171,13 @@ ul {
 	import chart from '@/components/chart'
 
 	export default {
+		props: ['currentIndex'],
+
 		data() {
 			return {
+				loading: false,
+				loaded: false,
+
 				companyNum: 10,
 				totalArea: 10000,
 				ratio: 88,
@@ -161,32 +200,83 @@ ul {
 					}
 				],
 
-				pieChartData: []
+				pieChartData: [],
+				barChartData: []
 			}
 		},
 
 		computed: {
 			pieChartConfig() {
 				return {
-				    tooltip: {
-				        trigger: 'item',
-				        formatter: "{a} <br/>{b}：{c} ({d}%)"
-				    },
-				    color: ['#9013FE', '#FAAD14', '#2FC25B'],
-				    series: {
-			            name: '租赁分析',
-			            type: 'pie',
-			            radius: '65%',
-			            center: ['50%', '50%'],
-			            data: this.pieChartData,
-			            itemStyle: {
-			                emphasis: {
-			                    shadowBlur: 10,
-			                    shadowOffsetX: 0,
-			                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-			                }
-			            }
-			        }
+					tooltip: {
+						trigger: 'item',
+						formatter: "{a} <br/>{b}：{c} ({d}%)"
+					},
+					color: ['#9013FE', '#FAAD14', '#2FC25B'],
+					series: {
+						name: '租赁分析',
+						type: 'pie',
+						radius: '65%',
+						center: ['50%', '50%'],
+						data: this.pieChartData,
+						itemStyle: {
+							emphasis: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+					}
+				}
+			},
+			barChartConfig() {
+				return  {
+					color: ['#9013FE', '#FAAD14', '#2FC25B'],
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'shadow'
+						}
+					},
+					grid: {
+						top: 10,
+						right: 0,
+						bottom: 20,
+						left: 35,
+					},
+					xAxis: [
+						{
+							type: 'category',
+							axisLabel: {
+								color: '#545454'
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#BFBFBF'
+								}
+							},
+							data: [1, 2, 3, 4 ,5 ,6 ,7 ,8 ,9 ,10, 11, 12, 13,14,15,16,17].map((item) => `${item}层`)
+						}
+					],
+					yAxis: {
+						type: 'value',
+						axisLine: {
+							show: false
+						},
+						axisTick: {
+							show: false,
+						},
+						axisLabel: {
+							color: '#545454'
+						},
+						splitLine: {
+							lineStyle: {
+								type: 'dashed',
+								color: '#E8E8E8'
+							}
+						}
+					},
+					series: this.barChartData
 				}
 			}
 		},
@@ -195,21 +285,57 @@ ul {
 			chart
 		},
 
-		created() {
-			this.pieChartData = [
-                {
-                	value: 6500,
-                	name:'65%'
-                },
-                {
-                	value: 2300,
-                	name:'23%'
-                },
-                {
-                	value: 1200,
-                	name:'12%'
-                }
-            ]
+		watch: {
+			currentIndex(value) {
+				if (value === 1 && ! this.loaded) {
+					this.getData()
+				}
+			}
+		},
+
+		methods: {
+			async getData() {
+				this.loading = true
+
+				setTimeout(() => {
+					this.loading = false
+					this.loaded = true
+
+					this.pieChartData = [
+						{
+							value: 6500,
+							name:'65%'
+						},
+						{
+							value: 2300,
+							name:'23%'
+						},
+						{
+							value: 1200,
+							name:'12%'
+						}
+					]
+
+					this.barChartData = [
+						{
+							name: '已出租',
+							type: 'bar',
+							barGap: 0,
+							data: [320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
+						},
+						{
+							name: '即将到期',
+							type: 'bar',
+							data: [220, 182, 191, 234, 290, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
+						},
+						{
+							name: '未出租',
+							type: 'bar',
+							data: [150, 232, 201, 154, 190, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
+						}
+					]
+				}, 2000)
+			}
 		}
 	}
 </script>
