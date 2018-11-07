@@ -166,6 +166,11 @@
 						reg: /\/energy-consumption/
 					},
 					{
+						title: '环境',
+						type: 4,
+						reg: /\/environment$/
+					},
+					{
 						title: '场地',
 						items: [
 							{
@@ -215,15 +220,10 @@
 							},
 							{
 								text: '设备故障',
-								path: '/deviceErrors',
-								reg: /\/deviceErrors/
+								path: '/device-fault',
+								reg: /\/device-fault/
 							}
 						]
-					},
-					{
-						title: '环境',
-						type: 4,
-						reg: /\/environment$/
 					}
 				]
 			}
