@@ -285,27 +285,27 @@
         font-size: 36px;
     }
     & li {
-		display: flex;
-		margin-bottom: 24px;
-		color: rgba(255,255,255,1);
-		counter-increment: num;
+        display: flex;
+        margin-bottom: 24px;
+        color: rgba(255,255,255,1);
+        counter-increment: num;
 
-		&::before {
-			content: counter(num);
-			display: inline-block;
-			width: 20px;
-			margin-right: 24px;
-			color: #FFF;
-			font-size: 12px;
-			text-align: center;
-			border-radius: 50%;
-			background-color: #1890FF;
+        &::before {
+            content: counter(num);
+            display: inline-block;
+            width: 20px;
+            margin-right: 24px;
+            color: #FFF;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: #1890FF;
             line-height: 20px;
-		}
+        }
 
-		& span:last-child {
-			margin-left: 310px;
-		}
+        & span:last-child {
+            margin-left: 310px;
+        }
     }
     & li:last-child {
         &::before {
