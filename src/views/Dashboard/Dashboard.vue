@@ -1,156 +1,4 @@
 <style src="@/css/dashboard.css" scoped></style>
-<style scoped>
-.one {
-    width: 393px;
-    height: 12px;
-    background: #ffffff;
-    float: left;
-}
-.two {
-    width: 100px;
-    height: 12px;
-    background: #ffffff;
-    float: left;
-    transform: skewY(158deg);
-    margin-top: -20px;
-}
-.center-floor {
-    margin-left: 209px;
-    /* padding-top: 42px; */
-}
-.floor {
-    color: #ffffff;
-    width: 142px;
-    height: 20px;
-}
-.center-right {
-    margin-left: 356px;
-    color: #ffffff;
-    margin-top: -490px;
-    transform: skewY(-31deg);
-} 
-.transform {
-    width: 56px;
-    height: 20px;
-}
-.detail-floor {
-    width: 484px;
-    height: 320px;
-    background: rgba(185,224,249,0.1);
-    margin-left: 730px;
-    margin-top: -502px;
-
-    & img {
-        margin: 40px 40px 0 40px;
-    }
-}
-.detail-content {
-    font-size:24px;
-    font-weight:400;
-    color:rgba(185,224,249,1);
-    margin: 40px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-.detail-info {
-    height:54px;
-    font-size:24px;
-    letter-spacing:2px;
-}
-.lastfloor {
-    width: 328px;
-}
-.left-li {
-    width: 200px;
-    
-    & span {
-        float: right;
-        margin-right: 62px;
-    }
-}
-.right-li {
-    width: 200px;
-
-    & span {
-        float: right;
-        /* margin-right: 44px; */
-    }
-}
-.time-content {
-    width: 356px;
-    height: 127px;
-    font-weight: 400;
-    color: rgba(255,255,255,1);
-    margin: 80px 0 0 854px;
-}
-.detail-time {
-    text-align: right;
-    font-size: 48px;
-    line-height: 72px;
-}
-.detail-date {
-    text-align: right;
-    font-size: 36px;
-}
-.oneFour {
-    margin-left: 209px;
-}
-.bottom-floor {
-    color: #ffffff;
-    width: 334px;
-    height: 20px;
-}
-.right-oneFour {
-    margin-left: 544px;
-    margin-top: -93px;
-    transform: skewY(-31deg);
-}
-.right-bottom-floor {
-    width: 56px;
-    height: 20px;
-}
-.top-floor {
-    display: inline-block;
-    width: 145px;
-    height: 37px;
-    margin-left: 238px;
-    transform: skewX(-58deg);
-    margin-top: 5px;
-}
-.right-top {
-    display: block;
-    width: 187px;
-    height: 37px;
-    margin-left: 384px;
-    margin-top: 110px;
-    transform: skewX(-58deg);
-}
-.basement {
-    margin-left: 208px;
-}
-.basement-floor {
-    width: 337px;
-    height: 20px;
-}
-.basement-right {
-    margin-left: 544px;
-    margin-top: -77px;
-}
-.basement-right-floor {
-    width: 56px;
-    height: 20px;
-    transform: skewY(-31deg);
-}
-.basement-top {
-    display: block;
-    width: 337px;
-    height: 37px;
-    margin-left: 237px;
-    margin-top: 118px;
-    transform: skewX(-57deg);
-}
-</style>
 
 <template>
     <div id="dashboard-wrapper">
@@ -175,7 +23,7 @@
                     <p><span class="parking-icon"></span>车位</p>
                     <div class="parking-pic">
                         <span class="picture1">
-                            <span class="car-num">234</span><br />
+                            <span class="car-num">234</span>
                             <span class="rest">空闲</span>
                         </span>
                         <span class="picture2">
@@ -191,9 +39,9 @@
                     </p>
                     <p class="chart-title">
                         <span class="total">234</span>
-                        <span class="down">{{varyNum | format}}</span>
+                        <span class="down-icon">{{varyNum | format}}</span>
                     </p>
-                    <div class="car-chart" ref="car-chart"></div>
+                    <div class="car-chart" ref="carChart"></div>
                 </div>
             </div>
         </div>
@@ -204,25 +52,25 @@
                     <div>
                         <span class="top-floor" @click="getIndex(floor = 17)"></span>
                         <ul class="center-floor">
-                            <li class="floor" v-for="item of floorItem" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                            <li class="floor" v-for="item of floorItem" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                         <ul class="oneFour">
-                            <li class="bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                            <li class="bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                         <ul class="center-right">
-                            <li class="transform" v-for="item of floorItem" @click="getIndex(item.floor)" :key="item.index">{{ item.floor }}</li>
+                            <li class="transform" v-for="item of floorItem" @click="getIndex(item.floor)" :key="item.index"></li>
                         </ul>
                         <span class="right-top" @click="getIndex(floor = 4)"></span>
                         <ul class="right-oneFour">
-                            <li class="right-bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                            <li class="right-bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
 
                         <span class="basement-top" @click="getIndex(floor = -1)"></span>
                         <ul class="basement">
-                            <li class="basement-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                            <li class="basement-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                         <ul class="basement-right">
-                            <li class="basement-right-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index">{{ item.floor }}</li>
+                            <li class="basement-right-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                     </div>
 
@@ -250,7 +98,7 @@
                         {{peopleNum | format}}
                         <span class="down">{{varyNum | format}}</span>
                     </div>
-                    <div class="people-chart" ref="people-chart"></div>
+                    <div class="people-chart" ref="peopleChart"></div>
                 </div>
                 <div class="right ranking-list">
                     <p>人流量时段排名</p>
@@ -287,9 +135,9 @@
                 <span class="device-explain electric-explain">电能耗（KW · h）</span>
                 <div class="ele-num">
                     {{peopleNum | format}}
-                    <span class="down" style="margin-left:150px">{{varyNum | format}}</span>
+                    <span class="down" style="margin-left:1.50rem">{{varyNum | format}}</span>
                 </div>
-                <div class="electric-charts" ref="ele-chart"></div>
+                <div class="electric-charts" ref="eleChart"></div>
             </div>
             <div class="water">
                 <span class="device-explain electric-icon water-icon"></span>
@@ -299,7 +147,7 @@
                     <span class="down">{{varyNum | format}}</span>
                     <span class="water-gage">水压 0.6 MPa</span>
                 </div>
-                <div class="electric-charts" ref="water-chart"></div>
+                <div class="electric-charts" ref="waterChart"></div>
             </div>
         </div>
     </div>
@@ -362,6 +210,9 @@
                     { floor: -3, status: 1 },
                 ]
             }
+        },
+        created() {
+            document.documentElement.style.fontSize  = `calc(100vw / 25.6)`
         },
         computed: {
             currentDate() {
@@ -430,8 +281,17 @@
                         data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
                     }]
                 };
+                
+                this.$carChart = echarts.init(this.$refs['carChart'], null, {
+					renderer: 'svg'
+				})
 
- 			    echarts.init(this.$refs['car-chart']).setOption(option);
+                this.$carChart.setOption(option)
+                
+                //  echarts.init(this.$refs['carChart']).setOption(option);
+                 window.addEventListener('resize', () => {
+					this.$carChart.resize()
+				})
             },
             generatePersonChart() {
                 const option = {
@@ -473,7 +333,17 @@
                     }]
                 };
 
- 			    echarts.init(this.$refs['people-chart']).setOption(option);
+                //  echarts.init(this.$refs['people-chart']).setOption(option);
+                 this.$peopleChart = echarts.init(this.$refs['peopleChart'], null, {
+					renderer: 'svg'
+				})
+
+                this.$peopleChart.setOption(option)
+                
+                //  echarts.init(this.$refs['carChart']).setOption(option);
+                 window.addEventListener('resize', () => {
+					this.$peopleChart.resize()
+				})
             },
             generateEleChart(resourceType = 0) {
                 const option = {
@@ -510,17 +380,34 @@
                         }
                     ]
                 }
-                echarts.init(this.$refs['ele-chart']).setOption(option);
-                echarts.init(this.$refs['water-chart']).setOption(option);
+                // echarts.init(this.$refs['ele-chart']).setOption(option);
+                // echarts.init(this.$refs['water-chart']).setOption(option);
+                this.$eleChart = echarts.init(this.$refs['eleChart'], null, {
+					renderer: 'svg'
+                })
+                this.$waterChart = echarts.init(this.$refs['waterChart'], null, {
+					renderer: 'svg'
+				})
+
+                this.$eleChart.setOption(option);
+                this.$waterChart.setOption(option)
+                
+                //  echarts.init(this.$refs['carChart']).setOption(option);
+                 window.addEventListener('resize', () => {
+					this.$eleChart.resize()
+                })
+                window.addEventListener('resize', () => {
+					this.$waterChart.resize()
+				})
             },
             getIndex(index, status) {
                 console.log(index)
-                const objMap = [
-                    { status: 0, text: 'normal' },
-                    { status: 1, text: 'warning' },
-                    { status: 2, text: 'notice' }
-                ];
-                // this.status = objMap[status].text;
+                const mapObj = {
+                    0: "normal",
+                    1: "warning",
+                    2: "notice"
+                }
+                this.status = mapObj[status];
             }
         }
     }
