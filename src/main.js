@@ -24,6 +24,11 @@ import popover from '@/components/popover'
 
 Vue.component('popover', popover)
 
+// 全局 tabbar
+import tabBar from '@/components/tab-bar'
+
+Vue.component('tabBar', tabBar)
+
 //import all svg
 const requireAllSvg = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('./assets/svg', true, /\.svg$/)
