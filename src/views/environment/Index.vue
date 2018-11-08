@@ -203,25 +203,77 @@
 				return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
 			},
 			type() {
-				return ['温度℃', '湿度%', '温度℃', '湿度%', 'CO2 ppm', 'CO ppm', '水压 MPa'][this.currentIndex]
+				return ['温度 ℃', '湿度 %', '温度 ℃', '湿度 %', 'CO2 ppm', 'CO ppm', '水压 MPa'][this.currentIndex]
+			},
+			energyChartxAxisData() {
+				const dateType = this.dateType
+				let xAxisData = {}
+
+				// 设置当月天数
+				let days = []
+				const currentDate = new Date()
+				let day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0).getDate()
+
+				while (day--) {
+					days.unshift(day + 1)
+				}
+
+				xAxisData = days
+
+
+				return xAxisData
 			},
 			chartConfig() {
 				return {
-					xAxisType: 2,
 					color: ['#1890FF'],
-					smooth: false,
-					areaStyle: null,
-					splitNumber: 5,
-					show: true,
 					grid: {
 						top: 20,
 						right: 30,
 						bottom: 50,
 						left: 50,
 					},
-					data: this.chartData
+					tooltip: {
+						trigger: 'axis',
+						formatter: `{b}点<br/>{a}：{c}${['℃', '%', '℃', '%', 'ppm', 'ppm', 'MPa'][this.currentIndex]}`
+					},
+					xAxis: {
+						type: 'category',
+						axisLabel: {
+							color: 'rgba(0, 0, 0, .65)'
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#D9D9D9'
+							}
+						},
+						boundaryGap: false,
+						data: this.energyChartxAxisData
+					},
+					yAxis: {
+						type: 'value',
+						splitNumber: 5,
+						axisLine: {
+							show: false
+						},
+						axisTick: {
+							show: false,
+						},
+						splitLine: {
+							lineStyle: {
+								type: 'dashed',
+								color: '#E8E8E8'
+							}
+						}
+					},
+					series: {
+						name: this.type.split(' ')[0],
+						type: 'line',
+						areaStyle: null,
+						smooth: false,
+						data: this.chartData
+					}
 				}
-			}
+			},
 		},
 
 		filters: {

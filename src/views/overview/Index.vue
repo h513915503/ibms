@@ -176,6 +176,7 @@
 </template>
 
 <script>
+	import mixin from '@/mixins'
 	import chart from '@/components/chart'
 	import svgProgress from '@/components/svg-progress'
 
@@ -264,42 +265,90 @@
 			},
 			energyChartConfig() {
 				return {
-					xAxisType: 0,
 					color: ['rgba(24, 144, 255, .2)'],
-					smooth: true,
-					areaStyle: {},
 					title: {
 						top: 0,
 						text: ['电能耗实况（KW · h）', '水能耗实况（tun）'][this.currentResourceType]
 					},
-					splitNumber: 3,
-					show: true,
 					grid: {
 						top: 50,
 						right: 15,
 						bottom: 20,
 						left: 45,
 					},
-					data: this.energyChartData
+					tooltip: {
+						trigger: 'axis'
+					},
+					xAxis: {
+						type: 'category',
+						axisLabel: {
+							color: 'rgba(0, 0, 0, .65)'
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#D9D9D9'
+							}
+						},
+						boundaryGap: false,
+						data: this.chartxAxisData
+					},
+					yAxis: {
+						type: 'value',
+						splitNumber: 3,
+						axisLine: {
+							show: false
+						},
+						axisTick: {
+							show: false,
+						},
+						splitLine: {
+							lineStyle: {
+								type: 'dashed',
+								color: '#E8E8E8'
+							}
+						}
+					},
+					series: {
+						name: '电能耗',
+						type: 'line',
+						areaStyle: {},
+						smooth: true,
+						data: this.energyChartData
+					}
 				}
 			},
 			peopleChartConfig() {
 				return {
-					xAxisType: 4,
 					color: ['rgba(24, 144, 255, .2)'],
-					smooth: true,
-					areaStyle: {},
 					title: false,
-					splitNumber: 3,
-					xAxisData: [6, 8, 10, 12, 14],
-					show: false,
 					grid: {
 						top: 10,
 						right: 15,
 						bottom: 20,
 						left: 10,
 					},
-					data: this.peopleChartData
+					xAxis: {
+						type: 'category',
+						axisLabel: {
+							color: 'rgba(0, 0, 0, .65)'
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#D9D9D9'
+							}
+						},
+						boundaryGap: false,
+						data: [6, 8, 10, 12, 14]
+					},
+					yAxis: {
+						show: false,
+					},
+					series: {
+						type: 'line',
+						areaStyle: {},
+						smooth: true,
+						data: this.peopleChartData
+					}
 				}
 			}
 		},
@@ -312,6 +361,8 @@
 				return ['暂无异常'][value]
 			}
 		},
+
+		mixins: [mixin],
 
 		watch: {
 			currentResourceType(value) {
