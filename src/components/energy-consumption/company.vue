@@ -169,6 +169,7 @@
 </template>
 
 <script>
+	import mixin from '@/mixins'
 	import getResponses from '@/api'
 	import chart from '@/components/chart'
 
@@ -198,14 +199,35 @@
 
 		computed: {
 			chartConfig() {
-				return {
-					xAxisType: 0,
-					double: true,
-					color: ['#1890FF', '#9013FE'],
-					smooth: true,
-					show: true,
+				const yAxisConfig = {
+					type: 'value',
 					splitNumber: 7,
-					areaStyle: null,
+					axisLine: {
+						show: false
+					},
+					axisTick: {
+						show: false,
+					},
+					splitLine: {
+						lineStyle: {
+							type: 'dashed',
+							color: '#E8E8E8'
+						}
+					}
+				}
+				const yAxis = [yAxisConfig, yAxisConfig]
+
+				const seriesConfig = {
+						name: '电能耗',
+						type: 'line',
+						areaStyle: null,
+						smooth: true,
+						data: this.chartData[0]
+					}
+				const series = [seriesConfig, {... seriesConfig, name: '水能耗', yAxisIndex: 1, data: this.chartData[1]}]
+
+				return {
+					color: ['#1890FF', '#9013FE'],
 					title: false,
 					grid: {
 						top: 10,
@@ -213,10 +235,29 @@
 						bottom: 20,
 						left: 45,
 					},
-					data: this.chartData
+					tooltip: {
+						trigger: 'axis'
+					},
+					xAxis: {
+						type: 'category',
+						axisLabel: {
+							color: 'rgba(0, 0, 0, .65)'
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#D9D9D9'
+							}
+						},
+						boundaryGap: false,
+						data: this.chartxAxisData
+					},
+					yAxis,
+					series
 				}
 			}
 		},
+
+		mixins: [mixin],
 
 		watch: {
 			currentIndex(value) {
