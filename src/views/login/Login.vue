@@ -129,15 +129,11 @@
                     return
                 }
 
-                sessionStorage.setItem('uid', 111)
+                sessionStorage.setItem('token', data.token)
 
-                const {redirectPath} = this.$route.query
+                await this.$store.dispatch('getUserInfo')
 
-                if (redirectPath) {
-                    location.href = redirectPath
-                } else {
-                    location.reload()
-                }
+                this.$router.replace(this.$store.state.path)
             }
         }
     }
