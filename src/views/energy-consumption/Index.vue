@@ -31,7 +31,7 @@
 						</div>
 					</div>
 					<div class="chart-wrapper">
-						<chart class="chart" :data="energyChartConfig"></chart>
+						<chart class="chart" :data="chartConfig"></chart>
 
 						<div class="ranking-list">
 							<p>{{currentResourceType === 0 ? '电' : '水'}}能耗时段排名</p>
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+	import mixin from '@/mixins'
 	import tabBar from '@/components/tab-bar.vue'
 	import chart from '@/components/chart'
     import company from '@/components/energy-consumption/company.vue'
@@ -89,7 +90,7 @@
 				currentResourceType: 0,
 				date: '',
 				dateType: 0,
-				energyChartData: [],
+				chartData: [],
 				energyRankingList: [
 					{
 						start: 8,
@@ -146,14 +147,9 @@
 		},
 
 		computed: {
-			energyChartConfig() {
+			chartConfig() {
 				return {
-					xAxisType: 0,
 					color: ['rgba(24, 144, 255, .2)'],
-					smooth: true,
-					show: true,
-					splitNumber: 0,
-					areaStyle: {},
 					title: {
 						top: 0,
 						textStyle: {
@@ -168,7 +164,44 @@
 						bottom: 20,
 						left: 45,
 					},
-					data: this.energyChartData
+					tooltip: {
+						trigger: 'axis'
+					},
+					xAxis: {
+						type: 'category',
+						axisLabel: {
+							color: 'rgba(0, 0, 0, .65)'
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#D9D9D9'
+							}
+						},
+						boundaryGap: false,
+						data: this.chartxAxisData
+					},
+					yAxis: {
+						type: 'value',
+						axisLine: {
+							show: false
+						},
+						axisTick: {
+							show: false,
+						},
+						splitLine: {
+							lineStyle: {
+								type: 'dashed',
+								color: '#E8E8E8'
+							}
+						}
+					},
+					series: {
+						name: ['电能耗', '水能耗'][this.currentResourceType],
+						type: 'line',
+						areaStyle: {},
+						smooth: true,
+						data: this.chartData
+					}
 				}
 			},
 			rankingList() {
@@ -186,6 +219,8 @@
 			}
 		},
 
+		mixins: [mixin],
+
 		watch: {
 			currentResourceType(value) {
 				this.energyChartData = this.$d.reverse()
@@ -194,7 +229,7 @@
 
 		created() {
 			this.$d = [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300]
-			this.energyChartData  = this.$d
+			this.chartData  = this.$d
 
 			this.getData()
 		},
