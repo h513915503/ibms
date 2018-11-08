@@ -37,8 +37,11 @@ requireAllSvg(req)
 
 process.env.NODE_ENV === 'development' && (window.log = console.log.bind(console))
 
-new Vue({
-	router,
-	store,
-	render: h => h(App)
-}).$mount('#app')
+store.dispatch('getUserInfo').then(() => {
+	new Vue({
+		router,
+		store,
+		render: h => h(App)
+	}).$mount('#app')
+})
+
