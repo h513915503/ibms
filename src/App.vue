@@ -125,7 +125,7 @@
 								</dd>
 							</template>
 							<template v-else>
-								<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" @click="go(item.type)"></dt>
+								<dt class="cursor" :class="{actived: item.reg.test($route.path)}" v-text="item.title" @click="go(item.index)"></dt>
 							</template>
 
 						</template>
@@ -144,88 +144,13 @@
 	export default {
 		data() {
 			return {
-				aside: [
-					{
-						title: '概览',
-						type: 0,
-						reg: /\/$/
-					},
-					{
-						title: '物业人员管理',
-						type: 1,
-						reg: /\/propertyManagement|\/addProperty/
-					},
-					{
-						title: '岗位管理',
-						type: 2,
-						reg: /\/postManagement|\/addPost/
-					},
-					{
-						title: '能耗',
-						type: 3,
-						reg: /\/energy-consumption/
-					},
-					{
-						title: '环境',
-						type: 4,
-						reg: /\/environment$/
-					},
-					{
-						title: '场地',
-						items: [
-							{
-								text: '楼宇运营管理',
-								path: '/lease',
-								reg: /^\/lease/,
-							},
-							{
-								text: '停车场管理',
-								path: '/parking-lot',
-								reg: /\/parking-lot/
-							}
-						]
-					},
-					{
-						title: '人员',
-						items: [
-							{
-								text: '业主管理',
-								path: '/proprietor',
-								reg: /\/proprietor/
-							},
-							{
-								text: '访客登记',
-								path: '/visitor',
-								reg: /\/visitor/
-							},
-							{
-								text: '人员出入记录',
-								path: '/personnel',
-								reg: /\/personnel/
-							}
-						]
-					},
-					{
-						title: '设备',
-						items: [
-							{
-								text: '灯管理',
-								path: '/lightManagement',
-								reg: /\/lightManagement|\/light\/lightAdd/
-							},
-							{
-								text: '空调管理',
-								path: '/airConditioner',
-								reg: /\/airConditioner/
-							},
-							{
-								text: '设备故障',
-								path: '/device-fault',
-								reg: /\/device-fault/
-							}
-						]
-					}
-				]
+
+			}
+		},
+
+		computed: {
+			aside() {
+				return this.$store.state.aside
 			}
 		},
 
