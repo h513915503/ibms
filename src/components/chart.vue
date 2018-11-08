@@ -13,7 +13,7 @@
 
 		watch: {
 			data(value) {
-				this.$chart.setOption(this.generateOption())
+				this.$chart.setOption(this.data)
 			}
 		},
 
