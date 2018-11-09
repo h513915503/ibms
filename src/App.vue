@@ -192,7 +192,7 @@
 			},
 			handleCommand(command) {
 				if (command === '/logout') {
-					sessionStorage.removeItem('uid')
+					sessionStorage.removeItem('token')
 
 					location.reload()
 

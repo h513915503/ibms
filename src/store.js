@@ -144,7 +144,6 @@ export default new Vuex.Store({
 			commit('setRole', data.role)
 			commit('setPermissions', data.permissions)
 
-			console.log(state.routes)
 			router.addRoutes(state.routes)
 		}
 	}

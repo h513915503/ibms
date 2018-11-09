@@ -145,7 +145,6 @@
 </template>
 
 <script>
-	import getResponses from '@/api'
 	import chart from '@/components/chart'
 
 	export default {
@@ -296,7 +295,7 @@
 			async getData() {
 				this.loading = true
 
-				const [, data] = await Promise.all([this.getWeatherInfo(), this.getEnvData()]).catch(() => {
+				const [data] = await Promise.all([this.getEnvData(), this.getWeatherInfo()]).catch(() => {
 					this.loading = false
 				})
 
@@ -310,7 +309,9 @@
 					key: '85b5120e44404f66972df1e7588aa60e'
 				}
 
-				const {HeWeather6: [{now}]} = await getResponses('https://free-api.heweather.com/s6/weather/now', params, 'GET')
+				const {data: {HeWeather6: [{now}]}} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
+					params
+				})
 
 				this.temperature = now.tmp
 				this.weatherType = now.cond_txt
