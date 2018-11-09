@@ -89,19 +89,35 @@
 	box-sizing: border-box;
 	background-color: #F5F5F5;
 }
+.tab {
+	display: flex;
+	line-height: 72px;
+}
+.tab-item {
+	width: 128px;
+	height: 72px;
+	text-align: center;
+	cursor: pointer;
+}
+.tabActived {
+	background: rgba(3,92,156,1);
+}
 </style>
 
 <template>
 	<div id="app">
 		<router-view v-if="$route.meta.login === true"/>
-		<router-view v-else-if="$route.meta.dashboard === true" />
+		<!-- <router-view v-else-if="$route.meta.dashboard === true" /> -->
 		<template v-else>
 			<el-header class="header" height="72px">
 				<div class="info" @click="goDashboard">
 					<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
 					中宙物业 - 益展大厦
 				</div>
-
+				<div class="tab">
+					<div class="tab-item" :class="{ tabActived: tabType === 0}" @click="tabType = 0">管理后台</div>
+					<div class="tab-item" :class="{ tabActived: tabType === 1}" @click="tabType = 1">控制大屏</div>
+				</div>
 				<el-dropdown trigger="click" @command="handleCommand">
 					<span class="el-dropdown-link">
 						张宇<i class="el-icon-arrow-down el-icon--right"></i>
@@ -113,7 +129,10 @@
 				</el-dropdown>
 			</el-header>
 
-			<el-container>
+			<el-main v-if="$route.meta.dashboard === true">
+				<router-view/>
+			</el-main>
+			<el-container v-else>
 				<el-aside class="aside" width="240px">
 					<dl>
 						<template v-for="item of aside">
@@ -144,7 +163,7 @@
 	export default {
 		data() {
 			return {
-
+				tabType: 0
 			}
 		},
 
@@ -153,7 +172,18 @@
 				return this.$store.state.aside
 			}
 		},
-
+		watch: {
+			tabType(value) {
+				if(value === 0) {
+					this.$router.push('/')
+				} else if(value === 1) {
+					this.$router.push('/dashboard')
+				}
+			}
+		},
+		created() {
+			this.tabType = location.href.includes('dashboard') ? 1 : 0;
+		},
 		methods: {
 			go(type) {
 				const types = ['/', '/propertyManagement', '/postManagement', '/energy-consumption', '/environment']
