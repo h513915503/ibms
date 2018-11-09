@@ -74,8 +74,6 @@
 </template>
 
 <script>
-    import getResponses from '@/api'
-
     export default {
         data() {
             return {
@@ -121,7 +119,7 @@
 
                 this.logining = true
 
-                const data = await getResponses('/login', params)
+                const data = await axios.post('/login', params)
 
                 this.logining = false
 
