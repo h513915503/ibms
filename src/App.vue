@@ -110,7 +110,7 @@
 		<!-- <router-view v-else-if="$route.meta.dashboard === true" /> -->
 		<template v-else>
 			<el-header class="header" height="72px">
-				<div class="info" @click="goDashboard">
+				<div class="info">
 					<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
 					中宙物业 - 益展大厦
 				</div>
