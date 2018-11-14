@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="16px" viewBox="0 0 24 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>二氧化碳</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 17 25 17 25 0 0 0"></polygon>
+    </defs>
+    <g id="设计规范" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="设计规范---Web" transform="translate(-1912.000000, -1349.000000)">
+            <g id="二氧化碳" transform="translate(1912.000000, 1349.000000)">
+                <polygon id="Fill-3" fill="#000000" opacity="0" points="0 17 25 17 25 0 0 0"></polygon>
+                <path d="M10,9.75 C10,12.511 7.985,14.75 5.5,14.75 C3.015,14.75 1,12.511 1,9.75 L1,5.75 C1,2.989 3.015,0.75 5.5,0.75 C7.985,0.75 10,2.989 10,5.75" id="Stroke-1" stroke="#8C8C8C" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M16.5,14.75 C14.015,14.75 12,12.735 12,10.25 L12,5.25 C12,2.765 14.015,0.75 16.5,0.75 C18.985,0.75 21,2.765 21,5.25 L21,10.25 C21,12.735 18.985,14.75 16.5,14.75 Z" id="Stroke-5" stroke="#8C8C8C" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Clip-7"></g>
+                <text id="2" mask="url(#mask-2)" font-family="BebasNeueBook, Bebas Neue" font-size="6" font-weight="300" fill="#8C8C8C">
+                    <tspan x="21.9585" y="15.4375">2</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>
