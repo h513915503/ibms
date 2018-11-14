@@ -20,12 +20,7 @@ axios.interceptors.request.use((config) => {
 })
 
 axios.interceptors.response.use((res) => {
-	let {code, msg} = res.data;
-	
-	// 天气接口
-	if (res.data.HeWeather6) {
-		code = 0
-	}
+	let {code, msg} = res.data
 
 	if (code !== 0) {
 		Vue.prototype.$message.error(msg)
