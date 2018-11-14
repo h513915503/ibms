@@ -100,6 +100,15 @@
 .chart-wrapper {
 	height: 600px;
 }
+
+.co svg {
+	width: 21px;
+	height: 14px;
+}
+.co2 svg {
+	width: 26px;
+	height: 14px;
+}
 </style>
 
 <template>
@@ -116,8 +125,11 @@
 				</div>
 				<div class="data">
 					<div class="item" v-for="item of datas">
-						<span v-for="item of item">
+						<span :class="item.cname" v-for="item of item">
 							{{item.text}}
+							<svg v-if="item.cname">
+								<use :xlink:href="'#' + item.cname"></use>
+							</svg>
 							<strong v-text="item.data"></strong>
 						</span>
 					</div>
@@ -169,12 +181,14 @@
 					},],
 
 					[{
-						text: 'CO2',
-						data: '450ppm'
+						text: '',
+						data: '450ppm',
+						cname: 'co2'
 					},
 					{
-						text: 'CO',
-						data: '8ppm'
+						text: '',
+						data: '8ppm',
+						cname: 'co'
 					},],
 					[{
 						text: '水压',
@@ -304,14 +318,7 @@
 				this.chartData = data
 			},
 			async getWeatherInfo() {
-				const params = {
-					location: '115.236.39.114',
-					key: '85b5120e44404f66972df1e7588aa60e'
-				}
-
-				const {data: {HeWeather6: [{now}]}} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
-					params
-				})
+				const {data: {HeWeather6: [{now}]}} = await axios.post('/api/getWeatherInfo')
 
 				this.temperature = now.tmp
 				this.weatherType = now.cond_txt
