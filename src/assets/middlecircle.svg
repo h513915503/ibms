@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>中圈-亮线</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="96.790577%" y1="1.47394499%" x2="4.38465591%" y2="1.47394499%" id="linearGradient-1">
+            <stop stop-color="#AE96FD" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#70B4FE" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-B3到1F-告警" transform="translate(-74.000000, -511.000000)">
+            <g id="车位与车流量" transform="translate(-12.000000, 380.000000)">
+                <g id="圆圈背景2" transform="translate(0.000000, 41.000000)">
+                    <g id="中圈-亮线" transform="translate(84.000000, 88.000000)">
+                        <g id="Group{:linearEase;0,0,0,150,150,360,1;40,2,2,150,150,719,1;}" transform="translate(77.000000, 77.000000) rotate(359.000000) translate(-77.000000, -77.000000) translate(2.000000, 2.000000)">
+                            <path d="M75,150 C33.5786438,150 0,116.421356 0,75 C0,33.5786438 33.5786438,0 75,0 C116.421356,0 150,33.5786438 150,75 C150,116.421356 116.421356,150 75,150 Z M75,140 C110.898509,140 140,110.898509 140,75 C140,39.1014913 110.898509,10 75,10 C39.1014913,10 10,39.1014913 10,75 C10,110.898509 39.1014913,140 75,140 Z" id="Combined-Shape" fill-opacity="0.1" fill="#0E7CC2"></path>
+                            <path d="M140,75 C140,72.2385763 142.238576,70 145,70 C147.761424,70 150,72.2385763 150,75 C150,116.421356 116.421356,150 75,150 C33.5786438,150 0,116.421356 0,75 C1.24265945e-16,72.2385763 2.23857625,70 5,70 C7.76142375,70 10,72.2385763 10,75 C10,110.898509 39.1014913,140 75,140 C110.898509,140 140,110.898509 140,75 Z" id="Combined-Shape" fill="url(#linearGradient-1)"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

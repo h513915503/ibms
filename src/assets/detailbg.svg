@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="486px" height="320px" viewBox="0 0 486 320" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>楼层详细数据背景</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-B3到1F-告警" transform="translate(-1415.000000, -169.000000)">
+            <g id="楼层详细数据背景" transform="translate(1416.000000, 170.000000)">
+                <polygon id="Rectangle-5-Copy" fill-opacity="0.1" fill="#B9E0F9" points="0 1 136.216834 1 322.52003 1 484 1 484 318 331.008608 318 135.835786 318 0 318"></polygon>
+                <polyline id="Path-4" stroke="#0E7CC2" points="439.232461 0.224363138 484.26604 0.224363138 484.26604 317.948803 439.232461 317.948803"></polyline>
+                <polyline id="Path-4-Copy" stroke="#0E7CC2" transform="translate(22.516789, 158.862220) scale(-1, 1) translate(-22.516789, -158.862220) " points="0 0 45.0335784 0 45.0335784 317.72444 0 317.72444"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

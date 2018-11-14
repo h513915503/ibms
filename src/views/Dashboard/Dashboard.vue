@@ -11,7 +11,7 @@
                 </div>
                 <ul class="temperature">
                     <li>室外温度 12<span>℃</span></li>
-                    <li>室内温度 12<span>℃</span></li>
+                    <li>室内温度 18<span>℃</span></li>
                     <li>CO₂ 40ppm</li>
                     <li>室外温度 60%</li>
                     <li>室内温度 70%</li>
@@ -23,9 +23,12 @@
                     <p><span class="parking-icon"></span>车位</p>
                     <div class="parking-pic">
                         <span class="picture1">
-                            <span class="car-num">234</span>
+                            <span class="middlle-circle"></span>
+                            <span class="small-circle"></span>
+                            <span class="car-num">334</span>
                             <span class="rest">空闲</span>
                         </span>
+                        <span class="car-line"></span>
                         <span class="picture2">
                             <li>包月空闲 <span class="month-rest">230</span></li>
                             <li>临时空闲 <span class="now-rest">334</span></li>
@@ -38,10 +41,11 @@
                         <span class="car-explain">车流量</span>
                     </p>
                     <p class="chart-title">
-                        <span class="total">234</span>
-                        <span class="down-icon">{{varyNum | format}}</span>
+                        <span class="total">{{23134 | format}}</span>
+                        <span class="down-icon">{{22 | format}}</span>
                     </p>
-                    <div class="car-chart" ref="carChart"></div>
+                    <!-- <div class="car-chart" ref="carChart"></div> -->
+                    <LineChart class="car-chart" :data="carData" />
                 </div>
             </div>
         </div>
@@ -72,17 +76,20 @@
                         <ul class="basement-right">
                             <li class="basement-right-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
+                        <span class="building-point-line">
+                            <img :src="require('../../assets/b3line.svg')" class="point-img" alt="">
+                        </span>
                     </div>
 
                     <div class="detail-floor">
                         <img :src="require('../../assets/' + status + '.svg')" alt="">
                         <ul class="detail-content">
-                            <li class="detail-info left-li">人员  <span>123</span></li>
-                            <li class="detail-info right-li">空闲车位  <span>123</span></li>
-                            <li class="detail-info left-li">电能耗  <span>123</span></li>
-                            <li class="detail-info right-li">运行中设备  <span>123</span></li>
-                            <li class="detail-info left-li">水能耗  <span>123</span></li>
-                            <li class="detail-info right-li">故障中设备  <span>123</span></li>
+                            <li class="detail-info left-li">人员  <span>254</span></li>
+                            <li class="detail-info right-li">空闲车位  <span>326</span></li>
+                            <li class="detail-info left-li">电能耗  <span>641</span></li>
+                            <li class="detail-info right-li">运行中设备  <span>214</span></li>
+                            <li class="detail-info left-li">水能耗  <span>624</span></li>
+                            <li class="detail-info right-li">故障中设备  <span>21</span></li>
                         </ul>
                     </div>
                     <div class="time-content">
@@ -98,14 +105,15 @@
                         {{peopleNum | format}}
                         <span class="down">{{varyNum | format}}</span>
                     </div>
-                    <div class="people-chart" ref="peopleChart"></div>
+                    <!-- <div class="people-chart" ref="peopleChart"></div> -->
+                    <LineChart class="people-chart" :data="peopleFlowData"/>
                 </div>
-                <div class="right ranking-list">
+                <div class="rank-list">
                     <p>人流量时段排名</p>
                     <ul>
-                        <li v-for="item of list" :key="item.index">
-                            <span>{{item.start}}点~{{item.end}}点</span>
-                            <span>{{item.num | format}}</span>
+                        <li class="item-li" v-for="item of list" :key="item.index">
+                            <span class="people-flow-time">{{item.start}}点 ~ {{item.end}}点</span>
+                            <span class="people-flow-num">{{item.num | format}}</span>
                         </li>
                     </ul>
                 </div>
@@ -117,7 +125,7 @@
                 <span class="device-explain">设备</span>
                 <div class="device-charts">
                     <div class="running">
-                        <span class="running-num num">1234</span>
+                        <span class="running-num num">{{3421 | format}}</span>
                         <span class="explain">运行中</span>
                     </div>
                     <div class="error">
@@ -125,7 +133,7 @@
                         <span class="explain">故障中</span>
                     </div>
                     <div class="no-run">
-                        <span class="norun-num num">123</span>
+                        <span class="norun-num num">586</span>
                         <span class="explain">未运行</span>
                     </div>
                 </div>
@@ -134,20 +142,22 @@
                 <span class="device-explain electric-icon"></span>
                 <span class="device-explain electric-explain">电能耗（KW · h）</span>
                 <div class="ele-num">
-                    {{peopleNum | format}}
-                    <span class="down" style="margin-left:1.50rem">{{varyNum | format}}</span>
+                    {{35461 | format}}
+                    <span class="down" style="margin-left:1.50rem">{{624 | format}}</span>
                 </div>
-                <div class="electric-charts" ref="eleChart"></div>
+                <!-- <div class="electric-charts" ref="eleChart"></div> -->
+                <BarChart class="electric-charts" :data="electricData"/>
             </div>
             <div class="water">
                 <span class="device-explain electric-icon water-icon"></span>
                 <span class="device-explain electric-explain">水能耗（Ton）</span>
                 <div class="ele-num">
-                    {{peopleNum | format}}
-                    <span class="down">{{varyNum | format}}</span>
+                    {{6524 | format}}
+                    <span class="down">{{437 | format}}</span>
                     <span class="water-gage">水压 0.6 MPa</span>
                 </div>
-                <div class="electric-charts" ref="waterChart"></div>
+                <!-- <div class="electric-charts" ref="waterChart"></div> -->
+                <BarChart class="electric-charts" :data="waterData"/>
             </div>
         </div>
     </div>
@@ -155,12 +165,19 @@
 
 <script>
 
+import LineChart from '@/components/dashboard/lineChart.vue';
+import BarChart from '@/components/dashboard/barChart.vue';
+
     export default {
         data() {
             return {
-                peopleNum: 12321,
+                peopleNum: 24514,
                 varyNum: 343,
                 status: "normal",
+                carData: [200, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24],
+                peopleFlowData: [100, 220, 140, 300, 400, 250, 800, 600, 900, 608, 50, 700, 24],
+                electricData: [303, 62, 100, 234, 360, 330, 220, 60, 52, 200, 334, 90, 50, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 52],
+                waterData: [30, 62, 150, 24, 60, 30, 720, 460, 152, 210, 34, 190, 250, 320, 210, 152, 100, 234, 390, 130, 120, 410, 152, 100, 252],
                 list: [
 					{
 						start: 8,
@@ -168,19 +185,19 @@
 						num: 15234
 					},
 					{
-						start: 8,
-						end: 10,
-						num: 15234
+						start: 16,
+						end: 18,
+						num: 35137
 					},
 					{
-						start: 8,
-						end: 10,
-						num: 15234
+						start: 18,
+						end: 20,
+						num: 4096
 					},
 					{
-						start: 8,
-						end: 10,
-						num: 15234
+						start: 12,
+						end: 14,
+						num: 2237
 					}
                 ],
                 floorItem: [
@@ -212,7 +229,15 @@
             }
         },
         created() {
-            document.documentElement.style.fontSize  = `calc(100vw / 25.6)`
+            document.documentElement.style.fontSize  = `calc(100vw / 25.6)`;
+            // this.carData = [200, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
+        },
+        destroyed() {
+            document.documentElement.style.fontSize  = "";
+        },
+        components: {
+            LineChart,
+            BarChart
         },
         computed: {
             currentDate() {
@@ -237,169 +262,11 @@
 			},
         },
         mounted() {
-			this.generateCarChart();
-            this.generatePersonChart();
-            this.generateEleChart();
+			// this.generateCarChart();
+            // this.generatePersonChart();
+            // this.generateEleChart();
         },
         methods: {
-            generateCarChart() {
-                const option = {
-                // title: {
-                //     top: 0,
-                //     text
-                // },
-                    color: ['rgba(24, 144, 255, .2)'],
-                    grid: {
-                        top: 0,
-                        right: 15,
-                        bottom: 70,
-                        left: 45,
-                    },
-                    xAxis: {
-                        type: 'category',
-                        axisLabel: {
-                            color: 'rgba(255,255,255,1)',
-                            show: true,
-							interval: 2
-                        },
-                        axisLine: {
-                            lineStyle: false
-                        },
-                        boundaryGap: false,
-                        data: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
-                    },
-                    yAxis: {
-                        type: 'value',
-                        splitNumber : 3,
-                        show: false,
-                    },
-                    series: [{
-                        type: 'line',
-                        symbol: 'none',
-                        areaStyle: {},
-                        smooth: true,
-                        data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
-                    }]
-                };
-                
-                this.$carChart = echarts.init(this.$refs['carChart'], null, {
-					renderer: 'svg'
-				})
-
-                this.$carChart.setOption(option)
-                
-                //  echarts.init(this.$refs['carChart']).setOption(option);
-                 window.addEventListener('resize', () => {
-					this.$carChart.resize()
-				})
-            },
-            generatePersonChart() {
-                const option = {
-                // title: {
-                //     top: 0,
-                //     text
-                // },
-                    color: ['rgba(24, 144, 255, .2)'],
-                    grid: {
-                        top: 0,
-                        right: 15,
-                        bottom: 70,
-                        left: 45,
-                    },
-                    xAxis: {
-                        type: 'category',
-                        axisLabel: {
-                            color: 'rgba(255,255,255,1)',
-                            show: true,
-							interval: 2
-                        },
-                        axisLine: {
-                            lineStyle: false
-                        },
-                        boundaryGap: false,
-                        data: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
-                    },
-                    yAxis: {
-                        type: 'value',
-                        splitNumber : 3,
-                        show: false,
-                    },
-                    series: [{
-                        type: 'line',
-                        symbol: 'none',
-                        areaStyle: {},
-                        smooth: true,
-                        data: [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
-                    }]
-                };
-
-                //  echarts.init(this.$refs['people-chart']).setOption(option);
-                 this.$peopleChart = echarts.init(this.$refs['peopleChart'], null, {
-					renderer: 'svg'
-				})
-
-                this.$peopleChart.setOption(option)
-                
-                //  echarts.init(this.$refs['carChart']).setOption(option);
-                 window.addEventListener('resize', () => {
-					this.$peopleChart.resize()
-				})
-            },
-            generateEleChart(resourceType = 0) {
-                const option = {
-                    color: ['#3398DB'],
-                    grid: {
-                        top: '15%',
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'category',
-                        axisLabel: {
-                            color: 'rgba(255,255,255,1)',
-                            show: true,
-							interval: 2
-                        },
-                        axisLine: {
-                            lineStyle: false
-                        },
-                        boundaryGap: false,
-                        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
-                    },
-                    yAxis: {
-                        show: false
-                    },
-                    series: [
-                        {
-                            name:'直接访问',
-                            type:'bar',
-                            // barWidth: '60%',
-                            data:[10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 52]
-                        }
-                    ]
-                }
-                // echarts.init(this.$refs['ele-chart']).setOption(option);
-                // echarts.init(this.$refs['water-chart']).setOption(option);
-                this.$eleChart = echarts.init(this.$refs['eleChart'], null, {
-					renderer: 'svg'
-                })
-                this.$waterChart = echarts.init(this.$refs['waterChart'], null, {
-					renderer: 'svg'
-				})
-
-                this.$eleChart.setOption(option);
-                this.$waterChart.setOption(option)
-                
-                //  echarts.init(this.$refs['carChart']).setOption(option);
-                 window.addEventListener('resize', () => {
-					this.$eleChart.resize()
-                })
-                window.addEventListener('resize', () => {
-					this.$waterChart.resize()
-				})
-            },
             getIndex(index, status) {
                 console.log(index)
                 const mapObj = {
