@@ -113,6 +113,9 @@
                 this.powerCount --;
                 this.powerList = this.powerList.filter(item => item.index !== row.index);
             }
+        },
+        created() {
+            console.log(this.$store.state.detailInfo)
         }
     }
 </script>

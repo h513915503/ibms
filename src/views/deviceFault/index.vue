@@ -157,7 +157,7 @@
 				const params = {
 					pageIndex: this.page
 				}
-				const data = await getResponses('/getDeviceFaultList', params)
+				const data = await axios.post('/getDeviceFaultList', params)
 
 				if (! data) {
 					return

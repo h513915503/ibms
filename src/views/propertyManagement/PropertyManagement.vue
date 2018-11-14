@@ -91,7 +91,7 @@
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button class="opt-btn" type="text" size="small">编辑</el-button>
+                            <el-button class="opt-btn" type="text" size="small" @click="handleClick(scope.row)">编辑</el-button>
                             <el-popover placement="bottom-end" title="该员工确定离职了么？" width="400" trigger="click" content="该员工确定离职了么？">
                                 <el-button class="opt-btn" type="text dimission" size="small" slot="reference" data-type="1">离职</el-button>
 
@@ -119,37 +119,27 @@
         data() {
             return {
                 index: 1,
-                tableData: [
-                    {
-                        number: 'DSL1329732',
-                        name: 'duan shilei',
-                        phone: '123456778843',
-                        post: '前台专员',
-                        status: 0,
-                        time: '2017/2/3',
-                    },
-                    {
-                        number: 'DSL1329732',
-                        name: 'duan shilei',
-                        phone: '123456778843',
-                        post: '前台专员',
-                        status: 0,
-                        time: '2017/2/3',
-                    },
-                    {
-                        number: 'DSL1329732',
-                        name: 'duan shilei',
-                        phone: '123456778843',
-                        post: '前台专员',
-                        status: 1,
-                        time: '',
-                    },
-                ]
+                tableData: []
             }
+        },
+        created() {
+            this.getPropertyDataList()
         },
         methods: {
             go() {
                 this.$router.push('/addProperty')
+            },
+            async getPropertyDataList() {
+                const params = {
+                    role: 0
+                };
+                const data = await axios.post('/getPropertyManagementList', params);
+                this.tableData = data.data;
+            },
+            handleClick(row) {
+                // console.log(row)
+                this.$router.push(`/addProperty/${row.status}`);
+                this.$store.state.detailInfo = row
             }
         },
         components: {
