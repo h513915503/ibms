@@ -135,7 +135,7 @@ export default new Vuex.Store({
 	},
 	actions: {
 		async getUserInfo({commit, state}) {
-			const data = await getResponses('/getUserPermission')
+			const data = await getResponses('/dapi/getUserPermission')
 
 			if (! data) {
 				return
