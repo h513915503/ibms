@@ -9,12 +9,22 @@
 }
 .search-wrapper {
 	display: flex;
+	align-items: center;
 	margin-bottom: 40px;
 }
-.search-input {
-	width: 336px;
-	height: 32px;
+.time {
+	margin-right: 10px;
 	margin-left: auto;
+}
+.separator {
+	margin: 0 8px;
+}
+.search-input {
+	width: 128px;
+	margin-left: 24px;
+}
+.btn-search {
+	margin-left: 24px;
 }
 .calendar-label {
 	display: flex;
@@ -62,54 +72,64 @@
 
 <template>
 	<div id="proprietor-wrapper">
-		<tab-bar :list="tabs"></tab-bar>
+		<loading v-if="loading"></loading>
 
-		<div class="container">
-			<div class="search-wrapper">
-				<el-button type="primary" @click="go">+业主</el-button>
-				<el-button @click="go">批量导入</el-button>
-				<el-input class="search-input" v-model="number" placeholder="业主姓名/手机号码/所在单位">
-					<i slot="prefix" class="el-input__icon el-icon-search"></i>
-				</el-input>
+		<template v-else>
+			<tab-bar :list="tabs"></tab-bar>
+
+			<div class="container">
+				<div class="search-wrapper">
+					<el-button type="primary" @click="go">+业主</el-button>
+					<el-button @click="go">批量导入</el-button>
+
+					<span class="time">在职时间：</span>
+					<el-date-picker type="date" placeholder="开始日期" v-model="startDate"></el-date-picker>
+					<span class="separator">-</span>
+					<el-date-picker type="date" placeholder="结束日期" v-model="endDate"></el-date-picker>
+					<el-input class="search-input" v-model="account" placeholder="姓名/手机号码">
+						<!-- <i slot="prefix" class="el-input__icon el-icon-search"></i> -->
+					</el-input>
+					<el-button class="btn-search" type="primary" @click="go">查询</el-button>
+				</div>
+
+				<el-table :data="carList" @click.native="handleTable">
+					<el-table-column type="selection"></el-table-column>
+					<el-table-column prop="id" label="序号"></el-table-column>
+					<el-table-column prop="acountName" label="业主姓名"></el-table-column>
+					<el-table-column prop="phoneNumber" label="业主手机号码"></el-table-column>
+					<el-table-column prop="rentalCompany" label="所在单位"></el-table-column>
+					<el-table-column label="状态" sortable>
+						<template slot-scope="scope">
+							<span class="job-status dimission" v-if="scope.row.jobStatus === 2">离职</span>
+							<span class="job-status" v-else>在职</span>
+				    	</template>
+					</el-table-column>
+					<el-table-column label="人脸信息" sortable>
+						<template slot-scope="scope">
+							<span class="face-info-status no" v-if="scope.row.facialStatus === 0">未采集</span>
+							<span class="face-info-status" v-else-if="scope.row.facialStatus === 1">已采集</span>
+							<span class="face-info-status na" v-else>——</span>
+				    	</template>
+					</el-table-column>
+					<el-table-column label="离职日期" sortable>
+						<template slot-scope="scope">
+							<span v-text="scope.row.departureDate" v-if="scope.row.departureDate"></span>
+							<span v-else>——</span>
+				    	</template>
+					</el-table-column>
+					<el-table-column label="操作">
+			  			<template slot-scope="scope">
+					        <el-button type="text" size="small">编辑</el-button>
+					        <el-button type="text dimission" size="small" data-type="1">离职</el-button>
+				      </template>
+				    </el-table-column>
+				</el-table>
+
+				<div class="page-wrapper">
+					<el-pagination background layout="prev, pager, next" :total="totalPage" @current-change="pageChange"></el-pagination>
+				</div>
 			</div>
-
-			<el-table :data="carList" @click.native="handleTable">
-				<el-table-column type="selection"></el-table-column>
-				<el-table-column prop="number" label="序号"></el-table-column>
-				<el-table-column prop="name" label="业主姓名"></el-table-column>
-				<el-table-column prop="phone" label="业主手机号码"></el-table-column>
-				<el-table-column prop="company" label="所在单位" width="320"></el-table-column>
-				<el-table-column label="状态" sortable>
-					<template slot-scope="scope">
-						<span class="job-status dimission" v-if="scope.row.status === 0">离职</span>
-						<span class="job-status" v-else>在职</span>
-			    	</template>
-				</el-table-column>
-				<el-table-column label="人脸信息" sortable>
-					<template slot-scope="scope">
-						<span class="face-info-status no" v-if="scope.row.faceInfo === 0">未采集</span>
-						<span class="face-info-status" v-else-if="scope.row.faceInfo === 1">已采集</span>
-						<span class="face-info-status na" v-else>——</span>
-			    	</template>
-				</el-table-column>
-				<el-table-column label="离职日期" sortable>
-					<template slot-scope="scope">
-						<span v-text="scope.row.time" v-if="scope.row.time"></span>
-						<span v-else>——</span>
-			    	</template>
-				</el-table-column>
-				<el-table-column label="操作">
-		  			<template slot-scope="scope">
-				        <el-button type="text" size="small">编辑</el-button>
-				        <el-button type="text dimission" size="small" data-type="1">离职</el-button>
-			      </template>
-			    </el-table-column>
-			</el-table>
-
-			<div class="page-wrapper">
-				<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
-			</div>
-		</div>
+		</template>
 	</div>
 </template>
 
@@ -119,76 +139,34 @@
 	export default {
 		data() {
 			return {
+				loading: false,
+
 				tabs: [
 					{
-						number: 1000,
+						number: 0,
 						text: '入驻单位'
 					},
 					{
-						number: 1000,
+						number: 0,
 						text: '业主总人数'
 					},
 					{
-						number: 1000,
+						number: 0,
 						text: '已采集人脸信息'
 					},
 					{
-						number: 1000,
+						number: 0,
 						text: '未采集人脸信息'
 					}
 				],
 
-				date: '',
-				number: '',
+				startDate: '',
+				endDate: '',
+				account: '',
 
-				carList: [
-					{
-						number: '12',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						status: 0,
-						faceInfo: 0,
-						time: '2018-12-12'
-					},
-					{
-						number: '12',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						status: 1,
-						faceInfo: 1,
-						time: ''
-					},
-					{
-						number: '12',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						status: 1,
-						faceInfo: 1,
-						time: ''
-					},
-					{
-						number: '12',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						status: 0,
-						faceInfo: 0,
-						time: '2018-12-12'
-					},
-					{
-						number: '12',
-						name: '大河',
-						phone: 18603771499,
-						company: '浙江澜海知识产权服务有限公司',
-						status: 0,
-						faceInfo: 2,
-						time: '2018-12-12'
-					},
-
-				]
+				page: 1,
+				totalPage: 1,
+				carList: []
 			}
 		},
 
@@ -196,9 +174,55 @@
 			tabBar
 		},
 
+		created() {
+			this.loading = true
+
+			Promise.all([this.getData(), this.getList()]).then(() => {
+				this.loading = false
+			})
+		},
+
 		methods: {
 			go() {
 				this.$router.push('/parking-lot/add')
+			},
+			async getData() {
+				const params = {
+					action: 'accountManagement.queryYZCount'
+				}
+
+				let data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				const {rzCount, yzCount, ycjCount, wcjCount} = data.data
+
+				this.tabs[0].number = rzCount
+				this.tabs[1].number = yzCount
+				this.tabs[2].number = ycjCount
+				this.tabs[3].number = wcjCount
+			},
+			async getList() {
+				const params = {
+					action: 'accountManagement.queryAccountManagementPage',
+					pageNum: this.page,
+					type: '业主',
+					pageSize: 8
+				}
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.totalPage = data.data.total
+				this.carList = data.data.list
+			},
+			pageChange(value) {
+				log(value)
 			},
 			handleTable(e) {
 				let target = e.target
