@@ -38,10 +38,10 @@ axios.interceptors.request.use((config) => {
 })
 
 axios.interceptors.response.use((res) => {
-	const {success, msg} = res.data
+	const {success, errorMessage} = res.data
 
 	if (! success) {
-		Vue.prototype.$message.error(msg)
+		Vue.prototype.$message.error(errorMessage)
 
 		res.data = null
 	}
