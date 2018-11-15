@@ -318,7 +318,14 @@
 				this.chartData = data
 			},
 			async getWeatherInfo() {
-				const {data: {HeWeather6: [{now}]}} = await axios.post('/api/getWeatherInfo')
+				const params = {
+					location: '115.236.39.114',
+					key: '85b5120e44404f66972df1e7588aa60e'
+				}
+
+				const {HeWeather6: [{now}]} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
+					params
+				})
 
 				this.temperature = now.tmp
 				this.weatherType = now.cond_txt

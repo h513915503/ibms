@@ -22,21 +22,24 @@
 		</el-breadcrumb>
 
         <div class="container">
-            <el-form ref="form" :model="form" label-width="210px" label-position="right">
-				<el-form-item label="物业人员编号：">
-					<span>{{ form.lightNum }}</span>
+            <el-form ref="formField" :model="formField" :rules="rules" label-width="210px" label-position="right">
+				<el-form-item label="物业人员编号：" prop="lightNum">
+					<span>{{ formField.lightNum }}</span>
 				</el-form-item>
-				<el-form-item label="姓名：">
-					<el-input v-model="form.brand" placeholder="如：张三丰"></el-input>
+				<el-form-item label="姓名：" prop="name">
+					<el-input v-model="formField.name" placeholder="如：张三丰"></el-input>
 				</el-form-item>
-                <el-form-item label="手机号码：">
-					<el-input v-model="form.model" placeholder="手机号码"></el-input>
+                <el-form-item
+                    label="手机号码："
+                    prop="phoneNum"
+                >
+					<el-input v-model="formField.phoneNum" placeholder="手机号码"></el-input>
 				</el-form-item>
-				<el-form-item label="所在岗位：">
-					<el-checkbox v-for="item of form.checks" v-model="item.value" :key="item.value">{{ item.text }}</el-checkbox>
+				<el-form-item label="所在岗位：" prop="checks">
+					<el-checkbox v-for="item of formField.checks" v-model="item.value" :key="item.text">{{ item.text }}</el-checkbox>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="submit">确定</el-button>
+					<el-button type="primary" @click="submit('formField')">确定</el-button>
 					<el-button>取消</el-button>
 				</el-form-item>
 			</el-form>
@@ -47,8 +50,19 @@
 <script>
     export default {
         data() {
+            const phoneNumRule = (rule, value, callback) => {
+                if(!value) {
+                    callback(new Error('电话不能为空'));
+                } else if(!(/^1[34578]\d{9}$/.test(value))) {
+                    callback(new Error('请输入正确的手机号'))
+                }
+
+            }
             return {
-                form: {
+                formField: {
+                    lightNum: '',
+                    name: '',
+                    phoneNum: '',
                     checks: [
                         {
                             value: false,
@@ -67,12 +81,33 @@
                             text: 'ERWER'
                         },
                     ]
+                },
+                rules: {
+                    phoneNum: [
+                        { validator: phoneNumRule, trigger: 'blur'}
+                    ]
                 }
             }
         },
+        created() {
+            console.log(this.$store.state.detailInfo)
+        },
         methods: {
-            submit() {
-
+            submit(formField) {
+                // const params = {
+                //     num: values.lightNum,
+                //     name: values.name,
+                //     phoneNum: values.phoneNum,
+                //     checks: values.checks
+                // }
+                this.$refs[formField].validate((valid) => {
+                    if(valid) {
+                        console.log(this.formField)
+                    } else {
+                        return
+                    }
+                })
+                // console.log(params)
             },
             
         }

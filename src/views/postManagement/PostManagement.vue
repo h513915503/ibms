@@ -75,7 +75,7 @@
                     <el-table-column prop="power" label="权限"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button class="opt-btn" type="text" size="small">编辑</el-button>
+                            <el-button class="opt-btn" type="text" size="small" @click="handleClick(scope.row)">编辑</el-button>
                             <el-popover placement="bottom-end" title="确定删除该岗位么？" width="400" trigger="click" content="确定删除该岗位么？">
                                 <el-button class="opt-btn" type="text dimission" size="small" slot="reference" data-type="1">删除</el-button>
 
@@ -125,6 +125,11 @@
         methods: {
             go() {
                 this.$router.push('/addPost')
+            },
+            handleClick(row) {
+                // console.log(row)
+                this.$router.push(`/addPost`);
+                this.$store.state.detailInfo = row
             }
         }
     }

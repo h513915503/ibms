@@ -6,8 +6,8 @@
             <div class="wheather">
                 <div class="wheather-icon">
                     <p class="icon"></p>
-                    <p class="temp-num">12<span>℃</span></p>
-                    <p class="info">多云</p>
+                    <p class="temp-num">{{temperature}}<span>℃</span></p>
+                    <p class="info">{{weatherType}}</p>
                 </div>
                 <ul class="temperature">
                     <li>室外温度 12<span>℃</span></li>
@@ -54,7 +54,7 @@
                 <p class="building-title">益展大厦数据大屏</p>
                 <div class="building">
                     <div>
-                        <span class="top-floor" @click="getIndex(floor = 17)"></span>
+                        <span class="top-floor" @click="getIndex(floor = 17, 0)"></span>
                         <ul class="center-floor">
                             <li class="floor" v-for="item of floorItem" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
@@ -62,14 +62,14 @@
                             <li class="bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                         <ul class="center-right">
-                            <li class="transform" v-for="item of floorItem" @click="getIndex(item.floor)" :key="item.index"></li>
+                            <li class="transform" v-for="item of floorItem" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
-                        <span class="right-top" @click="getIndex(floor = 4)"></span>
+                        <span class="right-top" @click="getIndex(floor = 4, 2)"></span>
                         <ul class="right-oneFour">
                             <li class="right-bottom-floor" v-for="item of oneToFour" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
 
-                        <span class="basement-top" @click="getIndex(floor = -1)"></span>
+                        <span class="basement-top" @click="getIndex(floor = -1, 1)"></span>
                         <ul class="basement">
                             <li class="basement-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
@@ -77,6 +77,8 @@
                             <li class="basement-right-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                         <span class="building-point-line">
+                            <!-- <span>1</span>
+                            <span>2</span> -->
                             <img :src="require('../../assets/b3line.svg')" class="point-img" alt="">
                         </span>
                     </div>
@@ -93,7 +95,7 @@
                         </ul>
                     </div>
                     <div class="time-content">
-                        <p class="detail-time" v-text="getTime"></p>
+                        <p class="detail-time">{{ time }}</p>
                         <p class="detail-date" v-text="currentDate"></p>
                     </div>
                 </div>
@@ -171,6 +173,9 @@ import BarChart from '@/components/dashboard/barChart.vue';
     export default {
         data() {
             return {
+                temperature: '',
+                weatherType: '',
+                time: '',
                 peopleNum: 24514,
                 varyNum: 343,
                 status: "normal",
@@ -231,6 +236,8 @@ import BarChart from '@/components/dashboard/barChart.vue';
         created() {
             document.documentElement.style.fontSize  = `calc(100vw / 25.6)`;
             // this.carData = [200, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
+            this.getWheatherInfo();
+            this.timeChange();
         },
         destroyed() {
             document.documentElement.style.fontSize  = "";
@@ -244,17 +251,6 @@ import BarChart from '@/components/dashboard/barChart.vue';
                 const date = new Date();
 				return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`
             },
-            getTime() {
-                const date = new Date();
-                const hour = date.getHours();
-                const minute = date.getMinutes() > 9 ? date.getMinutes() : `0${date.getMinutes()}`;
-                // const seconds = date.getSeconds();
-                // setTimeout(() => {
-                //     console.log(`${hour} : ${minute} : ${seconds}`)
-                //     return `${hour} : ${minute} : ${seconds}`
-                // }, 1000)
-                return `${hour} : ${minute}`
-            },
         },
         filters: {
             format(value) {
@@ -267,6 +263,9 @@ import BarChart from '@/components/dashboard/barChart.vue';
             // this.generateEleChart();
         },
         methods: {
+            timeChange() {
+                setInterval(this.getTime, 1000)
+            },
             getIndex(index, status) {
                 console.log(index)
                 const mapObj = {
@@ -275,6 +274,27 @@ import BarChart from '@/components/dashboard/barChart.vue';
                     2: "notice"
                 }
                 this.status = mapObj[status];
+            },
+            getTime() {
+                const date = new Date();
+                const hour = date.getHours();
+                const minute = date.getMinutes() > 9 ? date.getMinutes() : `0${date.getMinutes()}`;
+                const seconds = date.getSeconds();
+                return this.time = `${hour} : ${minute}`
+            },
+            async getWheatherInfo() {
+                const params = {
+                    location: '115.236.39.114',
+					key: '85b5120e44404f66972df1e7588aa60e'
+                };
+                // const {data: {HeWeather6: [{now}]}} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
+				// 	params
+                // })
+                const {HeWeather6: [{now}]} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
+					params
+                })
+                this.temperature = now.tmp;
+                this.weatherType = now.cond_txt
             }
         }
     }

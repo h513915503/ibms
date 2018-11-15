@@ -176,7 +176,7 @@ export const routesMap = [
 	},
 	{
 		type: 71,
-		path: '/addProperty',
+		path: '/addProperty/:id',
 		name: 'addProperty',
 		component: AddProperty
 	},
