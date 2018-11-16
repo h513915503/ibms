@@ -2,6 +2,7 @@
 .popover-wrapper {
 	padding: 24px;
 	position: absolute;
+	z-index: 10;
 	font-size: 16px;
 	border-radius: 4px;
 	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
