@@ -8,10 +8,100 @@
         box-sizing: border-box;
         background-color: #FFF;
     }
-    .el-input {
+    .el-input, .el-select {
         width: 354px;
         height: 40px;
     }
+    .separator {
+        margin: 0 8px;
+    }
+    .file-wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        color: rgba(0, 0, 0, .45);
+        font-size: 14px;
+    }
+    .input-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 104px;
+	height: 104px;
+	padding: 15px 0;
+	margin-right: 10px;
+	cursor: pointer;
+	border-radius: 4px;
+	box-sizing: border-box;
+	border: 2px dashed rgba(0, 0, 0, .15);;
+	background-color: rgba(0, 0, 0, .02);
+}
+.icon {
+	width: 24px;
+	height: 24px;
+	position: relative;
+
+	&::before, &::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		background-color: rgba(0, 0, 0, .45);
+		transform: translate(-50%, -50%);
+	}
+
+	&::before {
+		width: 100%;
+		height: 2px;
+	}
+
+	&::after {
+		width: 2px;
+		height: 100%;
+	}
+}
+.upload {
+	display: none;
+}
+.face-image-wrapper {
+	display: flex;
+	align-items: center;
+	position: relative;
+	overflow: hidden;
+}
+.face-image {
+	width: 104px;
+	height: 104px;
+	margin-right: 12px;
+	object-fit: cover;
+}
+.scan-icon {
+	display: none;
+	width: 104px;
+	height: 104px;
+	position: absolute;
+	top: -100%;
+	left: 0;
+}
+@keyframes t {
+	from {
+		transform: translateY(0);
+	}
+	to {
+		transform: translateY(100%);
+	}
+}
+.animation {
+	display: block;
+	animation: t 2s infinite;
+}
+.recollection {
+	display: block;
+	color: #0E7CC2;
+	font-size: 14px;
+	cursor: pointer;
+}
 </style>
 
 <style>
@@ -55,48 +145,76 @@
         <div class="container">
             <el-form ref="form" :model="form" label-width="210px" label-position="right">
 				<el-form-item label="访客编号：">
-					<span>{{ form.lightNum }}</span>
+					<span>{{ Aid }}</span>
 				</el-form-item>
 				<el-form-item label="访客姓名：">
-					<el-input v-model="form.brand" placeholder="如：张三丰"></el-input>
+					<el-input v-model="form.acountName" placeholder="如：张三丰"></el-input>
 				</el-form-item>
                 <el-form-item label="访客手机号码：">
-					<el-input v-model="form.model" placeholder="手机号码"></el-input>
+					<el-input v-model="form.phoneNumber" placeholder="请输入访客手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="被访单位：">
-					<el-select v-model="form.region" placeholder="请选择活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+					<el-select v-model="rentalCompany" placeholder="请选择被访单位">
+                        <el-option
+                            v-for="item in company"
+                            :key="item.id"
+                            :label="item.rentalCompany"
+                            :value="item.rentalCompany">
+                        </el-option>
                     </el-select>
 				</el-form-item>
 				<el-form-item label="被访人：">
-					<el-input v-model="form.model" placeholder="手机号码"></el-input>
+					<el-input v-model="form.interviewee" placeholder="请输入被访人"></el-input>
 				</el-form-item>
 				<el-form-item label="被访人手机号码：">
-					<el-input v-model="form.model" placeholder="手机号码"></el-input>
+					<el-input v-model="form.intervieweeNumber" placeholder="请输入被访人手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="到访有效时间：">
 					<el-date-picker
-                        v-model="date"
-                        type="datetimerange"
-                        start-placeholder="开始时间"
-                        end-placeholder="结束时间">
+                        v-model="date1"
+                        value-format="timestamp"
+                        type="datetime"
+                        placeholder="开始时间">
+                    </el-date-picker>
+                    <span class="separator">-</span>
+                    <el-date-picker
+                        v-model="date2"
+                        value-format="timestamp"
+                        type="datetime"
+                        placeholder="结束时间">
                     </el-date-picker>
 				</el-form-item>
-				<el-form-item label="人脸信息">
-					<el-upload
-                        class="avatar-uploader"
-                        action="https://jsonplaceholder.typicode.com/posts/"
-                        :show-file-list="false"
-                        :on-success="handleAvatarSuccess"
-                        :before-upload="beforeAvatarUpload">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
+				<el-form-item label="人脸信息：">
+					<div class="file-wrapper" v-show="! faceURL">
+						<label class="input-wrapper">
+							<i class="icon"></i>
+							<span>上传照片</span>
+							<input class="upload" type="file" accept="image/*" @change="change" ref="input">
+						</label>
+						只支持 .jpg 格式
+					</div>
+                    <div class="face-image-wrapper" v-show="faceURL">
+						<img class="face-image" :src="faceURL">
+						<svg class="scan-icon" :class="{animation: scanAnimation}">
+							<use xlink:href="#scan"></use>
+						</svg>
+
+						<template v-if="collectionStatus === 0">
+							采集人脸信息中...
+						</template>
+						<div v-if="collectionStatus === 1">
+							<span class="collection-success">采集成功</span>
+							<span class="recollection" @click="recollect">重新采集</span>
+						</div>
+						<div v-if="collectionStatus === 2">
+							<span class="collection-success">采集成功</span>
+							<span class="recollection" @click="recollect">重新采集</span>
+						</div>
+					</div>
 				</el-form-item>
 				<el-form-item>
                     <p>请确认访客信息真实性后再点击“确定”</p>
-					<el-button type="primary" @click="submit">确定</el-button>
+					<el-button type="primary" @click="onSubmit">确定</el-button>
 					<el-button>取消</el-button>
 				</el-form-item>
 			</el-form>
@@ -108,10 +226,100 @@
     export default {
         data() {
             return {
-                form: {
-
-                }
+                Aid: '',
+                date1: '',
+                date2: '',
+                form: {},
+                company: [],
+                rentalCompany: '',
+                faceURL: '',
+                scanAnimation: false,
+                collectionStatus: 0
             }
+        },
+        methods: {
+            recollect() {
+				this.$refs.input.click()
+			},
+            async getAid() {
+                const params = {
+                    action: 'accountManagement.queryFKMax'
+                };
+                const data = await axios.post('/api/dispatcher.do', params);
+                
+                if(!data) {
+                    return;
+                }
+
+                this.Aid = data.data
+            },
+            async getCompany() {
+                const params = {
+                    action: 'accountManagement.queryRentalInfo'
+                };
+                
+                const data = await axios.post('/api/dispatcher.do', params);
+                this.company = data.data;
+
+            },
+            async change(e) {
+				const file = e.target.files[0]
+				const formdata = new FormData()
+
+				// 用户取消
+				if (! file) {
+					return
+				}
+
+				if (! file.type.startsWith('image')) {
+					this.$message.error('请选择图片文件')
+					return
+				}
+
+				this.faceURL = URL.createObjectURL(file)
+
+				formdata.append('action', 'file.upload')
+				formdata.append('file', file)
+
+				// 扫一扫动画
+				this.scanAnimation = true
+
+				const data = await axios.post('/api/dispatcher.do', formdata, {
+					headers: {'Content-Type': 'multipart/form-data'}
+				})
+
+				this.scanAnimation = false
+
+				if (! data) {
+					return
+				}
+
+				this.collectionStatus = 1
+				this.$faceURLRaw = data.data.uri
+			},
+            async onSubmit() {
+                const params = {
+                    action: 'accountManagement.addFKEntity',
+                    aid: this.form.aid,
+                    acountName: this.form.acountName,
+                    phoneNumber: this.form.phoneNumber,
+                    rentalCompany: this.rentalCompany,
+                    interviewee: this.form.interviewee,
+                    intervieweeNumber: this.form.intervieweeNumber,
+                    accessTimeStart: this.date1,
+                    accessTimeEnd: this.date2,
+                    facialInformation: this.form.facialInformation
+                };
+                const data = await axios.post('/api/dispatcher.do', params);
+                if(! data) {
+                    return;
+                }
+
+            }
+        },
+        created() {
+            this.getAid();
+            this.getCompany();
         }
     }
 </script>
