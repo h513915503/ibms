@@ -4,8 +4,13 @@
 }
 .container {
 	padding: 24px;
+	position: relative;
 	box-sizing: border-box;
 	background-color: #FFF;
+
+	& .popover-wrapper {
+		left: calc(100% - 585px);
+	}
 }
 .search-wrapper {
 	display: flex;
@@ -61,12 +66,20 @@
 .face-info-status.na::before {
 	display: none;
 }
+.table .btn {
+	font-size: 12px;
+	cursor: pointer;
+}
+.edit {
+	margin-right: 12px;
+	color: #0E7CC2;
+}
 .page-wrapper {
 	margin-top: 20px;
 	text-align: right;
 }
-.el-button.dimission {
-	color: red;
+.dimission {
+	color: #F5222D;
 }
 </style>
 
@@ -86,18 +99,16 @@
 					<el-date-picker type="date" placeholder="开始日期" v-model="startDate"></el-date-picker>
 					<span class="separator">-</span>
 					<el-date-picker type="date" placeholder="结束日期" v-model="endDate"></el-date-picker>
-					<el-input class="search-input" v-model="account" placeholder="姓名/手机号码">
-						<!-- <i slot="prefix" class="el-input__icon el-icon-search"></i> -->
-					</el-input>
-					<el-button class="btn-search" type="primary" @click="go">查询</el-button>
+					<el-input class="search-input" v-model="account" placeholder="姓名/手机号码"></el-input>
+					<el-button class="btn-search" type="primary" @click="search">查询</el-button>
 				</div>
 
-				<el-table :data="carList" @click.native="handleTable">
+				<el-table class="table" :data="carList" @click.native="handleTable">
 					<el-table-column type="selection"></el-table-column>
 					<el-table-column prop="id" label="序号"></el-table-column>
 					<el-table-column prop="acountName" label="业主姓名"></el-table-column>
 					<el-table-column prop="phoneNumber" label="业主手机号码"></el-table-column>
-					<el-table-column prop="rentalCompany" label="所在单位"></el-table-column>
+					<el-table-column prop="rentalCompany" label="所在单位" width="300" :show-overflow-tooltip="true"></el-table-column>
 					<el-table-column label="状态" sortable>
 						<template slot-scope="scope">
 							<span class="job-status dimission" v-if="scope.row.jobStatus === 2">离职</span>
@@ -111,16 +122,16 @@
 							<span class="face-info-status na" v-else>——</span>
 				    	</template>
 					</el-table-column>
-					<el-table-column label="离职日期" sortable>
+					<el-table-column label="离职日期" width="120" sortable>
 						<template slot-scope="scope">
-							<span v-text="scope.row.departureDate" v-if="scope.row.departureDate"></span>
+							<span v-if="scope.row.departureDate">{{scope.row.departureDate | format}}</span>
 							<span v-else>——</span>
 				    	</template>
 					</el-table-column>
 					<el-table-column label="操作">
 			  			<template slot-scope="scope">
-					        <el-button type="text" size="small">编辑</el-button>
-					        <el-button type="text dimission" size="small" data-type="1">离职</el-button>
+					        <span class="btn edit" type="text" size="small" data-type="1" :data-id="scope.row.id" :data-index="scope.$index">编辑</span>
+					        <span class="btn dimission" type="text" size="small" data-type="2" :data-id="scope.row.id" :data-index="scope.$index">离职</span>
 				      </template>
 				    </el-table-column>
 				</el-table>
@@ -128,6 +139,11 @@
 				<div class="page-wrapper">
 					<el-pagination background layout="prev, pager, next" :total="totalPage" @current-change="pageChange"></el-pagination>
 				</div>
+
+				<popover name="close" title="该公司确定退租了吗？" content="公司退租后，该公司在园区的信息将被删除。" :style="{top: 185 + (currentColumnIndex * 57) + 'px'}" :popoverModalStatus.sync="popoverModalStatus">
+					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
+					<el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
+				</popover>
 			</div>
 		</template>
 	</div>
@@ -140,6 +156,9 @@
 		data() {
 			return {
 				loading: false,
+
+				currentColumnIndex: -1,
+				popoverModalStatus: false,
 
 				tabs: [
 					{
@@ -174,6 +193,14 @@
 			tabBar
 		},
 
+		filters: {
+			format(value) {
+				const date = new Date(value)
+
+				return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+			}
+		},
+
 		created() {
 			this.loading = true
 
@@ -184,7 +211,7 @@
 
 		methods: {
 			go() {
-				this.$router.push('/parking-lot/add')
+				this.$router.push('/proprietor/add')
 			},
 			async getData() {
 				const params = {
@@ -206,10 +233,21 @@
 			},
 			async getList() {
 				const params = {
-					action: 'accountManagement.queryAccountManagementPage',
-					pageNum: this.page,
 					type: '业主',
-					pageSize: 8
+					action: 'accountManagement.queryAccountManagementPage',
+					pageNum: this.page
+				}
+
+				if (this.startDate) {
+					params.fromTimeYZStr = + this.startDate
+				}
+
+				if (this.endDate) {
+					params.fromTimeYZStr = + this.endDate
+				}
+
+				if (this.account) {
+					params.userNameOrPhone = this.account
 				}
 
 				const data = await axios.post('/api/dispatcher.do', params)
@@ -221,8 +259,20 @@
 				this.totalPage = data.data.total
 				this.carList = data.data.list
 			},
+			async search() {
+				if (this.$flag) {
+					return
+				}
+
+				this.$flag = true
+
+				await this.getList()
+
+				this.$flag = null
+			},
 			pageChange(value) {
-				log(value)
+				this.page = value
+				this.getList()
 			},
 			handleTable(e) {
 				let target = e.target
@@ -235,11 +285,33 @@
 					return
 				}
 
-				const {type} = target.dataset
+				const {id, type, index} = target.dataset
 
 				if (+ type === 1) {
-					this.$router.push(`/parking-lot/detail/${100}`)
+					this.$root.$tempEditData = this.carList[index]
+					this.$router.push(`/proprietor/edit/${id}`)
+
+					return
 				}
+
+				if (+ type === 2) {
+					this.$currentId = id
+					this.currentColumnIndex = + index
+					this.popoverModalStatus = true
+				}
+			},
+			async leaveOffice() {
+				const params = {
+					id: this.$currentId,
+					action: 'accountManagement.dimission'
+				}
+
+				this.popoverModalStatus = false
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				// 更新列表
+				this.getList()
 			},
 			redirec(e) {
 				let target = e.target
