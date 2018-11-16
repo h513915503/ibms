@@ -13,22 +13,31 @@ const accessKeySecret = 'f96de898642941ee8401bce20a076f18'
 
 window.axios = axios
 
-axios.defaults.timeout = 10000
+axios.defaults.timeout = 10 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 axios.interceptors.request.use((config) => {
-	const timestamp = Date.now()
-	const action = config.data.action
+	const isFormData = config.data instanceof FormData
 
+	const timestamp = Date.now()
+	const action = isFormData ? config.data.get('action') : config.data.action
+	const signature = SHA1.hex(`${accessKeySecret}_${accessKeyId}_${timestamp}_${action}`)
+
+
+	if (isFormData) {
+		config.data.append('timestamp', timestamp)
+		config.data.append('accessKeyId', accessKeyId)
+		config.data.append('signature', signature)
+	}
 	// 安全相关
 	config.data.timestamp = timestamp
 	config.data.accessKeyId = accessKeyId
-	config.data.signature = SHA1.hex(`${accessKeySecret}_${accessKeyId}_${timestamp}_${action}`)
+	config.data.signature = signature
 
 	//  user token
 	config.headers['x-sam-Token'] = store.state.token
 
-	if (config.method === 'post') {
+	if (config.method === 'post' && ! isFormData) {
 		config.data = qs.stringify(config.data)
 	}
 
@@ -36,6 +45,8 @@ axios.interceptors.request.use((config) => {
 }, (error) => {
 	log(error)
 })
+
+let isShowErrors = false
 
 axios.interceptors.response.use((res) => {
 	const {success, errorMessage} = res.data
@@ -48,7 +59,14 @@ axios.interceptors.response.use((res) => {
 
 	return res.data
 }, (error) => {
-	Vue.prototype.$message.error('请求失败')
+	if (! isShowErrors) {
+		isShowErrors = true
+
+		Vue.prototype.$notify.error({
+			title: '提示',
+			message: '服务君挂了，稍后重试'
+		})
+	}
 
 	return null
 })
