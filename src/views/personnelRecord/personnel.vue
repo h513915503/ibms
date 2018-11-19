@@ -17,6 +17,9 @@
         display: flex;
         justify-content: flex-end;
     }
+    .separator {
+        margin: 0 8px;
+    }
     .btn-search {
         margin-left: 20px;
     }
@@ -73,20 +76,32 @@
                     <div class="search-content">
                         <label class="calendar-label">
                             <el-date-picker
-                                v-model="date"
-                                type="datetimerange"
-                                start-placeholder="开始时间"
-                                end-placeholder="结束时间">
+                                v-model="date1"
+                                value-format="timestamp"
+                                type="datetime"
+                                placeholder="开始时间">
+                            </el-date-picker>
+                            <span class="separator">-</span>
+                            <el-date-picker
+                                v-model="date2"
+                                value-format="timestamp"
+                                type="datetime"
+                                placeholder="结束时间">
                             </el-date-picker>
                         </label>
-                        <el-input placeholder="姓名/手机号码"></el-input>
-                        <el-button type="primary" class="btn-search">查询</el-button>
+                        <el-input placeholder="姓名/手机号码" v-model="userNameOrPhone"></el-input>
+                        <el-button type="primary" class="btn-search" @click="searchHandler">查询</el-button>
                     </div>
                 </div>
 
                 <div class="table-content">
                     <el-table :data="tableData">
-                        <el-table-column label="时间" prop="allDateTamp" sortable></el-table-column>
+                        <el-table-column label="时间" sortable>
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.allDateTamp">{{ scope.row.allDateTamp | timestampToTime }}</span>
+                                <span v-else>--</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column label="姓名" prop="accountName"></el-table-column>
                         <el-table-column label="出/入" prop="accessStatus"></el-table-column>
                         <el-table-column label="业主/访客" prop="type"></el-table-column>
@@ -146,12 +161,27 @@
                 userNameOrPhone: ''
             }
         },
+        filters: {
+            timestampToTime(val) {
+                const date = new Date(val);
+                const YY = date.getFullYear() + '-';
+                const MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1 ) + '-';
+                const dd = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+                const hh = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+                const mm = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+                const ss = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
+                return YY + MM + dd + hh + mm + ss;
+            },
+        },
         methods: {
             filterHandler() {
 
             },
              pageChange(val) {
                 this.pageNum = val;
+                this.getTableData();
+            },
+            searchHandler() {
                 this.getTableData();
             },
             async getTopData() {
