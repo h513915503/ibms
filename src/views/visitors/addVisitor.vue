@@ -143,14 +143,14 @@
 		</el-breadcrumb>
 
         <div class="container">
-            <el-form ref="form" :model="form" label-width="210px" label-position="right">
+            <el-form ref="form" :model="form" :rules="rules" label-width="210px" label-position="right">
 				<el-form-item label="访客编号：">
 					<span>{{ Aid }}</span>
 				</el-form-item>
 				<el-form-item label="访客姓名：">
 					<el-input v-model="form.acountName" placeholder="如：张三丰"></el-input>
 				</el-form-item>
-                <el-form-item label="访客手机号码：">
+                <el-form-item label="访客手机号码：" prop="phoneNumber">
 					<el-input v-model="form.phoneNumber" placeholder="请输入访客手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="被访单位：">
@@ -166,7 +166,7 @@
 				<el-form-item label="被访人：">
 					<el-input v-model="form.interviewee" placeholder="请输入被访人"></el-input>
 				</el-form-item>
-				<el-form-item label="被访人手机号码：">
+				<el-form-item label="被访人手机号码：" prop="intervieweeNumber">
 					<el-input v-model="form.intervieweeNumber" placeholder="请输入被访人手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="到访有效时间：">
@@ -215,7 +215,7 @@
 				<el-form-item>
                     <p>请确认访客信息真实性后再点击“确定”</p>
 					<el-button type="primary" @click="onSubmit">确定</el-button>
-					<el-button>取消</el-button>
+					<el-button @click="cancelClick">取消</el-button>
 				</el-form-item>
 			</el-form>
         </div>
@@ -225,6 +225,13 @@
 <script>
     export default {
         data() {
+			const phoneNumRule = (rule, value, callback) => {
+                if(!value) {
+                    callback('手机号码不能为空');
+                } else if(!(/^1[34578]\d{9}$/.test(value))) {
+                    callback('请输入正确的手机号码')
+                }
+            }
             return {
                 Aid: '',
                 date1: '',
@@ -234,13 +241,24 @@
                 rentalCompany: '',
                 faceURL: '',
                 scanAnimation: false,
-                collectionStatus: 0
+				collectionStatus: 0,
+				rules: {
+                    phoneNumber: [
+                        { validator: phoneNumRule, trigger: 'blur' }
+                    ],
+                    intervieweeNumber: [
+                        { validator: phoneNumRule, trigger: 'blur' }
+                    ]
+                }
             }
         },
         methods: {
             recollect() {
 				this.$refs.input.click()
 			},
+			cancelClick() {
+                this.$router.push('/visitor')
+            },
             async getAid() {
                 const params = {
                     action: 'accountManagement.queryFKMax'
@@ -311,8 +329,8 @@
                     facialInformation: this.form.facialInformation
                 };
                 const data = await axios.post('/api/dispatcher.do', params);
-                if(! data) {
-                    return;
+                if(data.success) {
+                    this.$router.push('/visitor')
                 }
 
             }
