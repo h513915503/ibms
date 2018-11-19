@@ -103,7 +103,12 @@
                         <el-table-column label="被访单位" prop="rentalCompany"></el-table-column>
                         <el-table-column label="被访人" prop="interviewee"></el-table-column>
                         <el-table-column label="被访人手机号码" prop="intervieweeNumber"></el-table-column>
-                        <el-table-column label="状态" :filters="[]" :filter-method="filterHandler">
+                        <el-table-column
+                            label="状态"
+                            prop="activeStatus"
+                            :filters="[{text: '正常', value: '6'}, {text: '异常', value: '5'}, {text: '未进园区', value: '7'}, {text: '已离开', value: '4'}]"
+                            :filter-method="filterHandler"
+                        >
                             <template slot-scope="scope">
                                 <span class="status error" v-if="scope.row.activeStatus === 5">异常</span>
                                 <span class="status normal" v-else-if="scope.row.activeStatus === 6">正常</span>
@@ -111,7 +116,12 @@
                                 <span class="status left" v-else>已离开</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="访问时间" prop="time" sortable></el-table-column>
+                        <el-table-column label="访问时间" prop="time" sortable>
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.accessTimeStart">{{ scope.row.accessTimeStart | timestampToTime }} - {{ scope.row.accessTimeEnd | timestampToTime }}</span>
+                                <span v-else>--</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <el-button type="text" size="small" @click="toEditPage(scope)">编辑</el-button>
@@ -163,9 +173,22 @@
                 totalItem: ''
             }
         },
+        filters: {
+            timestampToTime(val) {
+                const date = new Date(val);
+                const YY = date.getFullYear() + '-';
+                const MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1 ) + '-';
+                const dd = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+                const hh = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+                const mm = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+                const ss = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
+                return YY + MM + dd + hh + mm + ss;
+            },
+        },
         methods: {
-            filterHandler() {
-
+            filterHandler(value, row) {
+                console.log(value, row);
+                return row.activeStatus === value;
             },
             go() {
                 this.$router.push('/visitor/addVisitor')
