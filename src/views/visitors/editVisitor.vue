@@ -146,17 +146,20 @@
 		</el-breadcrumb>
 
         <div class="container">
-            <el-form ref="form" :model="form" label-width="210px" label-position="right">
-				<el-form-item label="访客编号：">
-					<span>{{ form.aid }}</span>
+            <el-form ref="formData" :model="formData" :rules="rules" label-width="210px" label-position="right">
+				<el-form-item label="访客编号：" prop="aid">
+					<span>{{ formData.aid }}</span>
 				</el-form-item>
-				<el-form-item label="访客姓名：">
-					<el-input v-model="form.acountName" placeholder="如：张三丰"></el-input>
+				<el-form-item label="访客姓名：" prop="acountName">
+					<el-input v-model="formData.acountName" placeholder="如：张三丰"></el-input>
 				</el-form-item>
-                <el-form-item label="访客手机号码：">
-					<el-input v-model="form.phoneNumber" placeholder="手机号码"></el-input>
+                <el-form-item
+                    label="访客手机号码："
+                    prop="phoneNumber"
+                >
+					<el-input maxlength="11" v-model="formData.phoneNumber" placeholder="手机号码"></el-input>
 				</el-form-item>
-				<el-form-item label="被访单位：">
+				<el-form-item label="被访单位：" prop="rentalCompany">
 					<el-select v-model="rentalCompany" placeholder="请选择被访单位">
                         <el-option
                             v-for="item in company"
@@ -166,11 +169,14 @@
                         </el-option>
                     </el-select>
 				</el-form-item>
-				<el-form-item label="被访人：">
-					<el-input v-model="form.interviewee" placeholder="手机号码"></el-input>
+				<el-form-item label="被访人：" prop="interviewee">
+					<el-input v-model="formData.interviewee" placeholder="请输入被访人"></el-input>
 				</el-form-item>
-				<el-form-item label="被访人手机号码：">
-					<el-input v-model="form.intervieweeNumber" placeholder="手机号码"></el-input>
+				<el-form-item
+                    label="被访人手机号码："
+                    prop="intervieweeNumber"
+                >
+					<el-input v-model="formData.intervieweeNumber" maxlength="11" placeholder="手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="到访有效时间：">
 					<el-date-picker
@@ -217,8 +223,8 @@
 				</el-form-item>
 				<el-form-item>
                     <p>请确认访客信息真实性后再点击“确定”</p>
-					<el-button type="primary" @click="submitInfo">确定</el-button>
-					<el-button>取消</el-button>
+					<el-button type="primary" @click="submitInfo('formData')">确定</el-button>
+					<el-button @click="cancelClick">取消</el-button>
 				</el-form-item>
 			</el-form>
         </div>
@@ -230,21 +236,39 @@
 <script>
     export default {
         data() {
+            const phoneNumRule = (rule, value, callback) => {
+                if(!value) {
+                    callback('手机号码不能为空');
+                } else if(!(/^1[34578]\d{9}$/.test(value))) {
+                    callback('请输入正确的手机号码')
+                }
+            }
             return {
                 loading: false,
                 date1: '',
                 date2: '',
-                form: {},
+                formData: {},
                 company: [],
                 rentalCompany: '',
                 faceURL: '',
                 scanAnimation: false,
-                collectionStatus: 0
+                collectionStatus: 0,
+                rules: {
+                    phoneNumber: [
+                        { validator: phoneNumRule, trigger: 'blur' }
+                    ],
+                    intervieweeNumber: [
+                        { validator: phoneNumRule, trigger: 'blur' }
+                    ]
+                }
             }
         },
         methods: {
             recollect() {
 				this.$refs.input.click()
+            },
+            cancelClick() {
+                this.$router.push('/visitor')
             },
             async change(e) {
 				const file = e.target.files[0]
@@ -293,7 +317,7 @@
                     return;
                 }
 
-                this.form = data.data;
+                this.formData = data.data;
                 this.rentalCompany = data.data.rentalCompany;
                 this.date1 = data.data.accessTimeStart;
                 this.date2 = data.data.accessTimeEnd;
@@ -307,25 +331,25 @@
                 this.company = data.data;
 
             },
-            async submitInfo() {
+            async submitInfo(formData) {
                 const params = {
                     action: 'accountManagement.editFKEntity',
-                    id: this.form.id,
-                    aid: this.form.aid,
-                    acountName: this.form.acountName,
-                    phoneNumber: this.form.phoneNumber,
+                    id: this.formData.id,
+                    aid: this.formData.aid,
+                    acountName: this.formData.acountName,
+                    phoneNumber: this.formData.phoneNumber,
                     rentalCompany: this.rentalCompany,
-                    interviewee: this.form.interviewee,
-                    intervieweeNumber: this.form.intervieweeNumber,
+                    interviewee: this.formData.interviewee,
+                    intervieweeNumber: this.formData.intervieweeNumber,
                     accessTimeStart: this.date1,
                     accessTimeEnd: this.date2,
-                    facialInformation: this.form.facialInformation
+                    facialInformation: this.formData.facialInformation
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params);
-                console.log(data)
-                if(! data) {
-                    return;
+                if(data.success) {
+                    this.$message.success(data.data)
+                    this.$router.push('/visitor')
                 }
 
             }
