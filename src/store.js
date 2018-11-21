@@ -111,7 +111,7 @@ export default new Vuex.Store({
 		accountName: '',
 
 		routes: [],
-		aside: aside,
+		aside: [],
 
 		// 登录后将要去的 path
 		path: '',
@@ -129,6 +129,10 @@ export default new Vuex.Store({
 			state.role = value
 		},
 		setPermissions(state, value) {
+			if (! value.length) {
+				return
+			}
+
 			//log(value)
 			state.permissions = value
 
