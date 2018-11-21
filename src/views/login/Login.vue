@@ -140,7 +140,16 @@
 
                 await this.$store.dispatch('getUserInfo')
 
-                this.$router.replace(this.$store.state.path)
+                const path = this.$store.state.path
+
+                if (path) {
+                    this.$router.replace(path)
+                } else {
+                    sessionStorage.removeItem('token')
+                    this.$store.commit('setToken', '')
+
+                    this.$message.error('抱歉，你没有任何权限访问该系统')
+                }
             }
         }
     }
