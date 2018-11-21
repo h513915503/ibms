@@ -30,17 +30,17 @@ import AirConditioner from './views/airConditionerManage/AirConditioner.vue'
 
 import DeviceFault from './views/deviceFault/index.vue'
 
-import PropertyManagement from './views/propertyManagement/PropertyManagement.vue'
-import AddProperty from './views/propertyManagement/AddProperty.vue'
-import EditProperty from './views/propertyManagement/edit.vue'
+import Property from './views/property-management/index.vue'
+import AddProperty from './views/property-management/add.vue'
+import EditProperty from './views/property-management/edit.vue'
 
-import PostManagement from './views/postManagement/PostManagement.vue'
-import AddPost from './views/postManagement/AddPost.vue'
-import EditPost from './views/postManagement/edit.vue'
+import Post from './views/post-management/index.vue'
+import AddPost from './views/post-management/add.vue'
+import EditPost from './views/post-management/edit.vue'
 
-import Login from './views/login/Login'
-import ForgotPassword from './views/login/forgot-password'
-import ModifyPsw from './views/login/ModifyPsw.vue'
+import Login from './views/user/login'
+import ForgotPassword from './views/user/forgot-password'
+import ModifyPassword from './views/user/modify-password.vue'
 
 import EnergyConsumption from './views/energy-consumption/Index.vue'
 
@@ -139,39 +139,39 @@ export const routesMap = [
 
 	{
 		type: '4',
-		path: '/propertyManagement',
-		name: 'propertyManagement',
-		component: PropertyManagement
+		path: '/property',
+		name: 'property',
+		component: Property
 	},
 	{
 		type: '4',
-		path: '/propertyManagement/add',
-		name: 'propertyManagement-add',
+		path: '/property/add',
+		name: 'property-add',
 		component: AddProperty
 	},
 	{
 		type: '4',
-		path: '/propertyManagement/edit/:id',
-		name: 'propertyManagement-edit',
+		path: '/property/edit/:id',
+		name: 'property-edit',
 		component: EditProperty
 	},
 
 	{
 		type: '5',
-		path: '/postManagement',
-		name: 'postManagement',
-		component: PostManagement
+		path: '/post',
+		name: 'post',
+		component: Post
 	},
 	{
 		type: '5',
-		path: '/addPost',
-		name: 'addPost',
+		path: '/post/add',
+		name: 'post-add',
 		component: AddPost
 	},
 	{
 		type: '5',
-		path: '/postManagement/edit/:id',
-		name: 'EditPost',
+		path: '/post/edit/:id',
+		name: 'post-edit',
 		component: EditPost
 	},
 

@@ -6,7 +6,7 @@ module.exports = {
 		// port: 8099,
 		proxy: {
 			'/api/': {
-				target: 'http://192.168.0.115:8099',
+				target: 'http://192.168.0.103:8099',
 				changeOrigin: true
 			},
 			'/dapi/': {
