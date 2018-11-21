@@ -29,6 +29,14 @@ import tabBar from '@/components/tab-bar'
 
 Vue.component('tabBar', tabBar)
 
+// 全局filters
+import * as filters from './utils/util.js'
+
+// Vue.filter('timeFormat', timeFormat)
+Object.keys(filters).forEach(key => {
+	Vue.filter(key, filters[key])
+})
+
 //import all svg
 const requireAllSvg = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('./assets/svg', true, /\.svg$/)
