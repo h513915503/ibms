@@ -42,22 +42,28 @@
         <div class="container">
             <el-form ref="form" :model="form" label-width="210px" label-position="right">
 				<el-form-item label="岗位编号：">
-					<span>000</span>
+					<span v-text="postNumber"></span>
 				</el-form-item>
 				<el-form-item label="岗位名称：">
-					<el-input placeholder="如：前台"></el-input>
+					<el-input v-model="form.postName" placeholder="如：前台"></el-input>
 				</el-form-item>
                 <el-form-item label="权限：">
                     <ul class="power-list">
-                        <li v-for="item of powerList" :key="item.power1">
-                            <el-select v-model="item.power1" placeholder="一级导航"></el-select> 一
-                            <el-select v-model="item.power2" placeholder="二级导航"></el-select>
+                        <li v-for="(item, index) of authList">
+                            <el-select v-model="item.auth" @change="change">
+                                <el-option :label="item" :value="item" v-for="item of postListAuth"></el-option>
+                            </el-select> 一
+                            <el-select v-model="item.subAuth">
+                                <el-option :label="item" :value="item" v-for="item of postListSubAuth"></el-option>
+                            </el-select>
+
                             <el-checkbox v-model="item.read" style="margin-left: 48px">读</el-checkbox>
                             <el-checkbox v-model="item.write">写</el-checkbox>
-                            <span class="delete-icon" @click="deletePower(item)">一</span>
+                            <span class="delete-icon" @click="deleteAuth(index)">一</span>
                         </li>
                     </ul>
-                    <el-button type="text" @click="addPower">添加新权限</el-button>
+
+                    <el-button type="text" @click="addAuth">添加新权限</el-button>
 					<!-- <template>
                         <el-select v-model="value" placeholder="一级导航"></el-select> 一
                         <el-select v-model="value" placeholder="二级导航"></el-select>
@@ -67,8 +73,8 @@
                     </template> -->
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="submit">确定</el-button>
-					<el-button>取消</el-button>
+					<el-button type="primary" :disabled="isDisabled" @click="submit">确定</el-button>
+					<el-button @click="back">取消</el-button>
 				</el-form-item>
 			</el-form>
         </div>
@@ -80,42 +86,156 @@
     export default {
         data() {
             return {
-                powerCount: 1,
-                form: {
+                disabled: false,
 
+                postNumber: '',
+                form: {
+                    postName: ''
                 },
-                powerList: [
+
+                authList: [
                     {
-                        power1: '场地',
-                        poewrs: '办公租赁',
+                        auth: '',
+                        subAuth: '',
                         read: false,
-                        write: false,
-                        index: 1
+                        write: false
                     }
                 ],
+
+                postListAuth: [],
+                postListSubAuth: []
             }
         },
-        methods: {
-            submit() {
 
+        computed: {
+            isDisabled() {
+                if (this.disabled) {
+                    return true
+                }
+
+                const authIndex = this.authList.findIndex((item) => item.auth.length !== 0)
+                const subAuthIndex = this.authList.findIndex((item) => item.subAuth.length !== 0)
+
+                if (this.form.postName && authIndex !== -1 && subAuthIndex !== -1) {
+                    return false
+                }
+
+                return true
+            }
+        },
+
+        created() {
+            this.getPostList()
+            this.getPostNumber()
+        },
+
+        methods: {
+            async getPostNumber() {
+                const params = {
+                    action: 'administrator.getPmoId'
+                }
+
+                const data = await axios.post('/api/dispatcher.do', params)
+
+                if (! data) {
+                    return
+                }
+
+                this.postNumber = data.data
             },
-            addPower() {
-                this.powerCount ++;
-                this.powerList.push({
-                    power1: '场地' + this.powerCount,
-                    poewrs: '办公租赁' + this.powerCount,
-                    read: false,
-                    write: false,
-                    index: this.powerCount
+            async getPostList() {
+                const params = {
+                    action: 'administrator.getMenu'
+                }
+
+                const data = await axios.post('/api/dispatcher.do', params)
+
+                if (! data) {
+                    return
+                }
+
+                // 处理一级菜单
+                this.postListAuth = [... new Set(data.data.map((item) => item.primaryNavigationZh))]
+
+                // 处理二级菜单
+                // [
+                //     {
+                //         parent: '场地',
+                //         children: ['楼宇运营管理', '停车场管理']
+                //     }
+                // ]
+                this.$postListSubAuth = []
+                data.data.forEach((item) => {
+                    const index = this.$postListSubAuth.findIndex((current) => item.primaryNavigationZh === current.parent)
+
+                    if (index === -1) {
+                        this.$postListSubAuth.push({
+                            parent: item.primaryNavigationZh,
+                            children: [item.secondaryNavigationZh]
+                        })
+                    } else {
+                        this.$postListSubAuth[index].children.push(item.secondaryNavigationZh)
+                    }
                 })
             },
-            deletePower(row) {
-                this.powerCount --;
-                this.powerList = this.powerList.filter(item => item.index !== row.index);
+            change(value) {
+                this.postListSubAuth = this.$postListSubAuth.find((item) => item.parent === value).children
+            },
+            async submit() {
+                const isAuth = this.authList.some((item) => {
+                    if (item.read === false && item.write === false) {
+                        return true
+                    }
+
+                    return false
+                })
+
+                if (isAuth) {
+                    this.$message.error('读写必须要选择一个')
+
+                    return
+                }
+
+                const params = {
+                    action: 'administrator.addPostInfo',
+                    postId: this.postNumber,
+                    postName: this.form.postName,
+                    permissionInfo: JSON.stringify(this.authList.map((item) => {
+                        return {
+                            isRead: Number(item.read),
+                            isWrite: Number(item.write),
+                            primaryNavigation: item.auth,
+                            secondaryNavigation: item.subAuth
+                        }
+                    }))
+                }
+
+                this.disabled = true
+
+                const data = await axios.post('/api/dispatcher.do', params)
+
+                this.disabled = false
+
+                if (! data) {
+                    return
+                }
+
+                location.href = '/postManagement'
+            },
+            addAuth() {
+                this.authList.push({
+                    auth: '',
+                    subAuth: '',
+                    read: false,
+                    write: false
+                })
+            },
+            deleteAuth(index) {
+                this.authList.splice(index, 1)
+            },
+            back() {
+                this.$router.push('/postManagement')
             }
-        },
-        created() {
-            console.log(this.$store.state.detailInfo)
         }
     }
 </script>
