@@ -103,19 +103,31 @@
 					<el-button class="btn-search" type="primary" @click="search">查询</el-button>
 				</div>
 
-				<el-table class="table" :data="carList" @click.native="handleTable">
+				<el-table class="table" :data="carList" @click.native="handleTable" @sort-change="sortChange" @filter-change="filterHandler">
 					<el-table-column type="selection"></el-table-column>
 					<el-table-column prop="id" label="序号"></el-table-column>
 					<el-table-column prop="acountName" label="业主姓名"></el-table-column>
 					<el-table-column prop="phoneNumber" label="业主手机号码"></el-table-column>
 					<el-table-column prop="rentalCompany" label="所在单位" width="300" :show-overflow-tooltip="true"></el-table-column>
-					<el-table-column label="状态" sortable>
+					<el-table-column
+						label="状态"
+						column-key="jobStatus"
+						:filter-multiple="false"
+						prop="jobStatus"
+						:filters="[{text: '在职', value: '3'}, {text: '离职', value: '2'}]"
+					>
 						<template slot-scope="scope">
 							<span class="job-status dimission" v-if="scope.row.jobStatus === 2">离职</span>
 							<span class="job-status" v-else>在职</span>
 				    	</template>
 					</el-table-column>
-					<el-table-column label="人脸信息" sortable>
+					<el-table-column
+						label="人脸信息"
+						column-key="facialStatus"
+						:filter-multiple="false"
+                        prop="facialStatus"
+						:filters="[{text: '已采集', value: '1'}, {text: '未采集', value: '0'}]"
+					>
 						<template slot-scope="scope">
 							<span class="face-info-status no" v-if="scope.row.facialStatus === 0">未采集</span>
 							<span class="face-info-status" v-else-if="scope.row.facialStatus === 1">已采集</span>
@@ -185,7 +197,10 @@
 
 				page: 1,
 				totalPage: 1,
-				carList: []
+				carList: [],
+				orderBy: '',
+				facialStatus: '',
+				jobStatus: ''
 			}
 		},
 
@@ -213,6 +228,17 @@
 			go() {
 				this.$router.push('/proprietor/add')
 			},
+			filterHandler(filter) {
+				for (let key in filter) {
+					this[key] = filter[key][0]
+				}
+                this.getList()
+            },
+			sortChange(colum) {
+                const order = colum.order === 'ascending' ? 'departure_date-asc' : colum.order === 'descending' ? 'departure_date-desc' : ''
+                this.orderBy = order
+                this.getList();
+            },
 			async getData() {
 				const params = {
 					action: 'accountManagement.queryYZCount'
@@ -248,6 +274,18 @@
 
 				if (this.account) {
 					params.userNameOrPhone = this.account
+				}
+
+				if (this.orderBy) {
+					params.orderBy = this.orderBy
+				}
+
+				if(this.facialStatus) {
+					params.facialStatus = this.facialStatus
+				}
+
+				if(this.jobStatus) {
+					params.jobStatus = this.jobStatus
 				}
 
 				const data = await axios.post('/api/dispatcher.do', params)
