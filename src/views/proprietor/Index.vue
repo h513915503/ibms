@@ -81,6 +81,9 @@
 .dimission {
 	color: #F5222D;
 }
+.lead-in input {
+	display: none;
+}
 </style>
 
 <template>
@@ -93,7 +96,10 @@
 			<div class="container">
 				<div class="search-wrapper">
 					<el-button type="primary" @click="go">+业主</el-button>
-					<el-button @click="go">批量导入</el-button>
+					<el-button class="lead-in" @click="leadIn">
+						<input type="file" ref="input" @change="change">
+						批量导入
+					</el-button>
 
 					<span class="time">在职时间：</span>
 					<el-date-picker type="date" placeholder="开始日期" v-model="startDate"></el-date-picker>
@@ -239,6 +245,23 @@
                 this.orderBy = order
                 this.getList();
             },
+			async leadIn() {
+				this.$refs.input.click()
+			},
+			async change(e) {
+				const formdata = new FormData()
+
+				formdata.append('action', 'accountManagement.batchImport')
+				formdata.append('file', e.target.files[0])
+
+				const data = await axios.post('/api/dispatcher.do', formdata, {
+					headers: {'Content-Type': 'multipart/form-data'}
+				})
+
+				if (! data) {
+					return
+				}
+			},
 			async getData() {
 				const params = {
 					action: 'accountManagement.queryYZCount'

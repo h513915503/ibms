@@ -42,6 +42,13 @@
     .el-button {
         width: 354px;
     }
+    .forgot-password {
+        display: block;
+        margin-right: 60px;
+        color: rgba(0, 0, 0, .65);
+        font-size: 14px;
+        text-align: right;
+    }
 </style>
 
 <template>
@@ -58,11 +65,11 @@
                 :rules="rules"
                 label-width="140px" label-position="right">
                 <el-form-item label="手机号：" prop="username">
-                    <input class="el-input el-input__inner" v-model="form.phone" maxlength="11" placeholder="请输入" @input="change" />
+                    <input class="el-input el-input__inner" v-model="form.phone" autofocus maxlength="11" placeholder="请输入" @input="change" />
                 </el-form-item>
                 <el-form-item :label="label" prop="password">
-                    <el-input v-model="form.password" placeholder="请输入密码" @keyup.native.enter="login">
-                    </el-input>
+                    <el-input type="password" v-model="form.password" placeholder="请输入密码" @keyup.native.enter="login"></el-input>
+                    <router-link class="forgot-password" to="/forgot-password">找回密码</router-link>
                 </el-form-item>
                 <el-form-item>
                     <el-button :disabled="isDisabled" type="primary" v-if="! logining" @click="login">登录</el-button>
@@ -113,13 +120,14 @@
                 }
 
                 const params = {
-                    phone: this.form.phone,
+                    action: 'account.accountLogin',
+                    account: this.form.phone,
                     password: this.form.password
                 }
 
                 this.logining = true
 
-                const data = await axios.post('/login', params)
+                const data = await axios.post('/api/dispatcher.do', params)
 
                 this.logining = false
 
@@ -127,11 +135,21 @@
                     return
                 }
 
-                sessionStorage.setItem('token', data.token)
+                sessionStorage.setItem('token', data.data.token)
+                this.$store.commit('setToken', data.data.token)
 
                 await this.$store.dispatch('getUserInfo')
 
-                this.$router.replace(this.$store.state.path)
+                const path = this.$store.state.path
+
+                if (path) {
+                    this.$router.replace(path)
+                } else {
+                    sessionStorage.removeItem('token')
+                    this.$store.commit('setToken', '')
+
+                    this.$message.error('抱歉，你没有任何权限访问该系统')
+                }
             }
         }
     }

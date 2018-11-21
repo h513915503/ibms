@@ -17,31 +17,31 @@
 <template>
     <div id="add-property">
         <el-breadcrumb separator="/">
-			<el-breadcrumb-item :to="{path: '/propertyManagement'}">物业人员管理</el-breadcrumb-item>
-			<el-breadcrumb-item>新增物业人员</el-breadcrumb-item>
-		</el-breadcrumb>
+            <el-breadcrumb-item :to="{path: '/propertyManagement'}">物业人员管理</el-breadcrumb-item>
+            <el-breadcrumb-item>新增物业人员</el-breadcrumb-item>
+        </el-breadcrumb>
 
         <div class="container">
             <el-form :model="form" label-width="210px" label-position="right">
-				<el-form-item label="物业人员编号：">
-					<span>{{ postNumber }}</span>
-				</el-form-item>
-				<el-form-item label="姓名：">
-					<el-input v-model="form.name" placeholder="如：张三丰"></el-input>
-				</el-form-item>
+                <el-form-item label="物业人员编号：">
+                    <span>{{ postNumber }}</span>
+                </el-form-item>
+                <el-form-item label="姓名：">
+                    <el-input v-model="form.name" placeholder="如：张三丰"></el-input>
+                </el-form-item>
                 <el-form-item label="手机号码：">
                     <input type="text" class="el-input el-input__inner" maxlength="11" v-model="form.phone" placeholder="手机号码" @input="change">
-				</el-form-item>
-				<el-form-item label="所在岗位：">
+                </el-form-item>
+                <el-form-item label="所在岗位：">
                     <el-checkbox-group v-model="checkList">
-					   <el-checkbox v-for="item of postList" :label="item"></el-checkbox>
+                       <el-checkbox v-for="item of postList" :label="item"></el-checkbox>
                     </el-checkbox-group>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :disabled="isDisabled" @click="submit">确定</el-button>
-					<el-button @click="back">取消</el-button>
-				</el-form-item>
-			</el-form>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" :disabled="isDisabled" @click="submit">确定</el-button>
+                    <el-button @click="back">取消</el-button>
+                </el-form-item>
+            </el-form>
         </div>
     </div>
 </template>
@@ -55,6 +55,8 @@
                     phone: ''
                 },
 
+                disabled: false,
+
                 postNumber: '',
                 checkList: [],
                 postList: []
@@ -63,7 +65,11 @@
 
         computed: {
             isDisabled() {
-                if (this.form.name && this.form.phone) {
+                if (this.disabled) {
+                    return true
+                }
+
+                if (this.form.name && this.form.phone && this.checkList.length) {
                     return false
                 }
 
@@ -72,6 +78,7 @@
         },
 
         created() {
+            this.getDetail()
             this.getPostNumber()
             this.getPostList()
         },
@@ -80,6 +87,21 @@
             change(e) {
                 this.form.phone = e.target.value.replace(/\D/g, '')
                 e.target.value = this.form.phone
+            },
+            async getDetail() {
+                const params = {
+                    pmoId: this.$route.params.id,
+                    action: 'administrator.getPmoInfoByPmoId'
+                }
+
+                const data = await axios.post('/api/dispatcher.do', params)
+
+                if (! data) {
+                    return
+                }
+
+                this.form.name = data.data.accountName
+                this.form.phone = data.data.phoneNumber
             },
             async getPostNumber() {
                 const params = {
@@ -116,7 +138,11 @@
                     postName: JSON.stringify(this.checkList)
                 }
 
+                this.disabled = true
+
                 const data = await axios.post('/api/dispatcher.do', params)
+
+                this.disabled = false
 
                 if (! data) {
                     return

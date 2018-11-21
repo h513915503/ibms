@@ -231,11 +231,14 @@
 				e.target.value = this.form.phone
 			},
 			setData(data) {
-				const {acountName, rentalCompany, phoneNumber} = data
+				const {acountName, rentalCompany, phoneNumber, facialInformation} = data
 
 				this.form.name = acountName
 				this.form.phone = phoneNumber
 				this.form.company = rentalCompany
+
+				this.faceURL = facialInformation
+				this.collectionStatus = 2
 			},
 			async getDetail() {
 				const params = {

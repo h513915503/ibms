@@ -125,14 +125,15 @@
         },
 
         created() {
+            this.getDetail()
             this.getPostList()
-            this.getPostNumber()
         },
 
         methods: {
-            async getPostNumber() {
+            async getDetail() {
                 const params = {
-                    action: 'administrator.getPmoId'
+                    action: 'administrator.getPmoId',
+                    postId: this.$route.params.id
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params)
@@ -141,7 +142,8 @@
                     return
                 }
 
-                this.postNumber = data.data
+                this.postNumber = data.data.postNumber
+                this.form.postName = data.data.postName
             },
             async getPostList() {
                 const params = {
@@ -202,8 +204,8 @@
                     postName: this.form.postName,
                     permissionInfo: JSON.stringify(this.authList.map((item) => {
                         return {
-                            isRead: Number(item.read),
-                            isWrite: Number(item.write),
+                            isRead: item.read,
+                            isWrite: item.write,
                             primaryNavigation: item.auth,
                             secondaryNavigation: item.subAuth
                         }

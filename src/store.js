@@ -9,46 +9,47 @@ Vue.use(Vuex)
 
 const aside = [
 	{
-		type: 0,
+		type: '1',
 		title: '概览',
 		index: 0,
 		reg: /\/$/
 	},
 	{
-		type: 3,
-		title: '物业人员管理',
-		index: 1,
-		reg: /\/propertyManagement|\/addProperty/
-	},
-	{
-		type: 4,
-		title: '岗位管理',
-		index: 2,
-		reg: /\/postManagement|\/addPost/
-	},
-	{
-		type: 1,
+		type: '2',
 		title: '能耗',
 		index: 3,
 		reg: /\/energy-consumption/
 	},
 	{
-		type: 2,
+		type: '3',
 		title: '环境',
 		index: 4,
 		reg: /\/environment$/
 	},
 	{
+		type: '4',
+		title: '物业人员管理',
+		index: 1,
+		reg: /\/propertyManagement|\/addProperty/
+	},
+	{
+		type: '5',
+		title: '岗位管理',
+		index: 2,
+		reg: /\/postManagement|\/addPost/
+	},
+
+	{
 		title: '场地',
 		items: [
 			{
-				type: 5,
+				type: '6-1',
 				text: '楼宇运营管理',
 				path: '/lease',
 				reg: /^\/lease/,
 			},
 			{
-				type: 6,
+				type: '6-2',
 				text: '停车场管理',
 				path: '/parking-lot',
 				reg: /\/parking-lot/
@@ -59,19 +60,19 @@ const aside = [
 		title: '人员',
 		items: [
 			{
-				type: 7,
+				type: '7-1',
 				text: '业主管理',
 				path: '/proprietor',
 				reg: /\/proprietor/
 			},
 			{
-				type: 8,
+				type: '7-2',
 				text: '访客登记',
 				path: '/visitor',
 				reg: /\/visitor/
 			},
 			{
-				type: 9,
+				type: '7-3',
 				text: '人员出入记录',
 				path: '/personnel',
 				reg: /\/personnel/
@@ -82,19 +83,19 @@ const aside = [
 		title: '设备',
 		items: [
 			{
-				type: 10,
+				type: '8-1',
 				text: '灯管理',
 				path: '/lightManagement',
 				reg: /\/lightManagement|\/light\/lightAdd/
 			},
 			{
-				type: 11,
+				type: '8-2',
 				text: '空调管理',
 				path: '/airConditioner',
 				reg: /\/airConditioner/
 			},
 			{
-				type: 12,
+				type: '8-3',
 				text: '设备故障',
 				path: '/device-fault',
 				reg: /\/device-fault/
@@ -107,6 +108,8 @@ export default new Vuex.Store({
 	state: {
 		token: sessionStorage.getItem('token'),
 		role: '',
+		accountName: '',
+
 		routes: [],
 		aside: [],
 
@@ -116,19 +119,36 @@ export default new Vuex.Store({
 		detailInfo: {},
 	},
 	mutations: {
+		setToken(state, value) {
+			state.token = value
+		},
+		setAccountName(state, value) {
+			state.accountName = value
+		},
 		setRole(state, value) {
 			state.role = value
 		},
 		setPermissions(state, value) {
+			if (! value.length) {
+				return
+			}
+
+			//log(value)
 			state.permissions = value
 
-			state.routes = state.role === 'admin' ? routesMap : routesMap.filter((item) => value.includes(item.type))
-			state.path = state.role === 'admin' ? '/' : state.routes.find((item) => item.type === value[0]).path
+			state.routes = routesMap.filter((item) => value.includes(item.type))
+			state.path = state.routes.find((item) => item.type === value[0]).path
 
 			// 更新侧边栏
-			state.aside = state.role === 'admin' ? aside : aside.filter((item) => {
+			state.aside = aside.filter((item) => {
 				if (item.items) {
-					return item.items.filter((current) => state.permissions.includes(current.type)).length
+					item.items = item.items.filter((current) => state.permissions.includes(current.type))
+
+					if (item.items.length) {
+						return true
+					} else {
+						return false
+					}
 				} else {
 					return state.permissions.includes(item.type)
 				}
@@ -137,14 +157,19 @@ export default new Vuex.Store({
 	},
 	actions: {
 		async getUserInfo({commit, state}) {
-			const data = await getResponses('/dapi/getUserPermission')
+			const params = {
+				action: 'account.getPersonnelInfo'
+			}
+			const data = await axios.post('/api/dispatcher.do', params)
 
 			if (! data) {
 				return
 			}
 
-			commit('setRole', data.role)
-			commit('setPermissions', data.permissions)
+			commit('setAccountName', data.data.accountName)
+
+			//commit('setRole', 'admin')
+			commit('setPermissions', data.data.pagePermission)
 
 			router.addRoutes(state.routes)
 		}

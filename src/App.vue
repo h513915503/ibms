@@ -120,7 +120,8 @@
 				</div>
 				<el-dropdown trigger="click" @command="handleCommand">
 					<span class="el-dropdown-link">
-						张宇<i class="el-icon-arrow-down el-icon--right"></i>
+						{{accountName}}
+						<i class="el-icon-arrow-down el-icon--right"></i>
 					</span>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="/modifyPsw">修改密码</el-dropdown-item>
@@ -168,6 +169,9 @@
 		},
 
 		computed: {
+			accountName() {
+				return this.$store.state.accountName
+			},
 			aside() {
 				return this.$store.state.aside
 			}
