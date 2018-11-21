@@ -31,12 +31,15 @@ import DeviceFault from './views/deviceFault/index.vue'
 
 import PropertyManagement from './views/propertyManagement/PropertyManagement.vue'
 import AddProperty from './views/propertyManagement/AddProperty.vue'
+import EditProperty from './views/propertyManagement/edit.vue'
 
 import PostManagement from './views/postManagement/PostManagement.vue'
 import AddPost from './views/postManagement/AddPost.vue'
+import EditPost from './views/postManagement/edit.vue'
 
-import ModifyPsw from './views/login/ModifyPsw.vue'
 import Login from './views/login/Login'
+import ForgotPassword from './views/login/forgot-password'
+import ModifyPsw from './views/login/ModifyPsw.vue'
 
 import EnergyConsumption from './views/energy-consumption/Index.vue'
 
@@ -59,6 +62,23 @@ const router = new Router({
 				login: true
 			}
 		},
+		{
+			path: '/forgot-password',
+			name: 'forgot-password',
+			component: ForgotPassword,
+			meta: {
+				login: true
+			}
+		},
+		{
+			path: '/modifyPsw',
+			name: 'modifyPsw',
+			component: ModifyPsw,
+			meta: {
+				login: true
+			}
+		},
+
 		{
 			path: '*',
 			component: NotFound
@@ -86,163 +106,177 @@ router.beforeEach((to, from, next) => {
 			next()
 		}
 	} else {
-		next('/login')
+		if (to.path === '/forgot-password' || to.path === '/modifyPsw') {
+			next()
+		} else {
+			next('/login')
+		}
 	}
 })
 
 export const routesMap = [
 	{
-		type: 0,
+		type: '1',
 		path: '/',
 		name: 'overview',
 		component: Overview
 	},
 
 	{
-		type: 1,
+		type: '2',
 		path: '/energy-consumption',
 		nane: 'energy-consumption',
 		component: EnergyConsumption
 	},
 
 	{
-		type: 2,
+		type: '3',
 		path: '/environment',
 		name: 'environment',
 		component: Environment
 	},
 
 	{
-		type: 3,
+		type: '4',
 		path: '/propertyManagement',
 		name: 'propertyManagement',
 		component: PropertyManagement
 	},
+	{
+		type: '4',
+		path: '/propertyManagement/add',
+		name: 'propertyManagement-add',
+		component: AddProperty
+	},
+	{
+		type: '4',
+		path: '/propertyManagement/edit/:id',
+		name: 'propertyManagement-edit',
+		component: EditProperty
+	},
 
 	{
-		type: 4,
+		type: '5',
 		path: '/postManagement',
 		name: 'postManagement',
 		component: PostManagement
 	},
 	{
-		type: 41,
+		type: '5',
 		path: '/addPost',
 		name: 'addPost',
 		component: AddPost
 	},
+	{
+		type: '5',
+		path: '/postManagement/edit/:id',
+		name: 'EditPost',
+		component: EditPost
+	},
 
 	{
-		type: 5,
+		type: '6-1',
 		path: '/lease',
 		name: 'lease',
 		component: Lease
 	},
 	{
-		type: 51,
+		type: '6-1',
 		path: '/lease/add',
 		name: 'lease-add',
 		component: LeaseAdd
 	},
 	{
-		type: 52,
+		type: '6-1',
 		path: '/lease/detail/:id',
 		name: 'lease-detail',
 		component: LeaseDetail
 	},
 
 	{
-		type: 6,
+		type: '6-2',
 		path: '/parking-lot',
 		name: 'parking-lot',
 		component: ParkingLot
 	},
 	{
-		type: 61,
+		type: '6-2',
 		path: '/parking-lot/add',
 		name: 'parking-lot-add',
 		component: ParkingLotAdd
 	},
 	{
-		type: 62,
+		type: '6-2',
 		path: '/parking-lot/detail/:id',
 		name: 'parking-lot-detail',
 		component: ParkingLotDetail
 	},
 
 	{
-		type: 7,
+		type: '7-1',
 		path: '/proprietor',
 		name: 'proprietor',
 		component: Proprietor
 	},
 	{
-		type: 71,
+		type: '7-1',
 		path: '/proprietor/add',
 		name: 'proprietor-add',
 		component: ProprietorAdd
 	},
 	{
-		type: 72,
+		type: '7-1',
 		path: '/proprietor/edit/:id',
 		name: 'proprietor-edit',
 		component: ProprietorEdit
 	},
 	{
-		type: 8,
+		type: '7-2',
 		path: '/visitor',
 		name: 'visitor',
 		component: Visitor
 	},
 	{
-		type: 81,
+		type: '7-2',
 		path: '/visitor/addVisitor',
 		name: 'addVisitor',
 		component: AddNewVisitor
 	},
 	{
-		type: 9,
+		type: '7-3',
 		path: '/personnel',
 		name: 'personnel',
 		component: PersonnelRecord
 	},
 
 	{
-		type: 10,
+		type: '8-1',
 		path: '/lightManagement',
 		name: 'lightManagement',
 		component: LightManagement
 	},
 	{
-		type: 101,
+		type: '8-1',
 		path: '/light/lightAdd',
 		name: 'lightAdd',
 		component: LightAdd
 	},
 	{
-		type: 11,
+		type: '8-2',
 		path: '/airConditioner',
 		name: 'airConditioner',
 		component: AirConditioner
 	},
 	{
-		type: 12,
+		type: '8-3',
 		path: '/device-fault',
 		name: 'device-fault',
 		component: DeviceFault
 	},
 
+
 	{
-		type: 13,
-		path: '/modifyPsw',
-		name: 'modifyPsw',
-		component: ModifyPsw,
-		meta: {
-			login: true
-		}
-	},
-	{
-		type: 14,
+		type: '9',
 		path: '/dashboard',
 		name: 'dashboard',
 		component: Dashboard,
