@@ -258,6 +258,10 @@
 					params.facialInformation = this.$faceURLRaw
 				}
 
+				if (this.currentRadio === 2) {
+					delete params.facialInformation
+				}
+
 				const data = await axios.post('/api/dispatcher.do', params)
 
 				this.$flag = null
