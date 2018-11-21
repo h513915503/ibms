@@ -139,7 +139,7 @@
 			<div class="phone-wrapper" v-if="currentIndex === 0">
 				<el-form ref="form" :model="stepForm1" @submit.native.prevent>
 					<el-form-item label="手机号码：">
-						<input class="el-input el-input__inner" v-model="stepForm1.phone" maxlength="11" placeholder="请输入手机号码" @input="change" @keyup.enter="verifyPhone" />
+						<input class="el-input el-input__inner" v-model="stepForm1.phone" autofocus maxlength="11" placeholder="请输入手机号码" @input="change" @keyup.enter="verifyPhone" />
 					</el-form-item>
 				</el-form>
 				<el-button type="primary" :disabled="isDisabledStep1" @click="verifyPhone">下一步</el-button>
