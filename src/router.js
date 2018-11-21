@@ -19,6 +19,7 @@ import ProprietorEdit from './views/proprietor/edit.vue'
 
 import Visitor from './views/visitors/visitor.vue'
 import AddNewVisitor from './views/visitors/addVisitor.vue'
+import EditVisitor from './views/visitors/editVisitor'
 
 import PersonnelRecord from './views/personnelRecord/personnel.vue'
 
