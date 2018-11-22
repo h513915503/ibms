@@ -176,15 +176,11 @@
             async getList() {
                 const params = {
                     action: 'administrator.getPmoInfo',
-<<<<<<< HEAD:src/views/propertyManagement/PropertyManagement.vue
                     pageNo: this.page,
                     pageSize: 10,
                     rank: this.rank ? this.rank : undefined,
                     order: this.order ? this.order : undefined,
                     status: this.status ? this.status : undefined
-=======
-                    pageNo: this.page
->>>>>>> 00056f89423182be93250123e0cc136e39766899:src/views/property-management/index.vue
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params)
