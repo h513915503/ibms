@@ -30,13 +30,13 @@ const aside = [
 		type: '4',
 		title: '物业人员管理',
 		index: 1,
-		reg: /\/propertyManagement|\/addProperty/
+		reg: /^\/property/
 	},
 	{
 		type: '5',
 		title: '岗位管理',
 		index: 2,
-		reg: /\/postManagement|\/addPost/
+		reg: /^\/post/
 	},
 
 	{
