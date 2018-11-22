@@ -198,10 +198,10 @@
             goEdit(item) {
                 this.$tempData = item
 
-                this.$router.push(`/postManagement/edit/${item.postId}`)
+                this.$router.push(`/post/edit/${item.postId}`)
             },
             go() {
-                this.$router.push('/addPost')
+                this.$router.push('/post/add')
             }
         }
     }

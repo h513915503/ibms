@@ -27,7 +27,7 @@
 					<span>{{ postNumber }}</span>
 				</el-form-item>
 				<el-form-item label="姓名：">
-					<el-input v-model="form.name" placeholder="如：张三丰"></el-input>
+					<el-input v-model="form.name" placeholder="如：张三"></el-input>
 				</el-form-item>
                 <el-form-item label="手机号码：">
                     <input type="text" class="el-input el-input__inner" maxlength="11" v-model="form.phone" placeholder="手机号码" @input="change">
@@ -50,6 +50,8 @@
     export default {
         data() {
             return {
+                disabled: false,
+
                 form: {
                     name: '',
                     phone: ''
@@ -63,6 +65,10 @@
 
         computed: {
             isDisabled() {
+                if (this.disabled) {
+                    return true
+                }
+
                 if (this.form.name && this.form.phone) {
                     return false
                 }
@@ -116,16 +122,20 @@
                     postName: JSON.stringify(this.checkList)
                 }
 
+                this.disabled = true
+
                 const data = await axios.post('/api/dispatcher.do', params)
+
+                this.disabled = false
 
                 if (! data) {
                     return
                 }
 
-                location.href = '/propertyManagement'
+                location.href = '/property'
             },
             back() {
-                this.$router.push('/propertyManagement')
+                this.$router.push('/property')
             }
         }
     }

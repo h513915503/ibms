@@ -79,7 +79,6 @@
 
         created() {
             this.getDetail()
-            this.getPostNumber()
             this.getPostList()
         },
 
@@ -100,21 +99,9 @@
                     return
                 }
 
+                this.postNumber = data.data.accountId
                 this.form.name = data.data.accountName
                 this.form.phone = data.data.phoneNumber
-            },
-            async getPostNumber() {
-                const params = {
-                    action: 'administrator.getPmoId'
-                }
-
-                const data = await axios.post('/api/dispatcher.do', params)
-
-                if (! data) {
-                    return
-                }
-
-                this.postNumber = data.data
             },
             async getPostList() {
                 const params = {
@@ -148,10 +135,10 @@
                     return
                 }
 
-                location.href = '/propertyManagement'
+                location.href = '/property'
             },
             back() {
-                this.$router.push('/propertyManagement')
+                this.$router.push('/property')
             }
         }
     }

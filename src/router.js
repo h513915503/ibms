@@ -4,16 +4,33 @@ import store from './store'
 
 Vue.use(Router)
 
-import Overview from './views/overview/Index.vue'
-import Lease from './views/lease/Index.vue'
-import LeaseAdd from './views/lease/Add.vue'
-import LeaseDetail from './views/lease/Detail.vue'
+import Login from './views/user/login'
+import ForgotPassword from './views/user/forgot-password'
+import ModifyPassword from './views/user/modify-password.vue'
 
-import ParkingLot from './views/parking-lot/Index.vue'
-import ParkingLotAdd from './views/parking-lot/Add.vue'
-import ParkingLotDetail from './views/parking-lot/Detail.vue'
+import Overview from './views/overview/index.vue'
 
-import Proprietor from './views/proprietor/Index.vue'
+import Environment from './views/environment/index.vue'
+
+import EnergyConsumption from './views/energy-consumption/index.vue'
+
+import Property from './views/property-management/index.vue'
+import AddProperty from './views/property-management/add.vue'
+import EditProperty from './views/property-management/edit.vue'
+
+import Post from './views/post-management/index.vue'
+import AddPost from './views/post-management/add.vue'
+import EditPost from './views/post-management/edit.vue'
+
+import Lease from './views/lease/index.vue'
+import LeaseAdd from './views/lease/add.vue'
+import LeaseDetail from './views/lease/detail.vue'
+
+import ParkingLot from './views/parking-lot/index.vue'
+import ParkingLotAdd from './views/parking-lot/add.vue'
+import ParkingLotDetail from './views/parking-lot/detail.vue'
+
+import Proprietor from './views/proprietor/index.vue'
 import ProprietorAdd from './views/proprietor/add.vue'
 import ProprietorEdit from './views/proprietor/edit.vue'
 
@@ -30,26 +47,9 @@ import AirConditioner from './views/airConditionerManage/AirConditioner.vue'
 
 import DeviceFault from './views/deviceFault/index.vue'
 
-import PropertyManagement from './views/propertyManagement/PropertyManagement.vue'
-import AddProperty from './views/propertyManagement/AddProperty.vue'
-import EditProperty from './views/propertyManagement/edit.vue'
-
-import PostManagement from './views/postManagement/PostManagement.vue'
-import AddPost from './views/postManagement/AddPost.vue'
-import EditPost from './views/postManagement/edit.vue'
-
-import Login from './views/login/Login'
-import ForgotPassword from './views/login/forgot-password'
-import ModifyPsw from './views/login/ModifyPsw.vue'
-
-import EnergyConsumption from './views/energy-consumption/Index.vue'
-
 import Dashboard from './views/Dashboard/Dashboard.vue'
 
-import Environment from './views/environment/Index.vue'
-
 import NotFound from './views/not-found/index.vue'
-
 
 const router = new Router({
 	mode: 'history',
@@ -72,9 +72,9 @@ const router = new Router({
 			}
 		},
 		{
-			path: '/modifyPsw',
-			name: 'modifyPsw',
-			component: ModifyPsw,
+			path: '/modify-password',
+			name: 'modify-password',
+			component: ModifyPassword,
 			meta: {
 				login: true
 			}
@@ -107,7 +107,7 @@ router.beforeEach((to, from, next) => {
 			next()
 		}
 	} else {
-		if (to.path === '/forgot-password' || to.path === '/modifyPsw') {
+		if (to.path === '/forgot-password') {
 			next()
 		} else {
 			next('/login')
@@ -139,39 +139,39 @@ export const routesMap = [
 
 	{
 		type: '4',
-		path: '/propertyManagement',
-		name: 'propertyManagement',
-		component: PropertyManagement
+		path: '/property',
+		name: 'property',
+		component: Property
 	},
 	{
 		type: '4',
-		path: '/propertyManagement/add',
-		name: 'propertyManagement-add',
+		path: '/property/add',
+		name: 'property-add',
 		component: AddProperty
 	},
 	{
 		type: '4',
-		path: '/propertyManagement/edit/:id',
-		name: 'propertyManagement-edit',
+		path: '/property/edit/:id',
+		name: 'property-edit',
 		component: EditProperty
 	},
 
 	{
 		type: '5',
-		path: '/postManagement',
-		name: 'postManagement',
-		component: PostManagement
+		path: '/post',
+		name: 'post',
+		component: Post
 	},
 	{
 		type: '5',
-		path: '/addPost',
-		name: 'addPost',
+		path: '/post/add',
+		name: 'post-add',
 		component: AddPost
 	},
 	{
 		type: '5',
-		path: '/postManagement/edit/:id',
-		name: 'EditPost',
+		path: '/post/edit/:id',
+		name: 'post-edit',
 		component: EditPost
 	},
 

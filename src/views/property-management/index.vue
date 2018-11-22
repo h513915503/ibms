@@ -162,7 +162,7 @@
 
         methods: {
             go() {
-                this.$router.push('/propertyManagement/add')
+                this.$router.push('/property/add')
             },
             filterHandler(filter) {
                 this.status = filter.status[0]
@@ -176,11 +176,15 @@
             async getList() {
                 const params = {
                     action: 'administrator.getPmoInfo',
+<<<<<<< HEAD:src/views/propertyManagement/PropertyManagement.vue
                     pageNo: this.page,
                     pageSize: 10,
                     rank: this.rank ? this.rank : undefined,
                     order: this.order ? this.order : undefined,
                     status: this.status ? this.status : undefined
+=======
+                    pageNo: this.page
+>>>>>>> 00056f89423182be93250123e0cc136e39766899:src/views/property-management/index.vue
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params)
@@ -199,7 +203,7 @@
             goEdit(item) {
                 this.$tempData = item
 
-                this.$router.push(`/propertyManagement/edit/${item.accountId}`)
+                this.$router.push(`/property/edit/${item.accountId}`)
             },
             forLeaveOffice(e, item, index) {
                 this.$item = item
@@ -231,8 +235,6 @@
 
                     return
                 }
-
-                this.list.splice(this.$index, 1)
 
                 // 释放内存
                 this.$index = null

@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import router, {routesMap} from './router'
-import getResponses from '@/api'
-import Axios from 'axios';
 
 Vue.use(Vuex)
 
@@ -30,13 +28,13 @@ const aside = [
 		type: '4',
 		title: '物业人员管理',
 		index: 1,
-		reg: /\/propertyManagement|\/addProperty/
+		reg: /^\/property/
 	},
 	{
 		type: '5',
 		title: '岗位管理',
 		index: 2,
-		reg: /\/postManagement|\/addPost/
+		reg: /^\/post/
 	},
 
 	{
@@ -116,7 +114,7 @@ export default new Vuex.Store({
 		// 登录后将要去的 path
 		path: '',
 		permissions: [],
-		detailInfo: {},
+		detailInfo: {}
 	},
 	mutations: {
 		setToken(state, value) {
@@ -133,7 +131,6 @@ export default new Vuex.Store({
 				return
 			}
 
-			//log(value)
 			state.permissions = value
 
 			state.routes = routesMap.filter((item) => value.includes(item.type))
