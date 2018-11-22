@@ -328,6 +328,9 @@
                 };
                 
                 const data = await axios.post('/api/dispatcher.do', params);
+                if(!data) {
+                    return
+                }
                 this.company = data.data;
 
             },
