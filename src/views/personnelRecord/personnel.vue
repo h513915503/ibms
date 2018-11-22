@@ -95,10 +95,10 @@
                 </div>
 
                 <div class="table-content">
-                    <el-table :data="tableData">
+                    <el-table :data="tableData" @sort-change="sortChange" @filter-change="filterHandler">
                         <el-table-column label="时间" sortable>
                             <template slot-scope="scope">
-                                <span v-if="scope.row.allDateTamp">{{ scope.row.allDateTamp | timestampToTime }}</span>
+                                <span v-if="scope.row.allDateTamp">{{ scope.row.allDateTamp | dateFormat }}</span>
                                 <span v-else>--</span>
                             </template>
                         </el-table-column>
@@ -106,7 +106,13 @@
                         <el-table-column label="出/入" prop="accessStatus"></el-table-column>
                         <el-table-column label="业主/访客" prop="type"></el-table-column>
                         <el-table-column label="停留时长" prop="stayTime"></el-table-column>
-                        <el-table-column label="状态" :filters="[]" :filter-method="filterHandler">
+                        <el-table-column
+                            label="状态"
+                            column-key="activeStatus"
+                            :filter-multiple="false"
+                            prop="activeStatus"
+                            :filters="[{text: '正常', value: '6'}, {text: '异常', value: '5'}, {text: '未进园区', value: '7'}, {text: '已离开', value:'4'}]"
+                        >
                             <template slot-scope="scope">
                                 <span class="status error" v-if="scope.row.activeStatus === 5">异常</span>
                                 <span class="status normal" v-else-if="scope.row.activeStatus === 6">正常</span>
@@ -142,40 +148,48 @@
                 tabs: [
                     {
                         number: '',
-                        text: '今日累计访客量'
+                        text: '今日累计人流量'
+                    },
+                    {
+                        number: '',
+                        text: '当前园区业主'
                     },
                     {
                         number: '',
                         text: '当前园区访客'
                     },
-                    {
-                        number: '',
-                        text: '当前开园区业主'
-                    }
                 ],
                 tableData: [],
                 pageNum: '1',
                 pageSize: '10',
                 date1: '',
                 date2: '',
-                userNameOrPhone: ''
+                userNameOrPhone: '',
+                orderBy: '',
+                activeStatus: ''
             }
         },
         filters: {
-            timestampToTime(val) {
-                const date = new Date(val);
-                const YY = date.getFullYear() + '-';
-                const MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1 ) + '-';
-                const dd = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
-                const hh = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
-                const mm = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
-                const ss = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
-                return YY + MM + dd + hh + mm + ss;
-            },
+            // timestampToTime(val) {
+            //     const date = new Date(val);
+            //     const YY = date.getFullYear() + '-';
+            //     const MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1 ) + '-';
+            //     const dd = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+            //     const hh = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+            //     const mm = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+            //     const ss = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
+            //     return YY + MM + dd + hh + mm + ss;
+            // },
         },
         methods: {
-            filterHandler() {
-
+            filterHandler(filter) {
+                this.activeStatus = filter.activeStatus[0]
+                this.getTableData()
+            },
+            sortChange(colum) {
+                const order = colum.order === 'ascending' ? 'allDate_asc' : colum.order === 'descending' ? 'allDate_desc' : ''
+                this.orderBy = order
+                this.getTableData();
             },
              pageChange(val) {
                 this.pageNum = val;
@@ -195,8 +209,8 @@
                 }
 
                 this.tabs[0].number = data.data.peopleCounting;
-                this.tabs[1].number = data.data.dqFkCount;
-                this.tabs[2].number = data.data.dqYZCount;
+                this.tabs[1].number = data.data.dqYZCount;
+                this.tabs[2].number = data.data.dqFkCount;
             },
             async getTableData() {
                 const params = {
@@ -205,7 +219,9 @@
                     pageSize: this.pageSize,
                     fromTimeYZStr: this.date1,
                     toTimeYZStr: this.date2,
-                    userNameOrPhone: this.userNameOrPhone
+                    userNameOrPhone: this.userNameOrPhone,
+                    orderBy: this.orderBy,
+                    activeStatus: this.activeStatus
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params);

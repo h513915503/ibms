@@ -182,6 +182,7 @@
 		created() {
 			this.save(this.floorList[0])
 
+			this.getAllRentalInfo()
 			this.loading = true
 			setTimeout(() => {
 				this.loading = false
@@ -189,6 +190,15 @@
 		},
 
 		methods: {
+			async getAllRentalInfo() {
+				const params = {
+					action: 'OfficeRental.queryAllRentalInfo',
+				}
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				console.log(data.data)
+			},
 			save(item) {
 				this.$floorNumber = item.floorNumber
 				this.$totalArea = item.totalArea

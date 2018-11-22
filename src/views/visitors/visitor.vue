@@ -96,7 +96,7 @@
                     </div>
                 </div>
                 <div class="table-content">
-                    <el-table :data="tableData">
+                    <el-table :data="tableData" @sort-change="sortChange" @filter-change="filterHandler">
                         <el-table-column label="访客编号" prop="aid"></el-table-column>
                         <el-table-column label="访客姓名" prop="acountName"></el-table-column>
                         <el-table-column label="访客手机号码" prop="phoneNumber"></el-table-column>
@@ -106,8 +106,9 @@
                         <el-table-column
                             label="状态"
                             prop="activeStatus"
+                            :filter-multiple="false"
+                            column-key="activeStatus"
                             :filters="[{text: '正常', value: '6'}, {text: '异常', value: '5'}, {text: '未进园区', value: '7'}, {text: '已离开', value: '4'}]"
-                            :filter-method="filterHandler"
                         >
                             <template slot-scope="scope">
                                 <span class="status error" v-if="scope.row.activeStatus === 5">异常</span>
@@ -116,9 +117,9 @@
                                 <span class="status left" v-else>已离开</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="访问时间" prop="time" sortable>
+                        <el-table-column label="访问时间" prop="time" sortable='custom'>
                             <template slot-scope="scope">
-                                <span v-if="scope.row.accessTimeStart">{{ scope.row.accessTimeStart | timestampToTime }} - {{ scope.row.accessTimeEnd | timestampToTime }}</span>
+                                <span v-if="scope.row.accessTimeStart">{{ scope.row.accessTimeStart | dateFormat }} - {{ scope.row.accessTimeEnd | timeFormat }}</span>
                                 <span v-else>--</span>
                             </template>
                         </el-table-column>
@@ -145,6 +146,7 @@
 </template>
 
 <script>
+
     export default {
         data() {
             return {
@@ -166,29 +168,37 @@
                 tableData: [],
                 pageNum: '1',
                 pageSize: '10',
-                type: '业主',
+                type: '访客',
                 date1: '',
                 date2: '',
                 userNameOrPhone: '',
-                totalItem: ''
+                totalItem: '',
+                orderBy: '',
+                activeStatus: ''
             }
         },
         filters: {
-            timestampToTime(val) {
-                const date = new Date(val);
-                const YY = date.getFullYear() + '-';
-                const MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1 ) + '-';
-                const dd = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
-                const hh = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
-                const mm = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
-                const ss = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
-                return YY + MM + dd + hh + mm + ss;
-            },
+            // timestampToTime(val) {
+            //     const date = new Date(val);
+            //     const YY = date.getFullYear() + '-';
+            //     const MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth()+1) : date.getMonth()+1 ) + '-';
+            //     const dd = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+            //     const hh = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+            //     const mm = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+            //     const ss = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
+            //     return YY + MM + dd + hh + mm + ss;
+            // },
         },
         methods: {
-            filterHandler(value, row) {
-                console.log(value, row);
-                return row.activeStatus === value;
+            filterHandler(filter) {
+                console.log(filter.activeStatus[0]);
+                this.activeStatus = filter.activeStatus[0]
+                this.getTableData()
+            },
+            sortChange(colum) {
+                const order = colum.order === 'ascending' ? 'access_time_start-asc' : colum.order === 'descending' ? 'access_time_start-desc' : ''
+                this.orderBy = order
+                this.getTableData();
             },
             go() {
                 this.$router.push('/visitor/addVisitor')
@@ -225,7 +235,9 @@
                     type: this.type,
                     fromTimeYZStr: this.date1,
                     toTimeYZStr: this.date2,
-                    userNameOrPhone: this.userNameOrPhone
+                    userNameOrPhone: this.userNameOrPhone,
+                    orderBy: this.orderBy,
+                    activeStatus: this.activeStatus
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params);

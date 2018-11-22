@@ -109,7 +109,7 @@
 /* .el-form-item__content {
     line-height: 0 !important;
 } */
-.avatar-uploader .el-upload {
+/* .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 4px;
     cursor: pointer;
@@ -131,7 +131,7 @@
     width: 102px;
     height: 102px;
     display: block;
-  }
+  } */
 </style>
 
 <template>

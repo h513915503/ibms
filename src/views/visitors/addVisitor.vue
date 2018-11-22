@@ -109,7 +109,7 @@
 /* .el-form-item__content {
     line-height: 0 !important;
 } */
-.avatar-uploader .el-upload {
+/* .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 4px;
     cursor: pointer;
@@ -131,7 +131,7 @@
     width: 102px;
     height: 102px;
     display: block;
-  }
+  } */
 </style>
 
 <template>
@@ -151,7 +151,7 @@
 					<el-input v-model="form.acountName" placeholder="如：张三丰"></el-input>
 				</el-form-item>
                 <el-form-item label="访客手机号码：" prop="phoneNumber">
-					<el-input v-model="form.phoneNumber" placeholder="请输入访客手机号码"></el-input>
+					<el-input v-model="form.phoneNumber" maxlength="11" placeholder="请输入访客手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="被访单位：">
 					<el-select v-model="rentalCompany" placeholder="请选择被访单位">
@@ -167,7 +167,7 @@
 					<el-input v-model="form.interviewee" placeholder="请输入被访人"></el-input>
 				</el-form-item>
 				<el-form-item label="被访人手机号码：" prop="intervieweeNumber">
-					<el-input v-model="form.intervieweeNumber" placeholder="请输入被访人手机号码"></el-input>
+					<el-input v-model="form.intervieweeNumber" maxlength="11" placeholder="请输入被访人手机号码"></el-input>
 				</el-form-item>
 				<el-form-item label="到访有效时间：">
 					<el-date-picker
@@ -318,7 +318,7 @@
             async onSubmit() {
                 const params = {
                     action: 'accountManagement.addFKEntity',
-                    aid: this.form.aid,
+                    aid: this.Aid,
                     acountName: this.form.acountName,
                     phoneNumber: this.form.phoneNumber,
                     rentalCompany: this.rentalCompany,
@@ -330,6 +330,7 @@
                 };
                 const data = await axios.post('/api/dispatcher.do', params);
                 if(data.success) {
+                    this.$message.success(data.data)
                     this.$router.push('/visitor')
                 }
 
