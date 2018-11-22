@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import router, {routesMap} from './router'
-import getResponses from '@/api'
-import Axios from 'axios';
 
 Vue.use(Vuex)
 
@@ -116,7 +114,7 @@ export default new Vuex.Store({
 		// 登录后将要去的 path
 		path: '',
 		permissions: [],
-		detailInfo: {},
+		detailInfo: {}
 	},
 	mutations: {
 		setToken(state, value) {
@@ -133,7 +131,6 @@ export default new Vuex.Store({
 				return
 			}
 
-			//log(value)
 			state.permissions = value
 
 			state.routes = routesMap.filter((item) => value.includes(item.type))
