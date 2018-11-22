@@ -220,7 +220,7 @@
                     return
                 }
 
-                location.href = '/postManagement'
+                location.href = '/post'
             },
             addAuth() {
                 this.authList.push({
@@ -234,7 +234,7 @@
                 this.authList.splice(index, 1)
             },
             back() {
-                this.$router.push('/postManagement')
+                this.$router.push('/post')
             }
         }
     }
