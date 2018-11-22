@@ -107,7 +107,7 @@ router.beforeEach((to, from, next) => {
 			next()
 		}
 	} else {
-		if (to.path === '/forgot-password' || to.path === '/modifyPsw') {
+		if (to.path === '/forgot-password') {
 			next()
 		} else {
 			next('/login')
