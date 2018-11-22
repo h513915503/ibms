@@ -148,10 +148,10 @@
                     return
                 }
 
-                location.href = '/propertyManagement'
+                location.href = '/property'
             },
             back() {
-                this.$router.push('/propertyManagement')
+                this.$router.push('/property')
             }
         }
     }
