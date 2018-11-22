@@ -110,7 +110,7 @@
 				</div>
 
 				<el-table class="table" :data="carList" @click.native="handleTable" @sort-change="sortChange" @filter-change="filterHandler">
-					<el-table-column type="selection"></el-table-column>
+					<!-- <el-table-column type="selection"></el-table-column> -->
 					<el-table-column prop="id" label="序号"></el-table-column>
 					<el-table-column prop="acountName" label="业主姓名"></el-table-column>
 					<el-table-column prop="phoneNumber" label="业主手机号码"></el-table-column>
@@ -158,7 +158,7 @@
 					<el-pagination background layout="prev, pager, next" :total="totalPage" @current-change="pageChange"></el-pagination>
 				</div>
 
-				<popover name="close" title="该公司确定退租了吗？" content="公司退租后，该公司在园区的信息将被删除。" :style="{top: 185 + (currentColumnIndex * 57) + 'px'}" :popoverModalStatus.sync="popoverModalStatus">
+				<popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工将不能通过人脸识别进入园区。" :style="{top: 185 + (currentColumnIndex * 57) + 'px'}" :popoverModalStatus.sync="popoverModalStatus">
 					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 					<el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
 				</popover>
