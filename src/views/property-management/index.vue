@@ -89,7 +89,13 @@
                                 </ul>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="status" label="状态"></el-table-column>
+
+                        <el-table-column prop="status" label="状态">
+                            <template slot-scope="scope">
+                                {{scope.row.status}}
+                            </template>
+                        </el-table-column>
+
                         <el-table-column label="入职时间" prop="hireDate" sortable></el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
@@ -146,13 +152,12 @@
 
         methods: {
             go() {
-                this.$router.push('/propertyManagement/add')
+                this.$router.push('/property/add')
             },
             async getList() {
                 const params = {
                     action: 'administrator.getPmoInfo',
-                    pageNo: this.page,
-                    pageSize: 10
+                    pageNo: this.page
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params)
@@ -171,7 +176,7 @@
             goEdit(item) {
                 this.$tempData = item
 
-                this.$router.push(`/propertyManagement/edit/${item.accountId}`)
+                this.$router.push(`/property/edit/${item.accountId}`)
             },
             forLeaveOffice(e, item, index) {
                 this.$item = item
@@ -203,8 +208,6 @@
 
                     return
                 }
-
-                this.list.splice(this.$index, 1)
 
                 // 释放内存
                 this.$index = null
