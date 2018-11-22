@@ -39,7 +39,9 @@
 			<el-breadcrumb-item>新增岗位</el-breadcrumb-item>
 		</el-breadcrumb>
 
-        <div class="container">
+        <loading v-if="loading"></loading>
+
+        <div class="container" v-else>
             <el-form ref="form" :model="form" label-width="210px" label-position="right">
 				<el-form-item label="岗位编号：">
 					<span v-text="postNumber"></span>
@@ -47,6 +49,7 @@
 				<el-form-item label="岗位名称：">
 					<el-input v-model="form.postName" placeholder="如：前台"></el-input>
 				</el-form-item>
+
                 <el-form-item label="权限：">
                     <ul class="power-list">
                         <li v-for="(item, index) of authList">
@@ -62,16 +65,9 @@
                             <span class="delete-icon" @click="deleteAuth(index)">一</span>
                         </li>
                     </ul>
-
                     <el-button type="text" @click="addAuth">添加新权限</el-button>
-					<!-- <template>
-                        <el-select v-model="value" placeholder="一级导航"></el-select> 一
-                        <el-select v-model="value" placeholder="二级导航"></el-select>
-                        <el-checkbox v-model="checked" style="margin-left: 40px">读</el-checkbox>
-                        <el-checkbox v-model="checked">写</el-checkbox><br />
-                        <el-button type="text">添加新权限</el-button>
-                    </template> -->
-				</el-form-item>
+			     </el-form-item>
+
 				<el-form-item>
 					<el-button type="primary" :disabled="isDisabled" @click="submit">确定</el-button>
 					<el-button @click="back">取消</el-button>
@@ -86,6 +82,8 @@
     export default {
         data() {
             return {
+                loading: false,
+
                 disabled: false,
 
                 postNumber: '',
@@ -93,14 +91,7 @@
                     postName: ''
                 },
 
-                authList: [
-                    {
-                        auth: '',
-                        subAuth: '',
-                        read: false,
-                        write: false
-                    }
-                ],
+                authList: [],
 
                 postListAuth: [],
                 postListSubAuth: []
@@ -125,14 +116,17 @@
         },
 
         created() {
-            this.getDetail()
-            this.getPostList()
+            this.loading = true
+
+            Promise.all([this.getDetail(), this.getPostList()]).then(() => {
+                this.loading = false
+            })
         },
 
         methods: {
             async getDetail() {
                 const params = {
-                    action: 'administrator.getPmoId',
+                    action: 'administrator.getPostInfoByPostId',
                     postId: this.$route.params.id
                 }
 
@@ -142,8 +136,17 @@
                     return
                 }
 
-                this.postNumber = data.data.postNumber
+                this.postNumber = data.data.postId
                 this.form.postName = data.data.postName
+
+                this.authList = data.data.postPermissionDescriptionArray.map((item) => {
+                    return {
+                        read: Boolean(item.isRead),
+                        write: Boolean(item.isWrite),
+                        auth: item.primaryNavigation,
+                        subAuth: item.secondaryNavigation
+                    }
+                })
             },
             async getPostList() {
                 const params = {
@@ -199,7 +202,7 @@
                 }
 
                 const params = {
-                    action: 'administrator.addPostInfo',
+                    action: 'administrator.updatePostPermission',
                     postId: this.postNumber,
                     postName: this.form.postName,
                     permissionInfo: JSON.stringify(this.authList.map((item) => {
@@ -222,7 +225,7 @@
                     return
                 }
 
-                location.href = '/postManagement'
+                location.href = '/post'
             },
             addAuth() {
                 this.authList.push({
@@ -236,7 +239,7 @@
                 this.authList.splice(index, 1)
             },
             back() {
-                this.$router.push('/postManagement')
+                this.$router.push('/post')
             }
         }
     }
