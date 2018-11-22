@@ -27,26 +27,22 @@
     <div id="modify-password-container">
 
         <div class="login-form">
-            <el-form
-                ref="loginForm"
-                :model="form"
-                :rules="rules"
-                label-width="140px" label-position="right">
+            <el-form :model="form" label-width="140px" label-position="right">
                 <el-form-item label="旧密码：" prop="oldpassword">
-                    <el-input v-model="form.username" placeholder="请输入旧密码">
+                    <el-input type="password" v-model="form.passwordOld" autofocus placeholder="请输入旧密码">
                     </el-input>
                 </el-form-item>
                 <el-form-item label="新密码：" prop="password">
-                    <el-input v-model="form.username" placeholder="请输入新密码">
+                    <el-input type="password" v-model="form.passwordNew" placeholder="请输入新密码">
                     </el-input>
                 </el-form-item>
                 <el-form-item label="确认新密码：" prop="password">
-                    <el-input v-model="form.username" placeholder="请输入新密码">
+                    <el-input type="password" v-model="form.passwordRepeat" placeholder="请再次输入新密码" @keyup.native.enter="updatePassword">
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-					<el-button type="info">确定</el-button>
-					<el-button>取消</el-button>
+					<el-button type="primary" :disabled="isDisabled" @click="updatePassword">确定</el-button>
+					<el-button @click="back">取消</el-button>
 				</el-form-item>
             </el-form>
         </div>
@@ -57,13 +53,54 @@
     export default {
         data() {
             return {
-                form: {
-                    oldpassword: '',
-                    password: ''
-                },
-                rules: {
+                disabled: false,
 
+                form: {
+                    passwordOld: '',
+                    passwordNew: '',
+                    passwordRepeat: ''
                 }
+            }
+        },
+
+        computed: {
+            isDisabled() {
+                if (this.disabled) {
+                    return true
+                }
+
+                if (this.form.passwordOld && this.form.passwordNew && this.form.passwordRepeat) {
+                    return false
+                }
+
+                return true
+            }
+        },
+
+        methods: {
+            back() {
+                this.$router.back()
+            },
+            async updatePassword() {
+                const params = {
+                    action: 'account.updatePassword',
+                    oldPwd: this.form.passwordOld,
+                    newPwd: this.form.passwordNew,
+                    newPwdT: this.form.passwordRepeat
+                }
+
+                this.disabled = true
+
+                const data = await axios.post('/api/dispatcher.do', params)
+
+                this.disabled = false
+
+                if (! data) {
+                    return
+                }
+
+                sessionStorage.removeItem('token')
+                location.href = '/login'
             }
         }
     }
