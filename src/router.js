@@ -244,6 +244,12 @@ export const routesMap = [
 		component: AddNewVisitor
 	},
 	{
+		type: '7-2',
+		path: '/visitor/editVisitor',
+		name: 'editVisitor',
+		component: EditVisitor
+	},
+	{
 		type: '7-3',
 		path: '/personnel',
 		name: 'personnel',
