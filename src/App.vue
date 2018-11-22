@@ -44,19 +44,19 @@
 	background-color: #004175;
 
 	& dt {
-		margin-bottom: 16px;
 		padding-left: 24px;
 		color: rgba(255, 255, 255, .45);
 		font-size: 20px;
-		line-height: 36px;
+		line-height: 48px;
 	}
 
 	& dt.cursor {
 		cursor: pointer;
 	}
 
+
+
 	& dd {
-		margin-bottom: 16px;
 		color: rgba(255, 255, 255, .85);
 		font-size: 16px;
 		cursor: pointer;
@@ -66,7 +66,7 @@
 		display: block;
 		padding-left: 48px;
 		color: inherit;
-		line-height: 36px;
+		line-height: 48px;
 	}
 
 	& a:hover, & a.actived, & dt.actived, & dt.cursor:hover {
@@ -124,7 +124,7 @@
 						<i class="el-icon-arrow-down el-icon--right"></i>
 					</span>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="/modifyPsw">修改密码</el-dropdown-item>
+						<el-dropdown-item command="/modify-password">修改密码</el-dropdown-item>
 						<el-dropdown-item command="/logout">退出</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -190,7 +190,7 @@
 		},
 		methods: {
 			go(type) {
-				const types = ['/', '/propertyManagement', '/postManagement', '/energy-consumption', '/environment']
+				const types = ['/', '/property', '/post', '/energy-consumption', '/environment']
 
 				this.$router.push(types[type])
 			},
