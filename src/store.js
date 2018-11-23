@@ -114,11 +114,17 @@ export default new Vuex.Store({
 		// 登录后将要去的 path
 		path: '',
 		permissions: [],
-		detailInfo: {}
+		detailInfo: {},
+
+		// 楼层号列表
+		floorNumberList: []
 	},
 	mutations: {
 		setToken(state, value) {
 			state.token = value
+		},
+		setFloorNumberList(state, value) {
+			state.floorNumberList = value
 		},
 		setAccountName(state, value) {
 			state.accountName = value
