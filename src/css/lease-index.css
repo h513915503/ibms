@@ -296,6 +296,7 @@
 	}
 
 	& .time {
+		margin-left: 20px;
 		color: #8C8C8C;
 		font-size: 14px;
 	}
@@ -447,10 +448,10 @@
 }
 
 .popover-wrapper {
-	top: 70px;
-	right: 0px;
+	top: 140px;
+	right: 150px;
 }
 .copy-wrapper {
-	top: 80px;
-	right: 50px;
+	top: 40px;
+	right: 40px;
 }
