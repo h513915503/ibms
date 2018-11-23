@@ -36,7 +36,7 @@
     <div id="add-post">
         <el-breadcrumb separator="/">
 			<el-breadcrumb-item :to="{path: '/postManagement'}">岗位管理</el-breadcrumb-item>
-			<el-breadcrumb-item>新增岗位</el-breadcrumb-item>
+			<el-breadcrumb-item>编辑岗位</el-breadcrumb-item>
 		</el-breadcrumb>
 
         <loading v-if="loading"></loading>
@@ -53,11 +53,11 @@
                 <el-form-item label="权限：">
                     <ul class="power-list">
                         <li v-for="(item, index) of authList">
-                            <el-select v-model="item.auth" @change="change">
+                            <el-select v-model="item.auth" @change="change" @focus="focus(index)">
                                 <el-option :label="item" :value="item" v-for="item of postListAuth"></el-option>
                             </el-select> 一
                             <el-select v-model="item.subAuth">
-                                <el-option :label="item" :value="item" v-for="item of postListSubAuth"></el-option>
+                                <el-option :label="item" :value="item" v-for="item of item.postListSubAuth"></el-option>
                             </el-select>
 
                             <el-checkbox v-model="item.read" style="margin-left: 48px">读</el-checkbox>
@@ -94,7 +94,7 @@
                 authList: [],
 
                 postListAuth: [],
-                postListSubAuth: []
+                //postListSubAuth: []
             }
         },
 
@@ -144,7 +144,8 @@
                         read: Boolean(item.isRead),
                         write: Boolean(item.isWrite),
                         auth: item.primaryNavigation,
-                        subAuth: item.secondaryNavigation
+                        subAuth: item.secondaryNavigation,
+                        postListSubAuth: []
                     }
                 })
             },
@@ -182,9 +183,31 @@
                         this.$postListSubAuth[index].children.push(item.secondaryNavigationZh)
                     }
                 })
+
+                // 更新子菜单
+                this.authList.forEach((item) => {
+                    this.$postListSubAuth.forEach((current) => {
+                        if (item.auth === current.parent) {
+                            item.postListSubAuth = current.children
+                        }
+                    })
+                })
+            },
+            focus(index) {
+                this.$index = index
             },
             change(value) {
                 this.postListSubAuth = this.$postListSubAuth.find((item) => item.parent === value).children
+
+                // 更新子菜单
+                const item = this.authList[this.$index]
+
+                this.$postListSubAuth.forEach((current) => {
+                    if (value === current.parent) {
+                        item.subAuth = current.children[0]
+                        item.postListSubAuth = current.children
+                    }
+                })
             },
             async submit() {
                 const isAuth = this.authList.some((item) => {
