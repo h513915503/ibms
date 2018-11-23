@@ -63,11 +63,6 @@
 	    text-align: right;
     }
 </style>
-<style>
-    /* .el-table__column-filter-trigger .el-icon-arrow-down {
-        display: none !important;
-    } */
-</style>
 
 <template>
     <div id="visitor-wrapper">
@@ -115,9 +110,6 @@
                             column-key="activeStatus"
                             :filters="[{text: '正常', value: '6'}, {text: '异常', value: '5'}, {text: '未进园区', value: '7'}, {text: '已离开', value: '4'}]"
                         >
-                            <!-- <template slot="header" slot-scope="scope">
-                                <span>状态<i class="el-icon-arrow-down el-icon--right"></i></span>
-                            </template> -->
                             <template slot-scope="scope">
                                 <span class="status error" v-if="scope.row.activeStatus === 5">异常</span>
                                 <span class="status normal" v-else-if="scope.row.activeStatus === 6">正常</span>
