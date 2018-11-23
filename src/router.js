@@ -24,6 +24,7 @@ import EditPost from './views/post-management/edit.vue'
 
 import Lease from './views/lease/index.vue'
 import LeaseAdd from './views/lease/add.vue'
+import LeaseEdit from './views/lease/edit.vue'
 import LeaseDetail from './views/lease/detail.vue'
 
 import ParkingLot from './views/parking-lot/index.vue'
@@ -186,6 +187,12 @@ export const routesMap = [
 		path: '/lease/add',
 		name: 'lease-add',
 		component: LeaseAdd
+	},
+	{
+		type: '6-1',
+		path: '/lease/edit/:id',
+		name: 'lease-edit',
+		component: LeaseEdit
 	},
 	{
 		type: '6-1',
