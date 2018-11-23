@@ -2,6 +2,7 @@
 .copy-wrapper {
 	padding: 24px;
 	position: absolute;
+	z-index: 10;
 	font-size: 16px;
 	border-radius: 4px;
 	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
@@ -32,9 +33,9 @@ h4 {
 			<h4 v-text="title"></h4>
 
 			<div class="content">
-				<el-input-number v-model="start" :min="1"></el-input-number>
+				<el-input-number v-model="copyStart" :min="1"></el-input-number>
 				~
-				<el-input-number v-model="end" :min="1"></el-input-number>
+				<el-input-number v-model="copyEnd" :min="1"></el-input-number>
 				层
 			</div>
 
@@ -48,14 +49,7 @@ h4 {
 
 <script>
 	export default {
-		props: ['title'],
-
-		data() {
-			return {
-				start: 1,
-				end: 2
-			}
-		},
+		props: ['title', 'copyStart', 'copyEnd'],
 
 		mounted() {
 			document.addEventListener('click', (e) => {
