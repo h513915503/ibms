@@ -18,7 +18,7 @@
     <div id="add-property">
         <el-breadcrumb separator="/">
             <el-breadcrumb-item :to="{path: '/propertyManagement'}">物业人员管理</el-breadcrumb-item>
-            <el-breadcrumb-item>新增物业人员</el-breadcrumb-item>
+            <el-breadcrumb-item>编辑物业人员</el-breadcrumb-item>
         </el-breadcrumb>
 
         <div class="container">
@@ -102,6 +102,7 @@
                 this.postNumber = data.data.accountId
                 this.form.name = data.data.accountName
                 this.form.phone = data.data.phoneNumber
+                this.checkList = data.data.postNameArray
             },
             async getPostList() {
                 const params = {
@@ -118,7 +119,7 @@
             },
             async submit() {
                 const params = {
-                    action: 'administrator.addPmoInfo',
+                    action: 'administrator.updatePmoInfo',
                     pmoId: this.postNumber,
                     name: this.form.name,
                     phoneNumber: this.form.phone,
