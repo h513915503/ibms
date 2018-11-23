@@ -52,30 +52,32 @@ strong {
 			<el-breadcrumb-item>入驻单位详情</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div class="container">
+		<loading v-if="loading"></loading>
+		<div class="container" v-else>
 			<div class="btn-wrapper">
 				<el-button @click="back">返回</el-button>
-				<el-button class="btn-edit" @click="index = 1">编辑</el-button>
-				<el-button slot="reference" class="btn-throw-lease" @click="popoverModalStatus = true">退租</el-button>
+				<el-button class="btn-edit" @click="goEdit">编辑</el-button>
+				<el-button slot="reference" :disabled="disabled" class="btn-throw-lease" @click="popoverModalStatus = true">退租</el-button>
 			</div>
 
-			<popover name="close" title="该公司确定退租了吗？" content="公司退租后，该公司在园区的信息将被删除。" :popoverModalStatus.sync="popoverModalStatus">
+			<popover name="close" title="该公司确定退租了吗？" content="公司退租后，该公司在园区的信息将被删除。" :popoverModalStatus.sync="popoverModalStatus" v-if="popoverModalStatus">
 				<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 				<el-button type="primary" slot="cancel" class="ok" @click="throwLease">确定</el-button>
 			</popover>
 
-			<template v-if="loading">
-				<loading></loading>
-			</template>
-			<template v-else>
-				<div class="detail-content" v-if="index === 0">
+			<template>
+				<div class="detail-content">
+					<div class="item">
+						<span>租赁楼层：</span>
+						<strong v-text="floorNumberString"></strong>
+					</div>
+					<div class="item">
+						<span>租赁总面积：</span>
+						<strong>{{totalArea}}㎡</strong>
+					</div>
 					<div class="item">
 						<span>租赁单位：</span>
 						<strong v-text="leaseCompany"></strong>
-					</div>
-					<div class="item">
-						<span>租赁房间：</span>
-						<strong>{{roomNumberStart}} - {{roomNumberEnd}}</strong>
 					</div>
 					<div class="item">
 						<span>租赁起止日期：</span>
@@ -98,42 +100,31 @@ strong {
 						<strong v-text="hrPhone"></strong>
 					</div>
 				</div>
-
-				<lease-add :type="1" @cancel="cancel" @complete="complete" v-else></lease-add>
 			</template>
 		</div>
 	</div>
 </template>
 
 <script>
-	import getResponses from '@/api'
-	import leaseAdd from '@/components/lease/Add'
-
 	export default {
 		data() {
 			return {
 				loading: false,
-
-				index: 0,
-
+				disabled: false,
 				visible: false,
 
 				popoverModalStatus: false,
 
-				leaseCompany: '韩国鍟化贸易有限公司绍兴代表处',
-				roomNumberStart: '101',
-				roomNumberEnd: '120',
-				dateStart: '2018-12-08',
-				dateEnd: '2018-12-30',
-				propertyPerson: '打打阿达',
-				propertyPersonPhone: 18600009999,
-				hr: '啊时代发生',
-				hrPhone: 18633336666
+				leaseCompany: '',
+				totalArea: '',
+				floorNumberString: '',
+				dateStart: '',
+				dateEnd: '',
+				propertyPerson: '',
+				propertyPersonPhone: '',
+				hr: '',
+				hrPhone: ''
 			}
-		},
-
-		components: {
-			leaseAdd
 		},
 
 		created() {
@@ -143,12 +134,13 @@ strong {
 		methods: {
 			async getDetail() {
 				const params = {
-					id: this.$route.params.id
+					action: 'OfficeRental.queryRentalInfo',
+					rentalId: this.$route.params.id
 				}
 
 				this.loading = true
 
-				const data = await getResponses('/api/getDetail', params)
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				this.loading = false
 
@@ -156,19 +148,54 @@ strong {
 					return
 				}
 
-				//this.detail = data.data
-			},
-			cancel() {
-				this.index = 0
-			},
-			complete() {
+				const {rentalCompany, propertyName, propertyPhone, personnelName, personnelPhone, rentalFloorInfos} = data.data
 
+				//this.detail = data.data
+				this.leaseCompany = rentalCompany
+				this.propertyPerson = propertyName
+				this.propertyPersonPhone = propertyPhone
+				this.hr = personnelName
+				this.hrPhone = personnelPhone
+
+				const dateStart = new Date(rentalFloorInfos[0].startDate)
+				this.dateStart = `${dateStart.getFullYear()}/${dateStart.getMonth() + 1}/${dateStart.getDate()}`.replace(/\b(\w)\b/, '0$1')
+
+				const dateEnd = new Date(rentalFloorInfos[0].endDate)
+				this.dateEnd = `${dateEnd.getFullYear()}/${dateEnd.getMonth() + 1}/${dateEnd.getDate()}`.replace(/\b(\w)\b/, '0$1')
+
+				this.totalArea = rentalFloorInfos.reduce((prev, next) => {
+					return prev + next.rentedSize
+				}, 0)
+
+				this.floorNumberString = rentalFloorInfos.map((item) => {
+					return `${item.floorNumber}层-${item.houseNumber}-${item.rentedSize}㎡`
+				}).join('、')
 			},
 			back() {
-				this.$router.replace('/lease')
+				this.$router.back()
 			},
-			throwLease() {
+			async throwLease() {
+				const params = {
+					action: 'OfficeRental.deleteRentalInfo',
+					rentalId: this.$route.params.id
+				}
+
+				this.disabled = true
 				this.popoverModalStatus = false
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				this.disabled = false
+
+				if (! data) {
+					return
+				}
+
+				this.$message.success('退租成功')
+				this.$router.back()
+			},
+			goEdit() {
+				this.$router.push(`/lease/edit/${this.$route.params.id}`)
 			}
 		}
 	}
