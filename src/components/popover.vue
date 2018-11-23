@@ -58,7 +58,7 @@ p {
 
 <template>
 	<transition name="scale">
-		<div class="popover-wrapper" v-if="popoverModalStatus" ref="popover">
+		<div class="popover-wrapper" ref="popover">
 			<h4 class="close" v-if="name === 'close'">
 				<svg>
 					<use xlink:href="#close"></use>
@@ -90,10 +90,12 @@ p {
 				if (! this.$refs.popover) {
 					return
 				}
+
 				if (this.$refs.popover.contains(e.target)) {
 					return
 				}
 
+				this.$emit('hide')
 				this.$emit('update:popoverModalStatus', false)
 			}, true)
 		}
