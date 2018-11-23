@@ -48,7 +48,22 @@ axios.interceptors.request.use((config) => {
 let isShowErrors = false
 
 axios.interceptors.response.use((res) => {
-	const {success, errorMessage} = res.data
+	let timer
+	const {success, errorMessage, statusCode} = res.data
+
+	// Token 过期
+	if (statusCode === 401 && ! timer) {
+		Vue.prototype.$message.error('登录已过期, 2s 后跳转登录页面')
+
+		timer = setTimeout(() => {
+			sessionStorage.removeItem('token')
+			location.href = '/login'
+		}, 2000)
+
+		res.data = null
+
+		return res.data
+	}
 
 	if (! success) {
 		Vue.prototype.$message.error(errorMessage)
@@ -61,10 +76,7 @@ axios.interceptors.response.use((res) => {
 	if (! isShowErrors) {
 		isShowErrors = true
 
-		Vue.prototype.$message.error({
-			title: '提示',
-			message: '服务君挂了，稍后重试'
-		})
+		Vue.prototype.$message.error('服务君挂了，稍后重试')
 	}
 
 	return null
