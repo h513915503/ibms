@@ -125,8 +125,7 @@ ul {
 			<el-button class="btn-export">导出</el-button>
 		</header>
 
-		<loading v-if="loading"></loading>
-		<div class="content" v-else>
+		<div class="content">
 			<div class="left">
 				<div class="title">
 					入驻单位
@@ -171,32 +170,29 @@ ul {
 	import chart from '@/components/chart'
 
 	export default {
-		props: ['currentIndex'],
+		props: ['chartData'],
 
 		data() {
 			return {
-				loading: false,
-				loaded: false,
-
-				companyNum: 10,
-				totalArea: 10000,
-				ratio: 88,
+				companyNum: 0,
+				totalArea: 0,
+				ratio: 0,
 
 				list: [
 					{
 						text: '已出租\u3000',
-						area: 6500,
-						ratio: 65
+						area: 0,
+						ratio: 0
 					},
 					{
 						text: '即将到期',
-						area: 2300,
-						ratio: 23
+						area: 0,
+						ratio: 0
 					},
 					{
 						text: '未出租\u3000',
-						area: 1200,
-						ratio: 12
+						area: 0,
+						ratio: 0
 					}
 				],
 
@@ -242,7 +238,7 @@ ul {
 						top: 10,
 						right: 0,
 						bottom: 20,
-						left: 35,
+						left: 45,
 					},
 					xAxis: [
 						{
@@ -255,7 +251,7 @@ ul {
 									color: '#BFBFBF'
 								}
 							},
-							data: [1, 2, 3, 4 ,5 ,6 ,7 ,8 ,9 ,10, 11, 12, 13,14,15,16,17].map((item) => `${item}层`)
+							data: [1, 2, 3, 4 ,5 ,6 ,7 ,8 ,9 ,10, 11, 12, 13, 14, 15, 16, 17].map((item) => `${item}层`)
 						}
 					],
 					yAxis: {
@@ -285,56 +281,61 @@ ul {
 			chart
 		},
 
-		watch: {
-			currentIndex(value) {
-				if (value === 1 && ! this.loaded) {
-					this.getData()
-				}
-			}
+		created() {
+			this.getChartData()
 		},
 
 		methods: {
-			async getData() {
-				this.loading = true
+			getChartData() {
+				// 租赁数据分析
+				const {usedSize, usableSize, willExpireSize, enterCompanyCount, officeRentalDetailReports} = this.chartData
 
-				setTimeout(() => {
-					this.loading = false
-					this.loaded = true
+				this.companyNum = enterCompanyCount
+				this.totalArea = usedSize + usableSize + willExpireSize
+				this.ratio = ~~ (((usedSize + willExpireSize) / this.totalArea) * 100);
 
-					this.pieChartData = [
-						{
-							value: 6500,
-							name:'65%'
-						},
-						{
-							value: 2300,
-							name:'23%'
-						},
-						{
-							value: 1200,
-							name:'12%'
-						}
-					]
+				[usedSize, willExpireSize, usableSize].forEach((value, index) => {
+					this.list[index].area = value
+					this.list[index].ratio = ~~ ((value / this.totalArea) * 100)
+				})
 
-					this.barChartData = [
-						{
-							name: '已出租',
-							type: 'bar',
-							barGap: 0,
-							data: [320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
-						},
-						{
-							name: '即将到期',
-							type: 'bar',
-							data: [220, 182, 191, 234, 290, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
-						},
-						{
-							name: '未出租',
-							type: 'bar',
-							data: [150, 232, 201, 154, 190, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
-						}
-					]
-				}, 2000)
+				// 饼图
+				this.pieChartData = this.list.map((item) => {
+					return {
+						value: item.area,
+						name: `${item.ratio}%`
+					}
+				})
+
+				// 柱状图
+				const floors = Array.from(Array(17), (v, index) => index + 1)
+
+				this.barChartData = [
+					{
+						name: '已出租',
+						type: 'bar',
+						barGap: 0,
+						data: floors
+					},
+					{
+						name: '即将到期',
+						type: 'bar',
+						data: floors.slice()
+					},
+					{
+						name: '未出租',
+						type: 'bar',
+						data: floors.slice()
+					}
+				]
+
+				officeRentalDetailReports.forEach((item) => {
+					const index = this.barChartData[0].data.findIndex((v) => v === + item.floorNumber)
+
+					this.barChartData[0].data[index] = item.usedSize
+					this.barChartData[1].data[index] = item.willExpireSize
+					this.barChartData[2].data[index] = item.usableSize
+				})
 			}
 		}
 	}
