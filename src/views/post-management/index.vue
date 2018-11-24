@@ -106,7 +106,7 @@
             </div>
         </template>
 
-        <popover name="close" title="确定删除该岗位么？" content="仅删除该岗位，该岗位的员工不会被删除。" :popoverModalStatus.sync="popoverModalStatus" ref="popover">
+        <popover name="close" title="确定删除该岗位么？" content="仅删除该岗位，该岗位的员工不会被删除。" :popoverModalStatus.sync="popoverModalStatus" ref="popover" v-if="popoverModalStatus">
             <el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
             <el-button type="primary" slot="cancel" class="ok" @click="del">确定</el-button>
         </popover>
