@@ -118,7 +118,7 @@
             </div>
         </template>
 
-        <popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工的账号将被注销。" :popoverModalStatus.sync="popoverModalStatus" ref="popover">
+        <popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工的账号将被注销。" :popoverModalStatus.sync="popoverModalStatus" ref="popover" v-if="popoverModalStatus">
             <el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
             <el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
         </popover>
