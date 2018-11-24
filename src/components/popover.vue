@@ -7,7 +7,7 @@
 	border-radius: 4px;
 	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
 	background-color: #FFF;
-	transition: all .15s;
+	transition: opacity .15s, transform .15s;
 	transform-origin: 100% 0;
 }
 .scale-enter, .scale-leave-active {
