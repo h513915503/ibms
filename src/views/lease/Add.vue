@@ -245,8 +245,8 @@
 				}
 			},
 			change(e, item) {
-				item.leaseArea = e.target.value.replace(/\D/g, '')
-				e.target.value = item.leaseArea
+				item.area = e.target.value.replace(/\D/g, '')
+				e.target.value = item.area
 			},
 			addFloor() {
 				this.list.push({
