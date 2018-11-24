@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="table-content">
-                    <el-table :data="list">
+                    <el-table :data="list" @sort-change="sortChange" @filter-change="filterHandler">
                         <el-table-column prop="accountId" label="物业人员编号"></el-table-column>
                         <el-table-column prop="accountName" label="姓名"></el-table-column>
                         <el-table-column prop="phoneNumber" label="手机号码"></el-table-column>
@@ -89,14 +89,20 @@
                                 </ul>
                             </template>
                         </el-table-column>
-
-                        <el-table-column prop="status" label="状态">
+                        <el-table-column
+                            prop="status"
+                            label="状态"
+                            :filter-multiple="false"
+                            column-key="status"
+                            :filters="[{text: '在职', value: '0'}, {text: '离职', value: '1'}]"
+                        ></el-table-column>
+                        <el-table-column label="入职时间" prop="hireDate" sortable='custom'></el-table-column>
+                        <el-table-column label="离职时间" prop="termDate" sortable='custom'>
                             <template slot-scope="scope">
-                                {{scope.row.status}}
+                                <span v-if="scope.row.termDate">{{scope.row.termDate}}</span>
+                                <span v-else>暂未离职</span>
                             </template>
                         </el-table-column>
-
-                        <el-table-column label="入职时间" prop="hireDate" sortable></el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <el-button class="opt-btn" type="text" size="small" @click="goEdit(scope.row)">编辑</el-button>
@@ -131,7 +137,11 @@
                 pageTotal: 1,
                 list: [],
 
-                popoverModalStatus: false
+                popoverModalStatus: false,
+
+                status: '',
+                rank: '',
+                order: ''
             }
         },
 
@@ -154,10 +164,23 @@
             go() {
                 this.$router.push('/property/add')
             },
+            filterHandler(filter) {
+                this.status = filter.status[0]
+                this.getList()
+            },
+            sortChange(colum) {
+                this.rank = colum.prop;
+                this.order = colum.order === 'ascending' ? '0' : colum.order === 'descending' ? '1' : '';
+                this.getList()
+            },
             async getList() {
                 const params = {
                     action: 'administrator.getPmoInfo',
-                    pageNo: this.page
+                    pageNo: this.page,
+                    pageSize: 10,
+                    rank: this.rank ? this.rank : undefined,
+                    order: this.order ? this.order : undefined,
+                    status: this.status ? this.status : undefined
                 }
 
                 const data = await axios.post('/api/dispatcher.do', params)

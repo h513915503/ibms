@@ -40,7 +40,7 @@
 <template>
 	<div id="parking-lot-wrapper">
 		<header class="header">
-			<tab-bar :list="tabs"></tab-bar>
+			<tab-bar :list="tabs"></tab-bar><br />
 
 			<div class="tab-wrapper">
 				<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
@@ -50,6 +50,7 @@
 		<parking-space v-show="currentIndex === 0"></parking-space>
 		<car-list v-show="currentIndex === 1"></car-list>
 		<car-record v-show="currentIndex === 2"></car-record>
+		<car-chart v-show="currentIndex === 3"></car-chart>
 	</div>
 </template>
 
@@ -58,12 +59,13 @@
 	import parkingSpace from '@/components/parking-lot/parking-space.vue'
 	import carList from '@/components/parking-lot/car-list.vue'
 	import carRecord from '@/components/parking-lot/car-record.vue'
+	import carChart from '@/components/parking-lot/chart.vue'
 
 	export default {
 		data() {
 			return {
 				currentIndex: 0,
-				tab: ['车位维护', '包月车辆', '车辆出入记录'],
+				tab: ['车位维护', '包月车辆', '车辆出入记录', '报表分析'],
 
 				tabs: [
 					{
@@ -93,7 +95,8 @@
 			tabBar,
 			parkingSpace,
 			carList,
-			carRecord
+			carRecord,
+			carChart
 		},
 
 		created() {

@@ -76,3 +76,9 @@ input {
 	padding: 0;
 	line-height: 32px;
 }
+
+.el-table__column-filter-trigger .el-icon-arrow-down {
+	font-size: 20px;
+	position: absolute;
+	top: 3px;
+}

@@ -191,7 +191,7 @@
         },
         methods: {
             filterHandler(filter) {
-                console.log(filter.activeStatus[0]);
+                // console.log(filter.activeStatus[0]);
                 this.activeStatus = filter.activeStatus[0]
                 this.getTableData()
             },
@@ -211,6 +211,7 @@
                 this.getTableData();
             },
             toEditPage(scope) {
+                // console.log(scope)
                 this.$router.push(`/visitor/editVisitor#${scope.row.id}`)
             },
             async getTopData() {
