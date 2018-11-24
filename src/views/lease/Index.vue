@@ -98,21 +98,19 @@
 									</el-popover>
 								</div>
 
-								<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" v-if="popoverModalStatus && currentFloorNumber === item.floorNumber" @hide="popoverModalStatus = false">
+								<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" v-if="popoverModalStatus && currentFloorNumber === item.floorNumber" @hide="popoverModalStatus = false" ref="popover">
 									<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 									<el-button type="primary" slot="cancel" class="ok" @click="deleteFloor(index)">确定</el-button>
 								</popover>
 
-								<copy-floor title="复制楼层到" :copy-start="copyStart" :copy-end="copyEnd" v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false">
-									<el-button slot="ok" @click="copyModalStatus = false">取消</el-button>
-									<el-button type="primary" slot="cancel" class="ok" @click="copyFloor(index)">确定</el-button>
+								<copy-floor title="复制楼层到" :copy-start="copyStart" :copy-end="copyEnd" :index="index" v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false" @complete="copyFloor">
 								</copy-floor>
 							</div>
 						</li>
 					</ul>
 				</template>
 
-				<chart :currentIndex="stage" v-show="stage === 1"></chart>
+				<chart :chart-data="chartData" v-else></chart>
 			</div>
 		</template>
 	</div>
@@ -160,6 +158,8 @@
 					}
 				],
 
+				chartData: {},
+
 				currentFloorNumber: 0,
 				floorList: [
 					{
@@ -196,16 +196,38 @@
 		created() {
 			this.save(this.floorList[0])
 
-			this.getAllRentalInfo()
 			this.loading = true
 
-			this.getList().then(() => {
+			Promise.all([this.getList(), this.getChartData()]).then(() => {
 				this.loading = false
 				this.loaded = true
 			})
 		},
 
 		methods: {
+			async getChartData() {
+				const params = {
+					action: 'OfficeRental.officeRentalReportInfo'
+				}
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.chartData = {... data.data}
+
+				const {usedSize, usableSize, willExpireSize, enterCompanyCount, officeRentalDetailReports} = data.data
+
+				const totalArea = usedSize + usableSize + willExpireSize
+				const ratio = ~~ (((usedSize + willExpireSize) / totalArea) * 100)
+
+				this.tabs[0].number = totalArea
+				this.tabs[1].number = usableSize
+				this.tabs[2].number = enterCompanyCount
+				this.tabs[3].number = `${ratio}%`
+			},
 			async getList() {
 				const params = {
 					action: 'OfficeRental.queryAllRentalInfo'
@@ -293,7 +315,7 @@
 				}
 
 				data.data.idList.forEach((item, index) => {
-					this.$floors[index].floorId
+					this.$floors[index].floorId = item
 				})
 
 				this.$floors = null
@@ -334,18 +356,24 @@
 				this.copyStart = this.floorList.slice(-1)[0].floorNumber + 1
 				this.copyEnd = this.copyStart
 			},
-			copyFloor(index) {
+			copyFloor(value) {
+				if (! value) {
+					return
+				}
+
+				let {start, end, index} = value
+
 				this.$floors = []
 				this.copyModalStatus = false
 
-				let num = this.copyEnd - this.copyStart + 1
+				let num = end - start + 1
 				const totalArea = this.floorList[index].totalArea
 
 				while (num--) {
 					this.$floors.push({
 						isEdit: false,
 						isFloorNumberEdit: true,
-						floorNumber: this.copyStart ++,
+						floorNumber: start ++,
 						totalArea,
 						floorId: -1,
 						companyList: []
@@ -365,6 +393,16 @@
 				this.popoverModalStatus = true
 				this.$floorId = item.floorId
 				this.$index = index
+
+				// 更新组件 position
+				this.$nextTick(() => {
+					const popover = this.$refs.popover[0].$el
+
+					if (popover.getBoundingClientRect().bottom > innerHeight) {
+						popover.style.transformOrigin = '100% 100%'
+						popover.style.top = '-140px'
+					}
+				})
 			},
 			async deleteFloor(index) {
 				const params = {
