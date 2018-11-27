@@ -29,6 +29,11 @@ import tabBar from '@/components/tab-bar'
 
 Vue.component('tabBar', tabBar)
 
+// 全局 toolbar
+import toolBar from '@/components/tool-bar'
+
+Vue.component('toolBar', toolBar)
+
 // 全局filters
 import * as filters from './utils/util.js'
 
