@@ -109,6 +109,7 @@
 					<el-button class="btn-search" type="primary" @click="search">查询</el-button>
 				</div>
 
+				<toolBar :allData="batchImportData" :status.sync="toolBarStatus" v-if="toolBarStatus === true"></toolBar>
 				<el-table class="table" :data="carList" @click.native="handleTable" @sort-change="sortChange" @filter-change="filterHandler">
 					<!-- <el-table-column type="selection"></el-table-column> -->
 					<el-table-column prop="id" label="序号"></el-table-column>
@@ -142,7 +143,7 @@
 					</el-table-column>
 					<el-table-column label="离职日期" width="120" sortable>
 						<template slot-scope="scope">
-							<span v-if="scope.row.departureDate">{{scope.row.departureDate | format}}</span>
+							<span v-if="scope.row.departureDateTamp">{{scope.row.departureDateTamp | format}}</span>
 							<span v-else>——</span>
 				    	</template>
 					</el-table-column>
@@ -158,7 +159,7 @@
 					<el-pagination background layout="prev, pager, next" :total="totalPage" @current-change="pageChange"></el-pagination>
 				</div>
 
-				<popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工将不能通过人脸识别进入园区。" :style="{top: 185 + (currentColumnIndex * 57) + 'px'}" :popoverModalStatus.sync="popoverModalStatus">
+				<popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工将不能通过人脸识别进入园区。" v-if="popoverModalStatus === true" :style="{top: 185 + (currentColumnIndex * 57) + 'px'}" :popoverModalStatus.sync="popoverModalStatus">
 					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 					<el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
 				</popover>
@@ -206,7 +207,10 @@
 				carList: [],
 				orderBy: '',
 				facialStatus: '',
-				jobStatus: ''
+				jobStatus: '',
+
+				batchImportData: {},
+				toolBarStatus: false
 			}
 		},
 
@@ -258,7 +262,10 @@
 					headers: {'Content-Type': 'multipart/form-data'}
 				})
 
-				if (! data) {
+				if (data) {
+					this.toolBarStatus = true
+					this.batchImportData = data.data
+				} else {
 					return
 				}
 			},
@@ -284,7 +291,7 @@
 				const params = {
 					type: '业主',
 					action: 'accountManagement.queryAccountManagementPage',
-					pageNum: this.page
+					pageNo: this.page
 				}
 
 				if (this.startDate) {

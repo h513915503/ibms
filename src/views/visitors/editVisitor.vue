@@ -165,7 +165,7 @@
                             v-for="item in company"
                             :key="item.id"
                             :label="item.rentalCompany"
-                            :value="item.rentalCompany">
+                            :value="item.id">
                         </el-option>
                     </el-select>
 				</el-form-item>
@@ -348,6 +348,8 @@
                     accessTimeEnd: this.date2,
                     facialInformation: this.formData.facialInformation
                 }
+
+                console.log(this.rentalCompany)
 
                 const data = await axios.post('/api/dispatcher.do', params);
                 if(data.success) {

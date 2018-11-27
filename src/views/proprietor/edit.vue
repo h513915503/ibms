@@ -108,7 +108,7 @@
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item>人员</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/proprietor'}">业主管理</el-breadcrumb-item>
-			<el-breadcrumb-item>新增业主</el-breadcrumb-item>
+			<el-breadcrumb-item>编辑业主</el-breadcrumb-item>
 		</el-breadcrumb>
 
 		<div class="container">
@@ -121,7 +121,7 @@
 			</el-form-item>
 			<el-form-item label="所在单位：">
 				<el-select v-model="form.company">
-					<el-option :label="item.rentalCompany" :value="item.rentalCompany" v-for="item of companyList" :key="item.id"></el-option>
+					<el-option :label="item.rentalCompany" :value="item.id" v-for="item of companyList" :key="item.id"></el-option>
 				</el-select>
 			</el-form-item>
 
@@ -178,9 +178,11 @@
 		data() {
 			return {
 				form: {
+					id: '',
 					name: '',
 					phone: '',
-					company: ''
+					company: '',
+					rentalCompanyId: ''
 				},
 
 				collectionStatus: 0,
@@ -231,11 +233,14 @@
 				e.target.value = this.form.phone
 			},
 			setData(data) {
-				const {acountName, rentalCompany, phoneNumber, facialInformation} = data
+				const {acountName, rentalCompany, phoneNumber, facialInformation, id, rentalCompanyId} = data
 
+				this.form.id = id
 				this.form.name = acountName
 				this.form.phone = phoneNumber
-				this.form.company = rentalCompany
+				this.form.company = rentalCompany,
+				this.form.rentalCompanyId = rentalCompanyId
+
 
 				this.faceURL = facialInformation
 				this.collectionStatus = 2
@@ -281,12 +286,12 @@
 				}
 
 				const params = {
-					action: 'accountManagement.addYZEntity',
+					action: 'accountManagement.editYZEntity',
 					acountName: this.form.name,
 					phoneNumber: this.form.phone,
-					rentalCompany: this.form.company
+					rentalCompany: this.form.company,
+					id: this.form.id
 				}
-
 				if (this.$faceURLRaw) {
 					params.facialInformation = this.$faceURLRaw
 				}
@@ -342,7 +347,7 @@
 				this.$refs.input.click()
 			},
 			cancel() {
-
+				this.$router.push('/proprietor')
 			}
 		}
 	}

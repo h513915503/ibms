@@ -121,7 +121,7 @@
 			</el-form-item>
 			<el-form-item label="所在单位：">
 				<el-select v-model="form.company">
-					<el-option :label="item.rentalCompany" :value="item.rentalCompany" v-for="item of companyList" :key="item.id"></el-option>
+					<el-option :label="item.rentalCompany" :value="item.id" v-for="item of companyList" :key="item.id"></el-option>
 				</el-select>
 			</el-form-item>
 
@@ -313,7 +313,7 @@
 				this.$refs.input.click()
 			},
 			cancel() {
-
+				this.$router.push('/proprietor')
 			}
 		}
 	}
