@@ -2,6 +2,7 @@
 .throw-lease-wrapper {
 	padding: 24px;
 	position: absolute;
+	z-index: 1;
 	font-size: 16px;
 	border-radius: 4px;
 	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
@@ -13,14 +14,14 @@
 	opacity: 0;
 	transform: scale(.7);
 }
-h4 {
+.title {
 	color: rgba(0, 0, 0, .85);
 	font-size: 16px;
 }
 .date-wrapper {
 	margin: 24px 0;
 }
-p {
+.tips {
 	margin-bottom: 8px;
 	text-align: right;
 }
@@ -33,24 +34,24 @@ p {
 	padding: 0;
 	line-height: 32px;
 }
-.el-button:last-child {
+/* .el-button:last-child {
 	color: #F5222D;
 	border-color: #D9D9D9;
 	background-color: rgba(0, 0, 0, .04);
-}
+} */
 </style>
 
 <template>
 	<transition name="scale">
-		<div class="throw-lease-wrapper" v-if="throwLeaseModalStatus" ref="throw-lease">
-			<h4>要续租几个月？</h4>
+		<div class="throw-lease-wrapper" ref="throw-lease">
+			<h4 class="title">要续租几个月？</h4>
 
-			<el-date-picker class="date-wrapper" v-model="time" type="daterange" range-separator="--" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+			<el-date-picker class="date-wrapper" v-model="date" value-format="yyyy-MM-dd" type="daterange" range-separator="--" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
 
-			<p>请确认车主已完成缴费后再点击“确定”</p>
+			<p class="tips">请确认车主已完成缴费后再点击“确定”</p>
 			<div class="btn-wrapper">
-				<el-button>取消</el-button>
-				<el-button type="primary">确定</el-button>
+				<el-button @click="complete(false)">取消</el-button>
+				<el-button type="primary" :disabled="disabled" @click="complete(true)">确定</el-button>
 			</div>
 		</div>
 	</transition>
@@ -58,11 +59,17 @@ p {
 
 <script>
 	export default {
-		props: ['name', 'title', 'content', 'throwLeaseModalStatus'],
+		props: ['id', 'name', 'title', 'content', 'throwLeaseModalStatus'],
 
 		data() {
 			return {
-				time: ''
+				date: ''
+			}
+		},
+
+		computed: {
+			disabled() {
+				return ! this.date
 			}
 		},
 
@@ -75,8 +82,42 @@ p {
 					return
 				}
 
+				// element 日期选择面板
+				const elPickerPanel = document.querySelector('.el-picker-panel')
+
+				if (elPickerPanel && elPickerPanel.contains(e.target)) {
+					return
+				}
+
 				this.$emit('update:throwLeaseModalStatus', false)
 			}, true)
+		},
+
+		methods: {
+			complete(value) {
+				if (value) {
+					this.$emit('complete', this.date[1])
+					this.containueLease()
+				}
+
+				this.$emit('update:throwLeaseModalStatus', false)
+			},
+			async containueLease() {
+				const params = {
+					action: 'ParkingRental.continueParkingRental',
+					id: this.id,
+					startDate: this.date[0],
+					endDate: this.date[1]
+				}
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.$message.success('续租成功')
+			}
 		}
 	}
 </script>
