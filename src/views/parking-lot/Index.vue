@@ -47,10 +47,9 @@
 			</div>
 		</header>
 
-		<parking-space v-show="currentIndex === 0"></parking-space>
-		<car-list v-show="currentIndex === 1"></car-list>
-		<car-record v-show="currentIndex === 2"></car-record>
-		<car-chart v-show="currentIndex === 3"></car-chart>
+		<parking-space v-if="currentIndex === 0"></parking-space>
+		<car-list v-if="currentIndex === 1"></car-list>
+		<car-record v-if="currentIndex === 2"></car-record>
 	</div>
 </template>
 
@@ -99,18 +98,9 @@
 			carChart
 		},
 
-		created() {
-			//log(this.$options)
-
-			if (this.$root.$currentIndex) {
-				this.currentIndex = this.$root.$currentIndex
-			}
-		},
-
 		methods: {
 			switchIndex(index) {
 				this.currentIndex = index
-				this.$root.$currentIndex = index
 			},
 			handleClick() {
 
