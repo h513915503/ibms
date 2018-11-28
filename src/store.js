@@ -117,7 +117,10 @@ export default new Vuex.Store({
 		detailInfo: {},
 
 		// 楼层号列表
-		floorNumberList: []
+		floorNumberList: [],
+
+		// 公司列表
+		companyList: []
 	},
 	mutations: {
 		setToken(state, value) {
@@ -128,6 +131,9 @@ export default new Vuex.Store({
 		},
 		setAccountName(state, value) {
 			state.accountName = value
+		},
+		setCompanyList(state, value) {
+			state.companyList = value
 		},
 		setRole(state, value) {
 			state.role = value
@@ -159,10 +165,11 @@ export default new Vuex.Store({
 		}
 	},
 	actions: {
-		async getUserInfo({commit, state}) {
+		async getUserInfo({commit, state, dispatch}) {
 			const params = {
 				action: 'account.getPersonnelInfo'
 			}
+
 			const data = await axios.post('/api/dispatcher.do', params)
 
 			if (! data) {
@@ -175,6 +182,22 @@ export default new Vuex.Store({
 			commit('setPermissions', data.data.pagePermission)
 
 			router.addRoutes(state.routes)
-		}
+
+			// 获取公司列表
+			dispatch('getCompanyList')
+		},
+		async getCompanyList({commit}) {
+			const params = {
+				action: 'accountManagement.queryRentalInfo'
+			}
+
+			const data = await axios.post('/capi/dispatcher.do', params)
+
+			if (! data) {
+				return
+			}
+
+			commit('setCompanyList', data.data.map((item) => ({id: item.id, companyName: item.rentalCompany})))
+		},
 	}
 })
