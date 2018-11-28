@@ -119,7 +119,7 @@
                         </el-table-column>
                         <el-table-column label="访问时间" prop="time" sortable='custom'>
                             <template slot-scope="scope">
-                                <span v-if="scope.row.accessTimeStart">{{ scope.row.accessTimeStart | dateFormat }} - {{ scope.row.accessTimeEnd | timeFormat }}</span>
+                                <span v-if="scope.row.accessTimeStartTamp">{{ scope.row.accessTimeStartTamp | dateFormat }} - {{ scope.row.accessTimeEndTamp | timeFormat }}</span>
                                 <span v-else>--</span>
                             </template>
                         </el-table-column>
