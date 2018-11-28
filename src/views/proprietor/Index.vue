@@ -84,6 +84,14 @@
 .lead-in input {
 	display: none;
 }
+.outJob {
+	/* pointer-events: none; */
+	/* color: #CCC; */
+	display: none;
+}
+.detail {
+	display: none;
+}
 </style>
 
 <template>
@@ -109,7 +117,7 @@
 					<el-button class="btn-search" type="primary" @click="search">查询</el-button>
 				</div>
 
-				<toolBar :allData="batchImportData" :status.sync="toolBarStatus" v-if="toolBarStatus === true"></toolBar>
+				<toolBar :allData="batchImportData" :status.sync="toolBarStatus" :timeText="timeText"></toolBar>
 				<el-table class="table" :data="carList" @click.native="handleTable" @sort-change="sortChange" @filter-change="filterHandler">
 					<!-- <el-table-column type="selection"></el-table-column> -->
 					<el-table-column prop="id" label="序号"></el-table-column>
@@ -149,8 +157,9 @@
 					</el-table-column>
 					<el-table-column label="操作">
 			  			<template slot-scope="scope">
-					        <span class="btn edit" type="text" size="small" data-type="1" :data-id="scope.row.id" :data-index="scope.$index">编辑</span>
-					        <span class="btn dimission" type="text" size="small" data-type="2" :data-id="scope.row.id" :data-index="scope.$index">离职</span>
+					        <span :class="{outJob: scope.row.jobStatus === 2}" class="btn edit" type="text" size="small" data-type="1" :data-id="scope.row.id" :data-index="scope.$index">编辑</span>
+							<span :class="{detail: scope.row.jobStatus !== 2}" class="btn edit" type="text" size="small" data-type="3" :data-id="scope.row.id" :data-index="scope.$index">查看</span>
+					        <span :class="{outJob: scope.row.jobStatus === 2}" class="btn dimission" type="text" size="small" data-type="2" :data-id="scope.row.id" :data-index="scope.$index">离职</span>
 				      </template>
 				    </el-table-column>
 				</el-table>
@@ -175,6 +184,8 @@
 		data() {
 			return {
 				loading: false,
+
+				timeText: '10秒后关闭',
 
 				currentColumnIndex: -1,
 				popoverModalStatus: false,
@@ -234,7 +245,27 @@
 			})
 		},
 
+		destroyed() {
+			clearTimeout(this.$timer)
+		},
+
 		methods: {
+			timeBack() {
+				let num = 10
+				
+				this.timeText = `${num}秒后自动关闭`
+
+				this.$timer = setTimeout(function go() {
+					this.timeText = `${--num}秒后自动关闭`
+
+					if (! num) {
+						this.toolBarStatus = false
+					}
+
+					this.$timer = setTimeout(go.bind(this), 1000)
+				}.bind(this), 1000)
+
+            },
 			go() {
 				this.$router.push('/proprietor/add')
 			},
@@ -265,6 +296,7 @@
 				if (data) {
 					this.toolBarStatus = true
 					this.batchImportData = data.data
+					this.timeBack()
 				} else {
 					return
 				}
@@ -360,6 +392,11 @@
 					this.$router.push(`/proprietor/edit/${id}`)
 
 					return
+				}
+
+				if (+ type === 3) {
+					this.$root.$tempEditData = this.carList[index]
+					this.$router.push(`/proprietor/detail/${id}`)
 				}
 
 				if (+ type === 2) {
