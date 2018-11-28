@@ -231,7 +231,7 @@
             async getTableData() {
                 const params = {
                     action: 'accountManagement.queryAccountManagementPage',
-                    pageNum: this.pageNum,
+                    pageNo: this.pageNum,
                     pageSize: this.pageSize,
                     type: this.type,
                     fromTimeYZStr: this.date1,
