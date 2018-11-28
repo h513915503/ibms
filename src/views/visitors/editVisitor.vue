@@ -318,9 +318,9 @@
                 }
 
                 this.formData = data.data;
-                this.rentalCompany = data.data.rentalCompany;
-                this.date1 = data.data.accessTimeStart;
-                this.date2 = data.data.accessTimeEnd;
+                this.rentalCompany = data.data.rentalCompanyId;
+                this.date1 = data.data.accessTimeStartTamp;
+                this.date2 = data.data.accessTimeEndTamp;
             },
             async getCompany() {
                 const params = {
@@ -349,7 +349,7 @@
                     facialInformation: this.formData.facialInformation
                 }
 
-                console.log(this.rentalCompany)
+                // console.log(this.rentalCompany)
 
                 const data = await axios.post('/api/dispatcher.do', params);
                 if(data.success) {
