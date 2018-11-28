@@ -53,9 +53,6 @@
         font-size: 12px;
         margin-right: 10px;
     }
-    .popover-wrapper {
-        width: 440px;
-    }
 </style>
 
 <template>
@@ -118,7 +115,7 @@
             </div>
         </template>
 
-        <popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工的账号将被注销。" :popoverModalStatus.sync="popoverModalStatus" ref="popover" v-if="popoverModalStatus">
+        <popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工的账号将被注销。" :follow-target="followTarget" ref="popover" v-if="popoverModalStatus" @hide="handleHide">
             <el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
             <el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
         </popover>
@@ -137,11 +134,8 @@
                 pageTotal: 1,
                 list: [],
 
-                popoverModalStatus: false,
-
-                status: '',
-                rank: '',
-                order: ''
+                followTarget: null,
+                popoverModalStatus: false
             }
         },
 
@@ -206,12 +200,10 @@
                 this.$index = index
                 this.popoverModalStatus = true
 
-                this.$nextTick(() => {
-                    const {x, y} = e.target.getBoundingClientRect()
-
-                    this.$refs.popover.$el.style.left = `${x - 750}px`
-                    this.$refs.popover.$el.style.top = `${y - 75}px`
-                })
+                this.followTarget = e.target
+            },
+            handleHide() {
+                this.popoverModalStatus = false
             },
             async leaveOffice() {
                 const params = {
