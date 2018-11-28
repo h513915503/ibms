@@ -29,6 +29,7 @@ import LeaseDetail from './views/lease/detail.vue'
 
 import ParkingLot from './views/parking-lot/index.vue'
 import ParkingLotAdd from './views/parking-lot/add.vue'
+import ParkingLotEdit from './views/parking-lot/edit.vue'
 import ParkingLotDetail from './views/parking-lot/detail.vue'
 
 import Proprietor from './views/proprietor/index.vue'
@@ -212,6 +213,12 @@ export const routesMap = [
 		path: '/parking-lot/add',
 		name: 'parking-lot-add',
 		component: ParkingLotAdd
+	},
+	{
+		type: '6-2',
+		path: '/parking-lot/edit/:id',
+		name: 'parking-lot-edit',
+		component: ParkingLotEdit
 	},
 	{
 		type: '6-2',
