@@ -80,52 +80,49 @@ strong {
 				<el-button @click="back">返回</el-button>
 
 				<el-button class="btn-relt" @click="throwLeaseModalStatus = true">续租</el-button>
-				<el-button class="btn-edit" @click="index = 1">编辑</el-button>
+				<el-button class="btn-edit" @click="goEdit">编辑</el-button>
 				<el-button slot="reference" class="btn-throw-lease" @click="popoverModalStatus = true">退租</el-button>
 
-				<popover name="close" title="该车主确定退租车位吗？" content="公司退租后，该公司在园区的信息将被删除。" :popoverModalStatus.sync="popoverModalStatus">
+				<popover name="close" title="该车主确定退租车位吗？" content="公司退租后，该公司在园区的信息将被删除。" :popoverModalStatus.sync="popoverModalStatus" v-if="popoverModalStatus">
 					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 					<el-button type="primary" slot="cancel" class="ok" @click="throwLease">确定</el-button>
 				</popover>
 			</div>
 
-			<parking-lot-add :type="1" @cancel="cancel" @ok="editComplete" v-if="index === 1"></parking-lot-add>
-
-			<div class="detail-content" v-else>
+			<div class="detail-content">
 				<div class="item">
 					<span>车牌号：</span>
 					<strong v-text="detail.carNumber"></strong>
 				</div>
 				<div class="item">
 					<span>车主姓名：</span>
-					<strong>{{detail.name}}</strong>
+					<strong>{{detail.masterName}}</strong>
 				</div>
 				<div class="item">
 					<span>车主号码：</span>
-					<strong>{{detail.phone}}</strong>
+					<strong>{{detail.masterPhone}}</strong>
 				</div>
 				<div class="item">
 					<span>所在单位：</span>
-					<strong v-text="detail.company"></strong>
+					<strong v-text="detail.masterCompany"></strong>
 				</div>
 				<div class="item">
 					<span>到期日期：</span>
-					<strong v-text="detail.date"></strong>
+					<strong>{{detail.endDate | format}}</strong>
 				</div>
 				<div class="item">
 					<span>车位：</span>
-					<strong v-text="detail.parkingPlace"></strong>
+					<strong>{{detail.floorNumber}}层·{{detail.isConfirmed === 1 ? detail.parkingSpaceNumber + '号' : detail.parkingAreaNumber}}</strong>
 				</div>
 			</div>
 		</div>
 
-		<parking-lot-throw-lease :throwLeaseModalStatus.sync="throwLeaseModalStatus"></parking-lot-throw-lease>
+		<parking-lot-throw-lease :id="$route.params.id" :throwLeaseModalStatus.sync="throwLeaseModalStatus" v-if="throwLeaseModalStatus"></parking-lot-throw-lease>
 	</div>
 </template>
 
 <script>
-	import getResponses from '@/api'
-	import parkingLotAdd from '@/components/parking-lot/Add'
+	import {dateFormatString} from '@/utils/util'
 	import parkingLotThrowLease from '@/components/parking-lot/throw-lease'
 
 	export default {
@@ -135,32 +132,36 @@ strong {
 				popoverModalStatus: false,
 				throwLeaseModalStatus: false,
 
-				index: 0,
-
 				detail: {}
 			}
 		},
 
 		components: {
-			parkingLotAdd,
 			parkingLotThrowLease
 		},
 
+		filters: {
+			format(value) {
+				return dateFormatString(new Date(value))
+			}
+		},
+
 		created() {
-			this.getDetail()
+			this.loading = true
+
+			this.getDetail().then(() => {
+				this.loading = false
+			})
 		},
 
 		methods: {
 			async getDetail() {
 				const params = {
-					id: this.$route.params.id
+					action: 'ParkingRental.queryRentalById',
+					parkingRentalId: this.$route.params.id
 				}
 
-				this.loading = true
-
-				const data = await getResponses('/api/getDetail', params)
-
-				this.loading = false
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -169,7 +170,10 @@ strong {
 				this.detail = data.data
 			},
 			back() {
-				this.$router.push('/lease')
+				this.$router.back()
+			},
+			goEdit() {
+				this.$router.push(`/parking-lot/edit/${this.$route.params.id}`)
 			},
 			cancel() {
 				this.index = 0
@@ -177,8 +181,22 @@ strong {
 			editComplete() {
 
 			},
-			throwLease() {
+			async throwLease() {
+				const params = {
+					action: 'ParkingRental.deleteParkingRentalInfo',
+					parkingRentalId: this.$route.params.id
+				}
 
+				this.popoverModalStatus = false
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.$message.success('退租成功')
+				this.back()
 			}
 		}
 	}
