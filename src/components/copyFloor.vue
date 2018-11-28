@@ -14,10 +14,9 @@
 	opacity: 0;
 	transform: scale(.7);
 }
-h4 {
+.title {
 	margin-bottom: 40px;
 }
-
 .content {
 	margin-bottom: 35px;
 }
@@ -30,18 +29,18 @@ h4 {
 <template>
 	<transition name="scale">
 		<div class="copy-wrapper" ref="popover">
-			<h4 v-text="title"></h4>
+			<h4 class="title" v-text="title"></h4>
 
 			<div class="content">
-				<el-input-number v-model="copyStart" :min="1"></el-input-number>
+				<el-input-number v-model="start" :min="1"></el-input-number>
 				~
-				<el-input-number v-model="copyEnd" :min="1"></el-input-number>
+				<el-input-number v-model="end" :min="1"></el-input-number>
 				层
 			</div>
 
 			<div class="btn-wrapper">
-				<slot name="ok"></slot>
-				<slot name="cancel"></slot>
+				<el-button @click="complete(false)">取消</el-button>
+				<el-button type="primary" @click="complete(true)">确定</el-button>
 			</div>
 		</div>
 	</transition>
@@ -49,7 +48,19 @@ h4 {
 
 <script>
 	export default {
-		props: ['title', 'copyStart', 'copyEnd'],
+		props: ['title', 'index', 'copyStart', 'copyEnd'],
+
+		data() {
+			return {
+				start: 1,
+				end: 1
+			}
+		},
+
+		created() {
+			this.start = this.copyStart
+			this.end = this.copyEnd
+		},
 
 		mounted() {
 			document.addEventListener('click', (e) => {
@@ -62,6 +73,16 @@ h4 {
 
 				this.$emit('hide')
 			}, true)
+		},
+
+		methods: {
+			complete(value) {
+				this.$emit('complete', value ? {
+					index: this.index,
+					start: this.start,
+					end: this.end
+				} : null)
+			}
 		}
 	}
 </script>

@@ -121,7 +121,7 @@
 					<el-input v-model="form.leaseCompany" placeholder="租赁单位全称"></el-input>
 				</el-form-item>
 				<el-form-item label="租约起止日期：">
-					 <el-date-picker v-model="form.date" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+					 <el-date-picker v-model="form.date" value-format="yyyy-MM-dd" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
 				</el-form-item>
 				<el-form-item label="单位物业负责人：">
 					<el-input v-model="form.propertyPerson" placeholder="负责除单位所属人员的人脸维护外的工作"></el-input>
@@ -147,6 +147,8 @@
 </template>
 
 <script>
+	import {dateFormatString} from '@/utils/util'
+
 	export default {
 		data() {
 			return {
@@ -241,7 +243,7 @@
 				this.form.hr = personnelName
 				this.form.hrPhone = personnelPhone
 
-				this.form.date = [rentalFloorInfos[0].startDate, rentalFloorInfos[0].endDate]
+				this.form.date = [dateFormatString(new Date(rentalFloorInfos[0].startDate)), dateFormatString(new Date(rentalFloorInfos[0].endDate))]
 
 				this.list = rentalFloorInfos.map((item) => {
 					return {
@@ -302,16 +304,13 @@
 				})
 			},
 			formatDate() {
-				if (typeof this.form.date[0] !== 'object') {
-					this.form.date = [new Date(this.form.date[0]), new Date(this.form.date[1])]
+				if (typeof this.form.date[0] === 'number') {
+					this.form.date = [dateFormatString(new Date(this.form.date[0])), dateFormatString(new Date(this.form.date[1]))]
 				}
 			},
 			async submit() {
 				// 时间可能是 timestamp
 				this.formatDate()
-
-				const startDate = this.form.date[0]
-				const endDate = this.form.date[1]
 
 				const params = {
 					action: 'OfficeRental.editRentalInfo',
@@ -329,8 +328,8 @@
 								floorNumber: this.floorNumberList.find((current) => current.floorId === item.floorId).floorNumber,
 								rentedSize: item.area,
 								houseNumber: item.roomNumber,
-								startDate: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
-								endDate: `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`,
+								startDate: this.form.date[0],
+								endDate: this.form.date[1]
 							}
 						})
 					})

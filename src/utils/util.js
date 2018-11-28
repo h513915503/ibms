@@ -18,4 +18,6 @@ const timeFormat = (val) => {
     return hh + mm;
 }
 
-export { dateFormat, timeFormat }
+const dateFormatString = (date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`.replace(/\b(\w)\b/g, '0$1')
+
+export { dateFormat, timeFormat, dateFormatString }

@@ -106,7 +106,7 @@
             </div>
         </template>
 
-        <popover name="close" title="确定删除该岗位么？" content="仅删除该岗位，该岗位的员工不会被删除。" :popoverModalStatus.sync="popoverModalStatus" ref="popover">
+        <popover name="close" title="确定删除该岗位么？" content="仅删除该岗位，该岗位的员工不会被删除。" :follow-target="followTarget" ref="popover" v-if="popoverModalStatus" @hide="handleHide">
             <el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
             <el-button type="primary" slot="cancel" class="ok" @click="del">确定</el-button>
         </popover>
@@ -121,6 +121,7 @@
                 loading: false,
                 loaded: false,
 
+                followTarget: null,
                 popoverModalStatus: false,
 
                 page: 1,
@@ -170,12 +171,10 @@
                 this.$index = index
                 this.popoverModalStatus = true
 
-                this.$nextTick(() => {
-                    const {x, y} = e.target.getBoundingClientRect()
-
-                    this.$refs.popover.$el.style.left = `${x - 680}px`
-                    this.$refs.popover.$el.style.top = `${y - 75}px`
-                })
+                this.followTarget = e.target
+            },
+            handleHide() {
+                this.popoverModalStatus = false
             },
             async del() {
                 const params = {

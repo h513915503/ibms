@@ -44,14 +44,6 @@
 	margin-right: 40px;
 }
 
-.select-wrapper {
-	width: 170px;
-	margin-right: 16px;
-}
-.option-wrapper {
-	display: flex;
-	justify-content: space-between;
-}
 .popover-wrapper {
 	left: 220px;
 	bottom: -150px;
@@ -64,10 +56,11 @@
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item>场地</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/parking-lot'}">车位租赁</el-breadcrumb-item>
-			<el-breadcrumb-item>新增包月车辆</el-breadcrumb-item>
+			<el-breadcrumb-item>编辑包月车辆</el-breadcrumb-item>
 		</el-breadcrumb>
 
-		<div class="container">
+		<loading v-if="loading"></loading>
+		<div class="container" v-else>
 			<el-form :model="form" label-width="200px" label-position="right">
 				<el-form-item label="车牌号：">
 					<el-input v-model="form.carNumber" placeholder="如：浙AMK123"></el-input>
@@ -89,23 +82,11 @@
 					<el-radio v-model="form.parkingPlace" :label="1">固定</el-radio>
 				</el-form-item>
 				<el-form-item label="停车位置：" v-if="form.parkingPlace === 1">
-					<el-select class="select-wrapper" v-model="form.floorId" @change="selectChange">
-						<el-option :label="item.floorNumber + '层'" :value="item.floorId" v-for="item of parkingNumberList"></el-option>
-					</el-select>
-					<el-select class="select-wrapper" v-model="form.parkingSpace" v-if="type === 1">
-						<el-option :label="item.parkingSpaceOrder + '号'" :value="item.spaceId" v-for="item of parkingSpaceList"></el-option>
-					</el-select>
-					<el-select class="select-wrapper" v-model="form.parkingSpace" v-else>
-						<el-option :label="item.areaNumber" class="option-wrapper" :value="item.areaId" v-for="item of parkingSpaceList">
-							<span v-text="item.areaNumber"></span>
-							<span>可用 {{item.usableCount}}</span>
-						</el-option>
-					</el-select>
-					<!-- <el-input-number v-model="form.parkingFloor" @change="handleParkingFloorChange"></el-input-number>
+					<el-input-number v-model="form.parkingFloor" @change="handleParkingFloorChange"></el-input-number>
 					<span class="mr">层</span>
 					<el-select class="select" v-model="form.parkingNumber" placeholder="请选择">
 						<el-option v-for="item of parkingNumberList" :key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select> -->
+					</el-select>
 				</el-form-item>
 
 
@@ -128,9 +109,12 @@
 </template>
 
 <script>
+	import {dateFormatString} from '@/utils/util'
+
 	export default {
 		data() {
 			return {
+				loading: false,
 				disabled: false,
 				popoverModalStatus: false,
 
@@ -143,12 +127,7 @@
 					leaseTime: '',
 					parkingFloor: '',
 					parkingNumber: '',
-					parkingSpace: ''
 				},
-
-				// 区分按号和按区
-				type: -1,
-				parkingSpaceList: [],
 				parkingNumberList: [
 					{
 						value: 1,
@@ -184,13 +163,18 @@
 		},
 
 		created() {
-			this.getFloorList()
+			this.loading = true
+
+			this.getDetail().then(() => {
+				this.loading = false
+			})
 		},
 
 		methods: {
-			async getFloorList() {
+			async getDetail() {
 				const params = {
-					action: 'ParkingRental.queryFloorParkingInfo'
+					action: 'ParkingRental.queryRentalById',
+					parkingRentalId: this.$route.params.id
 				}
 
 				const data = await axios.post('/api/dispatcher.do', params)
@@ -199,20 +183,15 @@
 					return
 				}
 
-				this.parkingNumberList = data.data
-			},
-			selectChange(value) {
-				const floor = this.parkingNumberList.find((item) => item.floorId === value)
+				const {carNumber, rentalId, masterName, masterPhone, isConfirmed, startDate, endDate} = data.data
 
-				this.type = floor.numberRule
+				this.form.carNumber = carNumber
+				this.form.name = masterName
+				this.form.phone = masterPhone
+				this.form.company = rentalId
+				this.form.parkingPlace = isConfirmed
 
-				if (floor.numberRule === 1) {
-					this.parkingSpaceList = floor.selectParkingSpaceInfos
-					this.form.parkingSpace = this.parkingSpaceList[0].spaceId
-				} else {
-					this.parkingSpaceList = floor.selectAreaInfos
-					this.form.parkingSpace = this.parkingSpaceList[0].areaId
-				}
+				this.form.leaseTime = [dateFormatString(new Date(startDate)), dateFormatString(new Date(endDate))]
 			},
 			back() {
 				this.$router.back()
@@ -224,21 +203,27 @@
 			forAdd() {
 				this.popoverModalStatus = true
 			},
+			formatDate() {
+				if (typeof this.form.leaseTime[0] === 'number') {
+					this.form.leaseTime = [dateFormatString(new Date(this.form.leaseTime[0])), dateFormatString(new Date(this.form.leaseTime[1]))]
+				}
+			},
 			async add() {
+				// 时间可能是 timestamp
+				this.formatDate()
+
 				const params = {
-					action: 'ParkingRental.addParkingRentalInfo',
+					action: 'ParkingRental.editParkingRentalInfo',
 
 					parkingRentalInfo: JSON.stringify({
+						id: this.$route.params.id,
 						carNumber: this.form.carNumber,
 						masterName: this.form.name,
 						masterPhone: this.form.phone,
 						rentalId: this.form.company,
 						isConfirmed: this.form.parkingPlace,
 						startDate: this.form.leaseTime[0],
-						endDate: this.form.leaseTime[1],
-						floorId: this.form.floorId,
-						parkingSpaceId: this.type === 1 ? this.form.parkingSpace : void 1,
-						areaId: this.type === 2 ? this.form.parkingSpace : void 1
+						endDate: this.form.leaseTime[1]
 					})
 				}
 
