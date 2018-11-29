@@ -2,7 +2,7 @@
 .popover-wrapper {
 	padding: 24px;
 	position: fixed;
-	z-index: 10;
+	z-index: 10000;
 	font-size: 16px;
 	border-radius: 4px;
 	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
@@ -100,24 +100,19 @@
 			followTarget: {
 				type: HTMLElement,
 				required: true
+			},
+			offsetX: {
+				type: Number,
+				default: 20
+			},
+			offsetY: {
+				type: Number,
+				default: 20
 			}
 		},
 
 		mounted() {
-			const {x, y, bottom} = this.followTarget.getBoundingClientRect()
-			const popover = this.$refs.popover
-			const width = popover.offsetWidth
-			const height = popover.offsetHeight
-
-			// 更新 position
-			popover.style.left = `${x - width - 20}px`
-			popover.style.top = `${y + 20}px`
-
-			// 40 是间距
-			if (bottom + height + 40 > innerHeight) {
-				popover.style.transformOrigin = '100% 100%'
-				popover.style.top = `${y - height}px`
-			}
+			this.updatePosition()
 
 			// 捕获事件
 			document.addEventListener('click', (e) => {
@@ -134,20 +129,7 @@
 			}, true)
 
 			// 自动更新 position
-			this.$resizewheelHandler = (e) => {
-				const {x, y, bottom} = this.followTarget.getBoundingClientRect()
-
-				popover.style.transformOrigin = '100% 0'
-				popover.style.left = `${x - width - 20}px`
-				popover.style.top = `${y + 20}px`
-
-				if (bottom + height + 40 > innerHeight) {
-					popover.style.transformOrigin = '100% 100%'
-					popover.style.top = `${y - height}px`
-				}
-			}
-
-			window.addEventListener('resize', this.$resizewheelHandler)
+			window.addEventListener('resize', this.updatePosition)
 
 			// 屏蔽滚动事件
 			this.$mousewheelHandler = (e) => e.preventDefault()
@@ -156,8 +138,26 @@
 		},
 
 		destroyed() {
-			window.removeEventListener('resize', this.$resizewheelHandler)
+			window.removeEventListener('resize', this.updatePosition)
 			document.removeEventListener('mousewheel', this.$mousewheelHandler)
+		},
+
+		methods: {
+			updatePosition() {
+				const {x, y, bottom} = this.followTarget.getBoundingClientRect()
+				const popover = this.$refs.popover
+				const width = popover.offsetWidth
+				const height = popover.offsetHeight
+
+				popover.style.transformOrigin = '100% 0'
+				popover.style.left = `${x - width - this.offsetX}px`
+				popover.style.top = `${y + this.offsetY}px`
+
+				if (bottom + height + 40 > innerHeight) {
+					popover.style.transformOrigin = '100% 100%'
+					popover.style.top = `${y - height}px`
+				}
+			}
 		}
 	}
 </script>
