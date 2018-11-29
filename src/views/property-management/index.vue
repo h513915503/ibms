@@ -115,7 +115,7 @@
             </div>
         </template>
 
-        <popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工的账号将被注销。" :follow-target="followTarget" ref="popover" v-if="popoverModalStatus" @hide="handleHide">
+        <popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工的账号将被注销。" :follow-target="followTarget" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
             <el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
             <el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
         </popover>
