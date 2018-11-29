@@ -98,11 +98,6 @@
 									</el-popover>
 								</div>
 
-								<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" v-if="popoverModalStatus && currentFloorNumber === item.floorNumber" @hide="popoverModalStatus = false" ref="popover">
-									<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
-									<el-button type="primary" slot="cancel" class="ok" @click="deleteFloor(index)">确定</el-button>
-								</popover>
-
 								<copy-floor title="复制楼层到" :copy-start="copyStart" :copy-end="copyEnd" :index="index" v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false" @complete="copyFloor">
 								</copy-floor>
 							</div>
@@ -113,6 +108,11 @@
 				<chart :chart-data="chartData" v-else></chart>
 			</div>
 		</template>
+
+		<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" :follow-target="followTarget" :offset-x="-50" :offset-y="30" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
+			<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
+			<el-button type="primary" slot="cancel" class="ok" @click="deleteFloor">确定</el-button>
+		</popover>
 	</div>
 </template>
 
@@ -133,6 +133,7 @@
 				copyStart: 1,
 				copyEnd: 1,
 
+				followTarget: null,
 				copyModalStatus: false,
 				popoverModalStatus: false,
 
@@ -394,15 +395,7 @@
 				this.$floorId = item.floorId
 				this.$index = index
 
-				// 更新组件 position
-				this.$nextTick(() => {
-					const popover = this.$refs.popover[0].$el
-
-					if (popover.getBoundingClientRect().bottom > innerHeight) {
-						popover.style.transformOrigin = '100% 100%'
-						popover.style.top = '-140px'
-					}
-				})
+				this.followTarget = e.target
 			},
 			async deleteFloor(index) {
 				const params = {
