@@ -258,7 +258,7 @@
 				this.$timer = setTimeout(function go() {
 					this.timeText = `${--num}秒后自动关闭`
 
-					if (! num) {
+					if (num < 0) {
 						this.toolBarStatus = false
 					}
 
@@ -284,11 +284,13 @@
 				this.$refs.input.click()
 			},
 			async change(e) {
+				clearTimeout(this.$timer)
 				const formdata = new FormData()
 
 				formdata.append('action', 'accountManagement.batchImport')
 				formdata.append('file', e.target.files[0])
-
+				
+				this.$refs.input.value = null;
 				const data = await axios.post('/api/dispatcher.do', formdata, {
 					headers: {'Content-Type': 'multipart/form-data'}
 				})
@@ -297,7 +299,7 @@
 					this.toolBarStatus = true
 					this.batchImportData = data.data
 					this.timeBack()
-				} else {
+				} else if(! data) {
 					return
 				}
 			},
