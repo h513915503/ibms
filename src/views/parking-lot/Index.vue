@@ -39,17 +39,21 @@
 
 <template>
 	<div id="parking-lot-wrapper">
-		<header class="header">
-			<tab-bar :list="tabs"></tab-bar><br />
+		<loading v-if="loading"></loading>
 
-			<div class="tab-wrapper">
-				<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
-			</div>
-		</header>
+		<template v-else>
+			<header class="header">
+				<tab-bar :list="tabs"></tab-bar><br />
 
-		<parking-space v-if="currentIndex === 0"></parking-space>
-		<car-list v-if="currentIndex === 1"></car-list>
-		<car-record v-if="currentIndex === 2"></car-record>
+				<div class="tab-wrapper">
+					<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
+				</div>
+			</header>
+
+			<parking-space v-if="currentIndex === 0"></parking-space>
+			<car-list v-if="currentIndex === 1"></car-list>
+			<car-record v-if="currentIndex === 2"></car-record>
+		</template>
 	</div>
 </template>
 
@@ -63,24 +67,26 @@
 	export default {
 		data() {
 			return {
+				loading: false,
+
 				currentIndex: 0,
 				tab: ['车位维护', '包月车辆', '车辆出入记录', '报表分析'],
 
 				tabs: [
 					{
-						number: 1000,
+						number: 0,
 						text: '总车位'
 					},
 					{
-						number: 1000,
+						number: 0,
 						text: '包月车位'
 					},
 					{
-						number: 1000,
+						number: 0,
 						text: '临时停放车辆'
 					},
 					{
-						number: 1000,
+						number: 0,
 						text: '未租空闲车位'
 					}
 				],
@@ -98,7 +104,33 @@
 			carChart
 		},
 
+		created() {
+			this.loading = true
+
+			this.getOverview().then(() => {
+				this.loading = false
+			})
+		},
+
 		methods: {
+			async getOverview() {
+				const params = {
+					action: 'ParkingRental.queryAllCount'
+				}
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				const {allParkingSpaceCount, rentalParkingSpaceCount, temporaryUseParkingSpaceCount, unusedParkingSpaceCount} = data.data
+
+				this.tabs[0].number = allParkingSpaceCount
+				this.tabs[1].number = rentalParkingSpaceCount
+				this.tabs[2].number = temporaryUseParkingSpaceCount
+				this.tabs[3].number = unusedParkingSpaceCount
+			},
 			switchIndex(index) {
 				this.currentIndex = index
 			},
