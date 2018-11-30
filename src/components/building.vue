@@ -27,6 +27,7 @@ export default {
             if ( WEBGL.isWebGLAvailable() === false ) {
                 this.$refs.info.appendChild( WEBGL.getWebGLErrorMessage() );
             }
+            var InfoDiv = document.getElementById('info')
             var container, controls;
             var camera, scene, renderer, light;
             var clock = new THREE.Clock();
@@ -36,8 +37,8 @@ export default {
             function init() {
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
-                // camera = new THREE.PerspectiveCamera( 45, 2000 / 520, 1, 20000 );
-                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
+                camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
+                // camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
                 camera.position.set( 100, 200, 900 );
 
 
@@ -63,17 +64,17 @@ export default {
 
                 // scene.add( new THREE.CameraHelper( light.shadow.camera ) );
                 // ground
-                var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 12000, 12000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
-                mesh.rotation.x = - Math.PI / 2;
-                mesh.receiveShadow = true;
-                scene.add( mesh );
-                var grid = new THREE.GridHelper( 12000, 120, 0x0f0f19, 0x000000 );
-                grid.material.opacity = 0.2;
-                grid.material.transparent = true;
-                scene.add( grid );
+                // var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 12000, 8000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+                // mesh.rotation.x = - Math.PI / 2;
+                // mesh.receiveShadow = true;
+                // scene.add( mesh );
+                // var grid = new THREE.GridHelper( 12000, 120, 0x0f0f19, 0x000000 );
+                // grid.material.opacity = 0.2;
+                // grid.material.transparent = true;
+                // scene.add( grid );
                 // model
                 var loader = new THREE.FBXLoader();
-                loader.load( '03(henliang)-2.fbx', function ( object ) {
+                loader.load( '03(henliangtouming)-2.fbx', function ( object ) {
                     // object.children[0].geometry.computeBoundingBox()
                     // object.children[0].geometry.center()
                     //object.position.set(0, 250, 0)
@@ -99,11 +100,11 @@ export default {
 
 
                     function onMouseClick( event ) {
-
+                        console.log(22222)
                         event.preventDefault();
                         var vector = new THREE.Vector3();//三维坐标对象
-                        vector.set( ( event.clientX / 2000 ) * 2 - 1, - ( event.clientY / 520 ) * 2 + 1, 0.5 );
-                        // vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+                        // vector.set( ( event.clientX / 1800 ) * 2 - 1, - ( event.clientY / 520 ) * 2 + 1, 0.5 );
+                        vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
                         vector.unproject( camera );
                         var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
                         var intersects = raycaster.intersectObjects(scene.children, true);
@@ -128,8 +129,8 @@ export default {
 
 
 
-                            //cube.position.set(x - 50, y + 300, z +300)
                             cube.position.set(x, y, z)
+                            // cube.position.set(x, y, z)
                             object.add( cube );
 
 
@@ -137,30 +138,30 @@ export default {
 
                     }
 
-                    var InfoDiv = document.getElementById('#info')
-                    window.addEventListener( 'click', onMouseClick, false );
+                    // var InfoDiv = document.getElementById('#info')
+                    InfoDiv.addEventListener( 'click', onMouseClick, false );
 
-                        scene.add( object );
-                    } );
-                    renderer = new THREE.WebGLRenderer( { antialias: true } );
-                    renderer.setPixelRatio( window.devicePixelRatio );
-                    renderer.setSize( 2000, 520 );
-                    renderer.shadowMap.enabled = true;
-                    container.appendChild( renderer.domElement );
-                    window.addEventListener( 'resize', onWindowResize, false );
+                    scene.add( object );
+                } );
+                renderer = new THREE.WebGLRenderer( { antialias: true } );
+                // renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( 1800, 520 );
+                renderer.shadowMap.enabled = true;
+                container.appendChild( renderer.domElement );
+                // window.addEventListener( 'resize', onWindowResize, false );
                 // stats
                 // stats = new Stats();
                 // container.appendChild( stats.dom );
             }
 
 
-            function onWindowResize() {
-                camera.aspect = 2000 / 520;
-                // camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize( 2000, 520 );
-                // renderer.setSize( window.innerWidth, window.innerHeight );
-            }
+            // function onWindowResize() {
+            //     camera.aspect = 1800 / 520;
+            //     // camera.aspect = window.innerWidth / window.innerHeight;
+            //     camera.updateProjectionMatrix();
+            //     renderer.setSize( 1800, 520 );
+            //     // renderer.setSize( window.innerWidth, window.innerHeight );
+            // }
 			//
             function animate() {
                 requestAnimationFrame( animate );
