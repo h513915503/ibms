@@ -1,4 +1,4 @@
-<style scope>
+<style scoped>
     .parking-chart-wrapper {
         min-height: 571px;
         padding: 24px;
@@ -26,7 +26,7 @@
         display: flex;
         align-items: center;
         margin-left: auto;
-        
+
         & .btn-text {
 			display: inline-block;
 			margin-right: 24px;
@@ -57,14 +57,14 @@
                 <el-date-picker v-model="date" type="date" placeholder="选择时间"></el-date-picker>
             </div>
 		</div>
-        
+
         <loading v-if="loading"></loading>
         <div class="content" v-else>
             <chart class="line-chart" :type="1" :data="generateChartOption"></chart>
         </div>
-        
+
     </div>
-    
+
 </template>
 
 <script>
@@ -115,12 +115,12 @@
 			// 	return xAxisData
 			// },
             generateChartOption() {
-                
+
                 return {
                     // title: {
                     //     top: 0,
                     //     text: 'lslls'
-                    // }, 
+                    // },
                     color: ['rgba(24, 144, 255, .2)', '#9013FE'],
                     grid: {
                         top: 10,
@@ -154,7 +154,7 @@
                             lineStyle: {
                                 color: '#BFBFBF'
                             }
-                            
+
 						},
                         axisLabel: {
 							color: '#545454'
@@ -185,10 +185,10 @@
                 this.loading = true
                 const [data] = await Promise.all([this.getChartData()]).catch(() => {
                     this.loading = false
-                    
+
                 })
                 this.loading = false
-                
+
                 this.chartData = data
             },
             async getChartData() {

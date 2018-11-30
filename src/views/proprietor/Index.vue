@@ -168,7 +168,7 @@
 					<el-pagination background layout="prev, pager, next" :total="totalPage" @current-change="pageChange"></el-pagination>
 				</div>
 
-				<popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工将不能通过人脸识别进入园区。" v-if="popoverModalStatus === true" :style="{top: 185 + (currentColumnIndex * 57) + 'px'}" :popoverModalStatus.sync="popoverModalStatus">
+				<popover name="close" title="该员工确定离职了么？" content="将该员工设为离职之后，该员工将不能通过人脸识别进入园区。" :follow-target="followTarget" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
 					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
 					<el-button type="primary" slot="cancel" class="ok" @click="leaveOffice">确定</el-button>
 				</popover>
@@ -188,6 +188,7 @@
 				timeText: '10秒后关闭',
 
 				currentColumnIndex: -1,
+				followTarget: null,
 				popoverModalStatus: false,
 
 				tabs: [
@@ -405,6 +406,8 @@
 					this.$currentId = id
 					this.currentColumnIndex = + index
 					this.popoverModalStatus = true
+
+					this.followTarget = target
 				}
 			},
 			async leaveOffice() {

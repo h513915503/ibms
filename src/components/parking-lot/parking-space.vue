@@ -222,15 +222,15 @@
 							</div>
 							<div class="item">
 								<span>车位数：</span>
-								{{item.numberRule === 1 ? item.numberEnd - item.numberStart + 1 : 0}}
+								{{item.numberRule === 1 ? item.endOrder - item.startOrder + 1 : 0}}
 							</div>
 						</div>
 						<div class="info2">
 							<span>车位：</span>
 
 	  						<div class="number-wrapper" v-if="item.numberRule === 1">
-	  							<el-input-number v-model="item.numberStart" :min="1" label="描述文字"></el-input-number> ~
-	  							<el-input-number v-model="item.numberEnd" :min="1" label="描述文字"></el-input-number> 号
+	  							<el-input-number v-model="item.startOrder" :min="1" label="描述文字"></el-input-number> ~
+	  							<el-input-number v-model="item.endOrder" :min="1" label="描述文字"></el-input-number> 号
 	  						</div>
 
 	  						<ul class="area-list" v-if="item.numberRule === 2">
@@ -239,7 +239,7 @@
 	  									<input class="index" type="text" v-model="area.areaStr"> 区
 	  								</p>
 	  								<p>
-	  									<input type="text" v-model="area.numberStart"> ~ <input type="text" v-model="area.numberEnd">
+	  									<input type="text" v-model="area.startOrder"> ~ <input type="text" v-model="area.endOrder">
 	  								</p>
 	  							</li>
 	  							<li class="more-area" @click="addArea(item)"></li>
@@ -300,7 +300,7 @@
 					</template>
 
 					<section class="icon-wrapper" :class="{'show-icon-wrapper': isShowIconWrapper && currentId === item.floorId}">
-						<i class="icon icon-edit" @click="editFloor(index)"></i>
+						<i class="icon icon-edit" @click="editFloor(item)"></i>
 						<i class="icon icon-delete" @click="forDeleteFloor($event, item, index)"></i>
 					</section>
 				</li>
@@ -377,6 +377,8 @@
 					const area = {
 						areaId: item.areaId,
 						areaStr: item.areaStr,
+						startOrder: item.startOrder,
+						endOrder: item.endOrder,
 
 						allParkingSpaceCount: item.allParkingSpaceCount,
 						rentalParkingSpaceCount: item.rentalParkingSpaceCount,
@@ -438,18 +440,30 @@
 				if (this.$add) {
 					// 更新总车位
 					if (item.numberRule === 1) {
-						item.allParkingSpaceCount = item.numberEnd - item.numberStart + 1
+						item.allParkingSpaceCount = item.endOrder - item.startOrder + 1
 					} else {
 						item.areaList.forEach((current) => {
-							current.allParkingSpaceCount = Number(current.numberEnd) - Number(current.numberStart) + 1
+							current.allParkingSpaceCount = Number(current.endOrder) - Number(current.startOrder) + 1
 						})
 					}
 
 					this.addParkingPlaceService()
+
+					return
 				}
+
+				if (item.numberRule === 1) {
+					item.allParkingSpaceCount = item.endOrder - item.startOrder + 1
+				} else {
+					item.areaList.forEach((current) => {
+						current.allParkingSpaceCount = Number(current.endOrder) - Number(current.startOrder) + 1
+					})
+				}
+
+				this.editParkingPlaceService(item)
 			},
 			async addParkingPlaceService() {
-				const {floorNumber, numberRule, numberStart, numberEnd, areaList} = this.$parkingSpace
+				const {floorNumber, numberRule, startOrder, endOrder, areaList} = this.$parkingSpace
 				const params = {
 					action: 'ParkingRental.addParkingInfo',
 
@@ -462,8 +476,8 @@
 				if (numberRule === 1) {
 					params.parkingFloorInfo.parkingSpaceInfos = [
 						{
-							parkingSpaceStartOrder: numberStart,
-							parkingSpaceEndOrder: numberEnd
+							parkingSpaceStartOrder: startOrder,
+							parkingSpaceEndOrder: endOrder
 						}
 					]
 				}
@@ -472,8 +486,8 @@
 					params.parkingFloorInfo.parkingAreaInfos = areaList.map((item) => {
 						return {
 							areaNumber: item.areaStr,
-							parkingSpaceStartOrder: item.numberStart,
-							parkingSpaceEndOrder: item.numberEnd
+							parkingSpaceStartOrder: item.startOrder,
+							parkingSpaceEndOrder: item.endOrder
 						}
 					})
 				}
@@ -493,6 +507,51 @@
 				this.$parkingSpace.floorId = data.data.floorId
 				this.$parkingSpace.isEdit = false
 			},
+			async editParkingPlaceService(item) {
+				const {floorId, numberRule, startOrder, endOrder, areaList} = item
+				const params = {
+					action: 'ParkingRental.editParkingInfo',
+
+					parkingFloorInfo: {
+						id: floorId,
+						numberRule
+					}
+				}
+
+				if (numberRule === 1) {
+					params.parkingFloorInfo.parkingSpaceInfos = [
+						{
+							parkingSpaceStartOrder: startOrder,
+							parkingSpaceEndOrder: endOrder
+						}
+					]
+				}
+
+				if (numberRule === 2) {
+					params.parkingFloorInfo.parkingAreaInfos = areaList.map((item) => {
+						return {
+							areaNumber: item.areaStr,
+							id: item.areaId,
+							parkingSpaceStartOrder: item.startOrder,
+							parkingSpaceEndOrder: item.endOrder
+						}
+					})
+				}
+
+				params.parkingFloorInfo = JSON.stringify(params.parkingFloorInfo)
+
+				this.disabledAdd = true
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				this.disabledAdd = false
+
+				if (! data) {
+					return
+				}
+
+				item.isEdit = false
+			},
 			cancelParkingPlace(item) {
 				if (this.$add) {
 					this.list.splice(0, 1)
@@ -503,10 +562,11 @@
 				item.isEdit = false
 
 				// 撤销修改
-				item.type = this.$type
+				item.numberRule = this.$numberRule
 				item.floorNumber = this.$floorNumber
-				item.numberStart = this.$numberStart
-				item.numberEnd = this.$numberEnd
+				item.startOrder = this.$startOrder
+				item.endOrder = this.$endOrder
+				item.areaList = JSON.parse(this.$areaList)
 			},
 			forDeleteFloor(e, item, index) {
 				this.isShowIconWrapper = true
@@ -539,18 +599,15 @@
 				this.popoverModalStatus = false
 				this.isShowIconWrapper = false
 			},
-
-			edit(item) {
+			editFloor(item) {
 				item.isEdit = true
 
 				// 保存信息
-				this.$type = item.type
+				this.$numberRule = item.numberRule
 				this.$floorNumber = item.floorNumber
-				this.$numberStart = item.numberStart
-				this.$numberEnd = item.numberEnd
-			},
-			editFloor(index) {
-				this.list[index].isEdit = true
+				this.$startOrder = item.startOrder
+				this.$endOrder = item.endOrder
+				this.$areaList = JSON.stringify(item.areaList)
 			},
 			addArea(item) {
 				item.areaList.push({

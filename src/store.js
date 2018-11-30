@@ -10,31 +10,36 @@ const aside = [
 		type: '1',
 		title: '概览',
 		index: 0,
-		reg: /\/$/
+		reg: /\/$/,
+		path: '/'
 	},
 	{
 		type: '2',
 		title: '能耗',
 		index: 3,
-		reg: /\/energy-consumption/
+		reg: /\/energy-consumption/,
+		path: '/energy-consumption'
 	},
 	{
 		type: '3',
 		title: '环境',
 		index: 4,
-		reg: /\/environment$/
+		reg: /\/environment$/,
+		path: '/environment'
 	},
 	{
 		type: '4',
 		title: '物业人员管理',
 		index: 1,
-		reg: /^\/property/
+		reg: /^\/property/,
+		path: '/property'
 	},
 	{
 		type: '5',
 		title: '岗位管理',
 		index: 2,
-		reg: /^\/post/
+		reg: /^\/post/,
+		path: '/post'
 	},
 
 	{
@@ -45,12 +50,14 @@ const aside = [
 				text: '楼宇运营管理',
 				path: '/lease',
 				reg: /^\/lease/,
+				path: '/lease'
 			},
 			{
 				type: '6-2',
 				text: '停车场管理',
 				path: '/parking-lot',
-				reg: /\/parking-lot/
+				reg: /\/parking-lot/,
+				path: '/parking-lot'
 			}
 		]
 	},
@@ -61,19 +68,22 @@ const aside = [
 				type: '7-1',
 				text: '业主管理',
 				path: '/proprietor',
-				reg: /\/proprietor/
+				reg: /\/proprietor/,
+				path: '/proprietor'
 			},
 			{
 				type: '7-2',
 				text: '访客登记',
 				path: '/visitor',
-				reg: /\/visitor/
+				reg: /\/visitor/,
+				path: '/visitor'
 			},
 			{
 				type: '7-3',
 				text: '人员出入记录',
 				path: '/personnel',
-				reg: /\/personnel/
+				reg: /\/personnel/,
+				path: '/personnel'
 			}
 		]
 	},
@@ -84,19 +94,22 @@ const aside = [
 				type: '8-1',
 				text: '灯管理',
 				path: '/lightManagement',
-				reg: /\/lightManagement|\/light\/lightAdd/
+				reg: /\/lightManagement|\/light\/lightAdd/,
+				path: '/lightManagement'
 			},
 			{
 				type: '8-2',
 				text: '空调管理',
 				path: '/airConditioner',
-				reg: /\/airConditioner/
+				reg: /\/airConditioner/,
+				path: '/airConditioner'
 			},
 			{
 				type: '8-3',
 				text: '设备故障',
 				path: '/device-fault',
-				reg: /\/device-fault/
+				reg: /\/device-fault/,
+				path: '/device-fault'
 			}
 		]
 	}
@@ -191,7 +204,7 @@ export default new Vuex.Store({
 				action: 'accountManagement.queryRentalInfo'
 			}
 
-			const data = await axios.post('/capi/dispatcher.do', params)
+			const data = await axios.post('/api/dispatcher.do', params)
 
 			if (! data) {
 				return
