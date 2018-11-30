@@ -103,6 +103,7 @@
                             </template>
                         </el-table-column>
                         <el-table-column label="姓名" prop="accountName"></el-table-column>
+                        <el-table-column label="手机号码" prop="phoneNumber"></el-table-column>
                         <el-table-column label="出/入" prop="accessStatus"></el-table-column>
                         <el-table-column label="业主/访客" prop="type"></el-table-column>
                         <el-table-column label="停留时长" prop="stayTime"></el-table-column>
@@ -137,7 +138,6 @@
 </template>
 
 <script>
-    import tabBar from '@/components/tab-bar.vue'
 
     export default {
         data() {
@@ -215,7 +215,7 @@
             async getTableData() {
                 const params = {
                     action: 'accountManagement.queryAccountManagementLogPage',
-                    pageNum: this.pageNum,
+                    pageNo: this.pageNum,
                     pageSize: this.pageSize,
                     fromTimeYZStr: this.date1,
                     toTimeYZStr: this.date2,

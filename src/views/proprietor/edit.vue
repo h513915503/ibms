@@ -120,7 +120,7 @@
 				<input class="el-input el-input__inner" type="tel" v-model="form.phone" maxlength="11" placeholder="请输入手机号码" @input="phoneChange">
 			</el-form-item>
 			<el-form-item label="所在单位：">
-				<el-select v-model="form.company">
+				<el-select v-model="form.rentalCompanyId">
 					<el-option :label="item.rentalCompany" :value="item.id" v-for="item of companyList" :key="item.id"></el-option>
 				</el-select>
 			</el-form-item>
@@ -197,7 +197,7 @@
 
 		computed: {
 			isDisabled() {
-				if (this.form.name && this.form.phone && this.form.company) {
+				if (this.form.name && this.form.phone && this.form.rentalCompanyId) {
 					if (this.currentRadio === 2) {
 						return false
 					} else {
@@ -289,9 +289,10 @@
 					action: 'accountManagement.editYZEntity',
 					acountName: this.form.name,
 					phoneNumber: this.form.phone,
-					rentalCompany: this.form.company,
+					rentalCompany: this.form.rentalCompanyId,
 					id: this.form.id
 				}
+
 				if (this.$faceURLRaw) {
 					params.facialInformation = this.$faceURLRaw
 				}

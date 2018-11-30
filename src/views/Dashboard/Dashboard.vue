@@ -53,6 +53,7 @@
             <div class="main-building">
                 <p class="building-title">益展大厦数据大屏</p>
                 <div class="building">
+                    <!-- <Building /> -->
                     <div>
                         <span class="top-floor" @click="getIndex(floor = 17, 0)"></span>
                         <ul class="center-floor">
@@ -77,8 +78,7 @@
                             <li class="basement-right-floor" v-for="item of bottomThree" @click="getIndex(item.floor, item.status)" :key="item.index"></li>
                         </ul>
                         <span class="building-point-line">
-                            <!-- <span>1</span>
-                            <span>2</span> -->
+                            
                             <img :src="require('../../assets/b3line.svg')" class="point-img" alt="">
                         </span>
                     </div>
@@ -169,6 +169,7 @@
 
 import LineChart from '@/components/dashboard/lineChart.vue';
 import BarChart from '@/components/dashboard/barChart.vue';
+// import Building from '@/components/dashboard/building.vue';
 
     export default {
         data() {
@@ -236,7 +237,7 @@ import BarChart from '@/components/dashboard/barChart.vue';
         created() {
             document.documentElement.style.fontSize  = `calc(100vw / 25.6)`;
             // this.carData = [200, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24]
-            this.getWheatherInfo();
+            // this.getWheatherInfo();
             this.timeChange();
         },
         destroyed() {
@@ -244,7 +245,8 @@ import BarChart from '@/components/dashboard/barChart.vue';
         },
         components: {
             LineChart,
-            BarChart
+            BarChart,
+            // Building
         },
         computed: {
             currentDate() {
@@ -282,20 +284,20 @@ import BarChart from '@/components/dashboard/barChart.vue';
                 const seconds = date.getSeconds();
                 return this.time = `${hour} : ${minute}`
             },
-            async getWheatherInfo() {
-                const params = {
-                    location: '115.236.39.114',
-					key: '85b5120e44404f66972df1e7588aa60e'
-                };
-                // const {data: {HeWeather6: [{now}]}} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
-				// 	params
-                // })
-                const {HeWeather6: [{now}]} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
-					params
-                })
-                this.temperature = now.tmp;
-                this.weatherType = now.cond_txt
-            }
+            // async getWheatherInfo() {
+            //     const params = {
+            //         location: '115.236.39.114',
+			// 		key: '85b5120e44404f66972df1e7588aa60e'
+            //     };
+            //     // const {data: {HeWeather6: [{now}]}} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
+			// 	// 	params
+            //     // })
+            //     const {HeWeather6: [{now}]} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
+			// 		params
+            //     })
+            //     this.temperature = now.tmp;
+            //     this.weatherType = now.cond_txt
+            // }
         }
     }
 </script>

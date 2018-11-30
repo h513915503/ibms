@@ -35,6 +35,7 @@ import ParkingLotDetail from './views/parking-lot/detail.vue'
 import Proprietor from './views/proprietor/index.vue'
 import ProprietorAdd from './views/proprietor/add.vue'
 import ProprietorEdit from './views/proprietor/edit.vue'
+import DetailProperty from './views/proprietor/detail.vue'
 
 import Visitor from './views/visitors/visitor.vue'
 import AddNewVisitor from './views/visitors/addVisitor.vue'
@@ -244,6 +245,12 @@ export const routesMap = [
 		path: '/proprietor/edit/:id',
 		name: 'proprietor-edit',
 		component: ProprietorEdit
+	},
+	{
+		type: '7-1',
+		path: '/proprietor/detail/:id',
+		name: 'proprietor-detail',
+		component: DetailProperty
 	},
 	{
 		type: '7-2',
