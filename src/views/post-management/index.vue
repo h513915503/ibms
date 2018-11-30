@@ -1,207 +1,195 @@
 <style scoped>
-    #property-wrapper {
-        min-width: 1000px;
-    }
-    .no-data {
-        padding: 48px 0;
-        color: #4A4A4A;
-        font-size: 14px;
-        text-align: center;
-        background-color: #FFF;
-    }
-    h1 {
-        margin-bottom: 48px;
-        font-size: 20px;
-    }
-    p {
-        line-height: 2;
-    }
-    .bottom-tip {
-        margin-bottom: 48px
-    }
-    .el-button {
-        /* margin-top: 48px; */
-        font-size: 16px;
-    }
-
-    .container {
-        padding: 24px;
-        box-sizing: border-box;
-        background-color: #FFF;
-    }
-    .search-wrapper {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 40px;
-    }
-    .page-wrapper {
-        margin-top: 20px;
-        text-align: right;
-    }
-
-    .popover-btn-wrapper {
-        text-align: right;
-    }
-    .btn-confirm, .btn-confirm:hover, .btn-confirm:focus, .btn-confirm:active {
-        color: rgba(245,34,45,1);
-    }
-    .el-button.dimission {
-        color: red;
-    }
-    .opt-btn {
-        font-size: 12px;
-        margin-right: 10px;
-    }
+.no-data-wrapper {
+	padding: 48px 0;
+	color: #4A4A4A;
+	font-size: 16px;
+	text-align: center;
+	background-color: #FFF;
+}
+.title {
+	margin-bottom: 48px;
+	font-size: 20px;
+}
+.tips {
+	line-height: 2;
+}
+.tips:last-of-type {
+	margin-bottom: 48px;
+}
+.el-button {
+	font-size: inherit;
+}
+.content {
+	padding: 24px;
+	background-color: #FFF;
+}
+.search-wrapper {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 40px;
+}
+.page-wrapper {
+	margin-top: 20px;
+	text-align: right;
+}
+.opt-btn {
+	display: inline-block;
+	color: #0E7CC2;
+	font-size: 12px;
+	cursor: pointer;
+	margin-right: 10px;
+}
+.opt-btn.dimission {
+	color: #F5222D;
+}
 </style>
 
 <template>
-    <div id="post-wrapper">
-        <loading v-if="loading"></loading>
+	<div class="post-wrapper">
+		<loading v-if="loading"></loading>
 
-        <template v-else>
-            <div class="no-data" v-if="noData">
-                <h1>暂无岗位</h1>
-                <p>您还没有维护岗位，</p>
-                <p class="bottom-tip">点击下方【+ 物业人员】按钮添加新的岗位。</p>
-                <el-button type="primary" @click="go">+ 岗位</el-button>
-            </div>
+		<template v-else>
+			<div class="no-data-wrapper" v-if="noData">
+				<h1 class="title">暂无岗位</h1>
+				<p class="tips">您还没有维护岗位，</p>
+				<p class="tips">点击下方【+ 岗位】按钮添加新的岗位。</p>
+				<el-button type="primary" @click="addPost">+ 岗位</el-button>
+			</div>
 
-            <div class="container" v-else>
-                <div class="search-wrapper">
-    				<el-button type="primary" @click="go">+ 岗位</el-button>
-    			</div>
+			<div class="content" v-else>
+				<div class="search-wrapper">
+					<el-button type="primary" @click="addPost">+ 岗位</el-button>
+				</div>
 
-                <div class="table-content">
-                    <el-table :data="list">
-                        <el-table-column prop="postId" label="岗位编号"></el-table-column>
-                        <el-table-column prop="postName" label="岗位名称"></el-table-column>
-                        <el-table-column label="权限">
-                            <template slot-scope="scope">
-                                <ul>
-                                    <li v-for="item of scope.row.permissionArray">
-                                        {{item.primaryNavigation}} - {{item.secondaryNavigation}}
+				<div class="table-content">
+					<el-table :data="list">
+						<el-table-column prop="postId" label="岗位编号"></el-table-column>
+						<el-table-column prop="postName" label="岗位名称"></el-table-column>
+						<el-table-column label="权限">
+							<template slot-scope="scope">
+								<ul>
+									<li v-for="item of scope.row.permissionArray">
+										{{item.primaryNavigation}} - {{item.secondaryNavigation}}
 
-                                        <template v-if="item.isRead === 1 && item.isWrite === 1">（读，写）</template>
+										<template v-if="item.isRead === 1 && item.isWrite === 1">（读，写）</template>
 
-                                        <template v-else-if="item.isRead === 1">（读）</template>
+										<template v-else-if="item.isRead === 1">（读）</template>
 
-                                        <template v-else-if="item.isWrite === 1">（写）</template>
-                                    </li>
-                                </ul>
-                            </template>
-                        </el-table-column>
+										<template v-else-if="item.isWrite === 1">（写）</template>
+									</li>
+								</ul>
+							</template>
+						</el-table-column>
 
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button class="opt-btn" type="text" size="small" @click="goEdit(scope.row)">编辑</el-button>
-                                <el-button class="opt-btn dimission" type="text" size="small" @click="forDel($event, scope.row, scope.$index)">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+						<el-table-column label="操作">
+							<template slot-scope="scope">
+								<div class="opt-btn" type="text" size="small" @click="goEdit(scope.row)">编辑</div>
+								<div class="opt-btn dimission" type="text" size="small" @click="forDel($event, scope.row, scope.$index)">删除</div>
+							</template>
+						</el-table-column>
+					</el-table>
 
-                    <div class="page-wrapper">
-                        <el-pagination background layout="prev, pager, next" :total="pageTotal" @current-change="pageChange"></el-pagination>
-                    </div>
-                </div>
-            </div>
-        </template>
+					<div class="page-wrapper">
+						<el-pagination background layout="prev, pager, next" :total="pageTotal" @current-change="pageChange"></el-pagination>
+					</div>
+				</div>
+			</div>
+		</template>
 
-        <popover name="close" title="确定删除该岗位么？" content="仅删除该岗位，该岗位的员工不会被删除。" :follow-target="followTarget" ref="popover" v-if="popoverModalStatus" @hide="handleHide">
-            <el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
-            <el-button type="primary" slot="cancel" class="ok" @click="del">确定</el-button>
-        </popover>
-    </div>
+		<popover name="close" title="确定删除该岗位么？" content="仅删除该岗位，该岗位的员工不会被删除。" :follow-target="followTarget" ref="popover" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
+			<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
+			<el-button type="primary" slot="cancel" @click="del">确定</el-button>
+		</popover>
+	</div>
 
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                loading: false,
-                loaded: false,
+	export default {
+		data() {
+			return {
+				loading: false,
+				loaded: false,
 
-                followTarget: null,
-                popoverModalStatus: false,
+				followTarget: null,
+				popoverModalStatus: false,
 
-                page: 1,
-                pageTotal: 1,
-                list: []
-            }
-        },
+				page: 1,
+				pageTotal: 1,
+				list: []
+			}
+		},
 
-        computed: {
-            noData() {
-                return this.loaded && ! this.list.length
-            }
-        },
+		computed: {
+			noData() {
+				return this.loaded && ! this.list.length
+			}
+		},
 
-        created() {
-            this.loading = true
+		created() {
+			this.loading = true
 
-            this.getList().then(() => {
-                this.loaded = true
-                this.loading = false
-            })
-        },
+			this.getList().then(() => {
+				this.loaded = true
+				this.loading = false
+			})
+		},
 
-        methods: {
-            async getList() {
-                const params = {
-                    action: 'administrator.getPostInfo',
-                    pageNo: this.page
-                }
-
-                const data = await axios.post('/api/dispatcher.do', params)
-
-                if (! data) {
-                    return
-                }
-
-
-                this.pageTotal = data.data.total
-                this.list = data.data.postInfoRespList
-            },
-            pageChange(value) {
-                this.page = value
-                this.getList()
-            },
-            forDel(e, item, index) {
-                this.$item = item
-                this.$index = index
-                this.popoverModalStatus = true
-
-                this.followTarget = e.target
-            },
-            handleHide() {
-                this.popoverModalStatus = false
-            },
-            async del() {
-                const params = {
-                    action: 'administrator.deletePostInfo',
-                    postId: this.$item.postId
-                }
-
-                // 不等请求返回，直接关闭弹窗，提高用户体验走一波
-                this.popoverModalStatus = false
-                const temp = this.list.splice(this.$index, 1)
-
-                const data = await axios.post('/api/dispatcher.do', params)
-
-                if (! data) {
-                    this.list.splice(this.$index, 0, temp[0])
-
-                    return
-                }
-            },
+		methods: {
+			addPost() {
+				this.$router.push('/post/add')
+			},
             goEdit(item) {
-                this.$tempData = item
-
                 this.$router.push(`/post/edit/${item.postId}`)
             },
-            go() {
-                this.$router.push('/post/add')
-            }
-        }
-    }
+			async getList() {
+				const params = {
+					action: 'administrator.getPostInfo',
+					pageNo: this.page
+				}
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+                const {total, postInfoRespList} = data.data
+
+                this.pageTotal = total
+				this.list = postInfoRespList
+			},
+			pageChange(value) {
+				this.page = value
+				this.getList()
+			},
+			forDel(e, item, index) {
+				this.$item = item
+				this.$index = index
+				this.popoverModalStatus = true
+
+				this.followTarget = e.target
+			},
+			async del() {
+				const params = {
+					action: 'administrator.deletePostInfo',
+					postId: this.$item.postId
+				}
+
+				this.popoverModalStatus = false
+
+				const data = await axios.post('/api/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+                this.list.splice(this.$index, 1)
+
+                // 释放内存
+                this.$index = null
+                this.$item = null
+			}
+		}
+	}
 </script>
