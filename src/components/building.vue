@@ -119,8 +119,8 @@ export default {
                             var selected = intersects[0];//取第一个物体
 
                             console.log(selected)
-                            let {x, y, z} = selected.position
-                            // let {x, y, z} = selected.point
+                            // let {x, y, z} = selected.position
+                            let {x, y, z} = selected.point
                             //selected.object.material.color.set( 0xff0000 );
 
 
