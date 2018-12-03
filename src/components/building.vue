@@ -27,7 +27,8 @@ export default {
             if ( WEBGL.isWebGLAvailable() === false ) {
                 this.$refs.info.appendChild( WEBGL.getWebGLErrorMessage() );
             }
-            var InfoDiv = document.getElementById('info')
+            var InfoDiv = null;
+            
             var container, controls;
             var camera, scene, renderer, light;
             var clock = new THREE.Clock();
@@ -35,16 +36,19 @@ export default {
             init.call(this)
             animate();
             function init() {
+                var InfoDiv = document.getElementById('info')
+                var width = document.getElementById('info').clientWidth;
+                var height = document.getElementById('info').clientHeight;
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
-                camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
-                // camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
+                // camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
+                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
                 camera.position.set( 100, 200, 900 );
 
 
-                controls = new THREE.OrbitControls( camera );
-                controls.target.set( 0, 100, 0 );
-                controls.update();
+                // controls = new THREE.OrbitControls( camera, InfoDiv );
+                // controls.target.set( 0, 100, 0 );
+                // controls.update();
 
                 scene = new THREE.Scene();
                 scene.background = new THREE.Color( 0xa0a0a0 );
@@ -61,7 +65,9 @@ export default {
                 light.shadow.camera.left = - 120;
                 light.shadow.camera.right = 120;
                 scene.add( light );
-
+                
+                var helper = new THREE.AxesHelper(5000);
+                scene.add(helper);
                 // scene.add( new THREE.CameraHelper( light.shadow.camera ) );
                 // ground
                 // var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 12000, 8000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -90,10 +96,10 @@ export default {
                     // } );
 
 
-                    var raycaster = new THREE.Raycaster();
+                    // var raycaster = new THREE.Raycaster();
 
 
-                    var mouse = new THREE.Vector3();
+                    // var mouse = new THREE.Vector3();
 
 
 
@@ -113,7 +119,8 @@ export default {
                             var selected = intersects[0];//取第一个物体
 
                             console.log(selected)
-                            let {x, y, z} = selected.point
+                            let {x, y, z} = selected.position
+                            // let {x, y, z} = selected.point
                             //selected.object.material.color.set( 0xff0000 );
 
 
@@ -145,6 +152,7 @@ export default {
                 } );
                 renderer = new THREE.WebGLRenderer( { antialias: true } );
                 // renderer.setPixelRatio( window.devicePixelRatio );
+                
                 renderer.setSize( 1800, 520 );
                 renderer.shadowMap.enabled = true;
                 container.appendChild( renderer.domElement );
@@ -152,6 +160,9 @@ export default {
                 // stats
                 // stats = new Stats();
                 // container.appendChild( stats.dom );
+                controls = new THREE.OrbitControls( camera, InfoDiv );
+                controls.target.set( 0, 100, 0 );
+                controls.update();
             }
 
 
