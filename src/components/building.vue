@@ -37,8 +37,6 @@ export default {
             animate();
             function init() {
                 var InfoDiv = document.getElementById('info')
-                var width = document.getElementById('info').clientWidth;
-                var height = document.getElementById('info').clientHeight;
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
                 // camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
@@ -106,11 +104,11 @@ export default {
 
 
                     function onMouseClick( event ) {
-                        console.log(22222)
                         event.preventDefault();
+                        const {x, y} = container.getBoundingClientRect()
                         var vector = new THREE.Vector3();//三维坐标对象
-                        // vector.set( ( event.clientX / 1800 ) * 2 - 1, - ( event.clientY / 520 ) * 2 + 1, 0.5 );
-                        vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+                        vector.set( ( (event.clientX - x) / 1800 ) * 2 - 1, - ( (event.clientY - y) / 520 ) * 2 + 1, 0.5 );
+                        // vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
                         vector.unproject( camera );
                         var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
                         var intersects = raycaster.intersectObjects(scene.children, true);
