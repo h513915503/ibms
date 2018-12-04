@@ -170,7 +170,7 @@
 
 <script>
 	import mixin from '@/mixins'
-	import getResponses from '@/api'
+	// import getResponses from '@/api'
 	import chart from '@/components/chart'
 
 	export default {
