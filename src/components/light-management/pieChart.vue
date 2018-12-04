@@ -17,7 +17,7 @@
     font-size:14px;
     color:rgba(89,89,89,1);
     line-height: 32px;
-    margin-left: 42px;
+    margin-left: 46px;
 }
 .item {
     font-size:12px;
@@ -26,36 +26,21 @@
     color:rgba(140,140,140,1);
 
     &::before {
+        content: "";
         display: inline-block;
         margin-right: 12px;
+        width: 10px;
+        height: 10px;
     }
 }
-.running {
-    &::before {
-        content: "";
-        border-top: 5px solid rgba(95, 226, 134, 1);
-        border-right: 5px solid rgba(95, 226, 134, 1);
-        border-bottom: 1px solid rgba(95, 226, 134, 1);
-        border-left: 1px solid rgba(95, 226, 134, 1);
-    }
+.running::before {
+    background-color: rgba(95, 226, 134, 1);
 }
-.error {
-    &::before {
-        content: "";
-        border-top: 5px solid rgba(255, 203, 100, 1);
-        border-right: 5px solid rgba(255, 203, 100, 1);
-        border-bottom: 1px solid rgba(255, 203, 100, 1);
-        border-left: 1px solid rgba(255, 203, 100, 1);
-    }
+.error::before {
+    background: rgba(255, 203, 100, 1);
 }
-.stop {
-    &::before {
-        content: "";
-        border-top: 5px solid rgba(202, 202, 202, 1);
-        border-right: 5px solid rgba(202, 202, 202, 1);
-        border-bottom: 1px solid rgba(202, 202, 202, 1);
-        border-left: 1px solid rgba(202, 202, 202, 1);
-    }
+.stop::before {
+    background: rgba(202, 202, 202, 1);
 }
 .top-num {
     display: inline-block;
@@ -95,7 +80,7 @@
         // props: ['chartData'],
         data() {
             return {
-                pieChartData: [45,12,63],
+                pieChartData: [{ value: 45, name: '运行中'},{ value: 12, name: '故障中'},{ value: 63, name: '未运行'}],
             }
         },
         computed: {
@@ -104,12 +89,6 @@
 					tooltip: {
 						trigger: 'item',
 						formatter: "{a} <br/>{b}：{c} ({d}%)"
-                    },
-                    grid: {
-                        top: 10,
-                        right: 15,
-                        bottom: 70,
-                        left: 45,
                     },
 					color: ['rgba(95, 226, 134, 1)', 'rgba(202, 202, 202, 1)', 'rgba(255, 203, 100, 1)'],
 					series: [{
