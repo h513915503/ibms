@@ -1,33 +1,29 @@
-#lease-wrapper .tabs {
+.lease-wrapper .tabs {
 	justify-content: flex-start;
 	padding: 0 24px;
 	margin-bottom: 30px;
 }
-#lease-wrapper >>> .tabs-item {
+.lease-wrapper >>> .tabs-item {
 	margin: 0;
 	margin-right: 120px;
 }
 
-#lease-wrapper .el-button+.el-button {
+.lease-wrapper .el-button+.el-button {
 	margin-left: 24px;
-}
-
-.loading {
-	margin: 200px auto;
 }
 
 .bootstrap-wrapper {
 	padding: 48px 0;
 	background-color: #FFF;
 
-	& h1 {
+	& .title {
 		margin-bottom: 52px;
 		color: #4A4A4A;
 		text-align: center;
 		font-size: 20px;
 	}
 
-	& ul {
+	& .bootstrap-list {
 		display: flex;
 		justify-content: space-between;
 		width: 500px;
@@ -49,7 +45,7 @@
 		}
 	}
 
-	& li {
+	& .bootstrap-list-item {
 		position: relative;
 		counter-increment: num;
 
@@ -68,18 +64,18 @@
 			background-color: transparent;
 		}
 
-		& strong {
+		& .sub-title {
 			font-size: 16px;
 		}
 
-		& p {
+		& .bootstrap-content {
 			width: 149px;
 			margin-top: 10px;
 			line-height: 1.6;
 		}
 	}
 
-	& li.active {
+	& .bootstrap-list-item.active {
 
 		&::before {
 			color: #FFF;
@@ -87,16 +83,16 @@
 			background-color: #1890FF;
 		}
 
-		& strong {
+		& .sub-title {
 			color: rgba(0, 0, 0, .85);
 		}
 
-		& p {
+		& .bootstrap-content {
 			color: rgba(0, 0, 0, .65);
 		}
 	}
 
-	& .el-button {
+	& .btn {
 		display: block;
 		margin: 0 auto;
 		font-size: 16px;
@@ -178,27 +174,6 @@
 	border: none;
 	border-bottom: 1px solid #D9D9D9;
 }
-.room-list {
-	display: flex;
-	flex-wrap: wrap;
-	margin-bottom: 24px;
-
-	& li {
-		width: 128px;
-		margin-right: 34px;
-		margin-bottom: 34px;
-		color: rgba(0, 0, 0, .75);
-		font-size: 14px;
-		text-align: center;
-		border: 1px solid rgba(0, 0, 0, .15);
-		border-bottom: none;
-	}
-
-	& p {
-		line-height: 40px;
-		border-bottom: 1px solid rgba(0, 0, 0, .15);
-	}
-}
 .input-wrapper {
 	display: flex;
 	align-items: center;
@@ -212,7 +187,7 @@
 .floor-list {
 	margin: 0 24px;
 }
-.floor-list > li {
+.floor-item {
 	margin-bottom: 16px;
 	color: rgba(0, 0, 0, .65);
 	font-size: 16px;
@@ -301,68 +276,6 @@
 		font-size: 14px;
 	}
 }
-
-.room-wrapper {
-	display: flex;
-	flex-wrap: wrap;
-}
-.room-item {
-	width: 85px;
-	height: 78px;
-	padding: 15px 0 15px 12px;
-	margin-right: 15px;
-	margin-bottom: 17px;
-	position: relative;
-	box-sizing: border-box;
-	border: 1px solid rgba(0, 0, 0, .15);
-
-	& p {
-		margin-top: 15px;
-	}
-
-	& .cu-checkbox {
-		position: absolute;
-		right: 0;
-		top: 0;
-		border-top: none;
-		border-right: none;
-	}
-}
-.room-item.ok {
-	padding: 12px;
-	color: #222;
-	font-size: 16px;
-	border: none;
-	background-color: #E9E9E9;
-
-	& .lease-info {
-		margin-bottom: 12px;
-		color: #919191;
-		font-size: 14px;
-
-		& span {
-			margin-right: 20px;
-			color: #5A5A5A;
-			font-size: 20px;
-		}
-	}
-
-	& p {
-		margin: 0;
-	}
-}
-.room-item.expires {
-	color: #FFF;
-	background-color: #FAAD14;
-
-	& .lease-info {
-		color: #FFF;
-
-		& span {
-			color: #FFF;
-		}
-	}
-}
 .icon-wrapper {
 	display: none;
 	justify-content: center;
@@ -423,28 +336,6 @@
 	cursor: pointer;
 	background: url(~@/assets/delete.png) center no-repeat;
 	background-size: 100%;
-}
-
-
-.statistics {
-	padding: 24px;
-	background-color: #FFF;
-
-	& h1 {
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: 18px;
-		font-size: 16px;
-	}
-
-	& >>> th {
-		text-align: center;
-		background-color: #FAFAFA;
-	}
-
-	& >>> td {
-		text-align: center;
-	}
 }
 
 .copy-wrapper {
