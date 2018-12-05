@@ -1,4 +1,7 @@
 <style scoped>
+.property-wrapper {
+	padding: 24px;
+}
 .no-data-wrapper {
 	padding: 48px 0;
 	color: #4A4A4A;
