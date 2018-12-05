@@ -122,7 +122,7 @@ ul {
 	<div class="lease-chart-wrapper">
 		<header>
 			<h2>租赁分析</h2>
-			<el-button class="btn-export">导出</el-button>
+			<el-button class="btn-export" @click="downloadFile">导出</el-button>
 		</header>
 
 		<div class="content">
@@ -167,6 +167,7 @@ ul {
 </template>
 
 <script>
+	import {downloadExcel} from '@/utils/util'
 	import chart from '@/components/chart'
 
 	export default {
@@ -336,6 +337,36 @@ ul {
 					this.barChartData[1].data[index] = item.willExpireSize
 					this.barChartData[2].data[index] = item.usableSize
 				})
+			},
+			downloadFile() {
+				const json = this.chartData.officeRentalDetailReports.map((item) => {
+					const totalArea = item.usedSize + item.usableSize + item.willExpireSize
+
+					return {
+						'楼层': item.floorNumber,
+						'已出租（平方米）': item.usedSize,
+						'即将到期（平方米）': item.willExpireSize,
+						'未出租（平方米）': item.usableSize,
+						'总面积（平方米）': totalArea,
+						'出租率（%）': `${(((item.usedSize + item.willExpireSize) / totalArea) * 100).toFixed(2)}%`
+					}
+				})
+
+				const usedSize = json.reduce((prevFloor, nextFloor) => prevFloor + nextFloor['已出租（平方米）'], 0)
+				const willExpireSize = json.reduce((prevFloor, nextFloor) => prevFloor + nextFloor['即将到期（平方米）'], 0)
+				const usableSize = json.reduce((prevFloor, nextFloor) => prevFloor + nextFloor['未出租（平方米）'], 0)
+				const totalArea = json.reduce((prevFloor, nextFloor) => prevFloor + nextFloor['总面积（平方米）'], 0)
+
+				json.push({
+					'楼层': '总计',
+					'已出租（平方米）': usedSize,
+					'即将到期（平方米）': willExpireSize,
+					'未出租（平方米）': usableSize,
+					'总面积（平方米）': totalArea,
+					'出租率（%）': `${(((usedSize + willExpireSize) / totalArea) * 100).toFixed(2)}%`
+				})
+
+				downloadExcel(json)
 			}
 		}
 	}
