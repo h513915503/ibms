@@ -35,15 +35,20 @@ export default {
             var mixers = [];
             init.call(this)
             animate();
+            var air = addAir();
+            var fov = 20;
+            var near = 1;
+            var far = 1000;
+
             function init() {
                 var InfoDiv = document.getElementById('info')
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
                 // camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
-                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
-                camera.position.set( 100, 200, 900 );
+                camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 20000 );
+                camera.position.set( 0, 200, 100 );
 
-
+                camera.fov = fov;
                 // controls = new THREE.OrbitControls( camera, InfoDiv );
                 // controls.target.set( 0, 100, 0 );
                 // controls.update();
@@ -77,6 +82,13 @@ export default {
                 // grid.material.transparent = true;
                 // scene.add( grid );
                 // model
+                function addAir() {
+                    var loader = new THREE.FBXLoader();
+                    loader.load( 'singleair.fbx', function ( object ) {
+                        console.log(object)
+                    })
+                }
+                var lll = addAir()
                 var loader = new THREE.FBXLoader();
                 loader.load( '03(henliangtouming)-2.fbx', function ( object ) {
                     // object.children[0].geometry.computeBoundingBox()
@@ -98,7 +110,6 @@ export default {
 
 
                     // var mouse = new THREE.Vector3();
-
 
 
 
@@ -131,12 +142,12 @@ export default {
                             var geometry = new THREE.BoxGeometry( 100, 100, 100 );
                             var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
                             var cube = new THREE.Mesh( geometry, material );
-
+                            // var air = addAir()
 
 
                             cube.position.set(x, y, z)
                             // cube.position.set(x, y, z)
-                            object.add( cube );
+                            object.add( lll );
 
 
                         }
@@ -145,7 +156,6 @@ export default {
 
                     // var InfoDiv = document.getElementById('#info')
                     InfoDiv.addEventListener( 'click', onMouseClick, false );
-
                     scene.add( object );
                 } );
                 renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -154,24 +164,27 @@ export default {
                 renderer.setSize( 1800, 520 );
                 renderer.shadowMap.enabled = true;
                 container.appendChild( renderer.domElement );
-                // window.addEventListener( 'resize', onWindowResize, false );
+                
+                window.addEventListener( 'resize', onWindowResize, false );
                 // stats
                 // stats = new Stats();
                 // container.appendChild( stats.dom );
                 controls = new THREE.OrbitControls( camera, InfoDiv );
                 controls.target.set( 0, 100, 0 );
+                // controls.minZoom = 5000;
+                controls.minDistance = 10000;
+                controls.maxDistance = 15000;
                 controls.update();
             }
 
 
-            // function onWindowResize() {
-            //     camera.aspect = 1800 / 520;
-            //     // camera.aspect = window.innerWidth / window.innerHeight;
-            //     camera.updateProjectionMatrix();
-            //     renderer.setSize( 1800, 520 );
-            //     // renderer.setSize( window.innerWidth, window.innerHeight );
-            // }
-			//
+            function onWindowResize() {
+                // camera.aspect = 1800 / 520;
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( 1800, 520 );
+                // renderer.setSize( window.innerWidth, window.innerHeight );
+            }
             function animate() {
                 requestAnimationFrame( animate );
                 if ( mixers.length > 0 ) {
@@ -182,6 +195,13 @@ export default {
                 renderer.render( scene, camera );
                 // stats.update();
             }
+            function addAir() {
+                var loader = new THREE.FBXLoader();
+                loader.load( 'singleair.FBX', function ( object ) {
+
+                })
+            }
+            
         }
     }
 }
