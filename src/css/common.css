@@ -35,6 +35,7 @@ input {
 
 .btn {
 	color: #FFF;
+	cursor: pointer;
 	text-align: center;
 }
 
