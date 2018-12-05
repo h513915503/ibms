@@ -12,7 +12,7 @@ const accessKeySecret = 'f96de898642941ee8401bce20a076f18'
 
 window.axios = axios
 
-axios.defaults.timeout = 10 * 1000
+axios.defaults.timeout = 30 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 axios.interceptors.request.use((config) => {
