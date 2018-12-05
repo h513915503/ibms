@@ -1,5 +1,5 @@
 <style scoped>
-#lease-detail-wrapper {
+.lease-detail-wrapper {
 	padding: 24px;
 	position: relative;
 
@@ -45,7 +45,7 @@ strong {
 </style>
 
 <template>
-	<div id="lease-detail-wrapper">
+	<div class="lease-detail-wrapper">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item :to="{path: '/'}">场地</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/lease'}">办公租赁</el-breadcrumb-item>
@@ -111,7 +111,6 @@ strong {
 			return {
 				loading: false,
 				disabled: false,
-				visible: false,
 
 				popoverModalStatus: false,
 
@@ -150,7 +149,6 @@ strong {
 
 				const {rentalCompany, propertyName, propertyPhone, personnelName, personnelPhone, rentalFloorInfos} = data.data
 
-				//this.detail = data.data
 				this.leaseCompany = rentalCompany
 				this.propertyPerson = propertyName
 				this.propertyPersonPhone = propertyPhone
