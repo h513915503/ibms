@@ -143,7 +143,7 @@
             return {
                 level: 0,
                 floorIndex: 0,
-                floor: ['1F', '2F', '3F', '4F', '5F', '6F', '7F', '8F', '9F', '10F', '11F', '12F', '13F'],
+                floor: ['1F', '2F', '3F', '4F', '5F', '6F', '7F', '8F', '9F', '10F', '11F', '12F', '13F'].reverse(),
             }
         },
         methods: {
