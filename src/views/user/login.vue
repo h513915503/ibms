@@ -1,156 +1,175 @@
 <style scoped>
-    #login-container {
-        width: 100%;
-        height: 100vh;
-        background:rgba(245,245,245,1);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .login-form {
-        width: 552px;
-        height: 352px;
-        background:rgba(255,255,255,1);
-        border-radius:2px;
-    }
-    .title {
-        text-align: center;
-        margin-top: 41px;
-        font-size: 24px;
-        letter-spacing: 2px;
-        display: flex;
-	    align-items: center;
-        justify-content: center;
-    }
-    .logo {
-        display: inline-block;
-        width:25px;
-        height:24px;
-        background:rgba(216,216,216,1);
-        border-radius:2px;
-        margin-right: 10px;
-        margin-top: 2px;
-    }
-    .el-form {
-        padding-top: 48px;
-    }
-    .el-input {
-        width: 354px;
-        height: 40px;
-        border-radius:4px;
-    }
-    .el-button {
-        width: 354px;
-    }
-    .forgot-password {
-        display: block;
-        margin-right: 60px;
-        color: rgba(0, 0, 0, .65);
-        font-size: 14px;
-        text-align: right;
-    }
+.login-wrapper {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	height: 100vh;
+	background: url(~@/assets/a.png) center no-repeat, linear-gradient(to bottom, #4278EE 60%, #684FD8);
+	background-size: cover;
+}
+.name {
+	position: absolute;
+	top: 64px;
+	left: 146px;
+	color: #FFF;
+	font-size: 24px;
+}
+.login-form {
+	padding: 48px;
+	margin-right: 18%;
+	border-radius: 2px;
+	background-color: #FFF;
+}
+.title {
+	margin-bottom: 50px;
+	color: #323232;
+	font-size: 24px;
+}
+.form-item {
+	display: flex;
+	align-items: center;
+	padding-bottom: 10px;
+	margin-bottom: 50px;
+	border-bottom: 1px solid #D9D9D9;
+}
+.form-item:nth-of-type(2) {
+	margin-bottom: 0;
+}
+.svg-wrapper {
+	padding: 0 10px;
+	margin-right: 10px;
+	border-right: 1px solid #D9D9D9;
+}
+.icon {
+	width: 18px;
+	height: 18px;
+}
+.input {
+	border: none;
+	font-size: 14px;
+}
+.input::placeholder {
+	color: #D9D9D9;
+}
+.login-btn {
+	width: 250px;
+	border-radius: 2px;
+	font-size: 20px;
+	line-height: 48px;
+	letter-spacing: 10px;
+	background-color: #4278EE;
+}
+.login-btn:hover {
+	background-color: #3366FF;
+}
+.forgot-password {
+	display: block;
+	margin: 10px 0 48px 0;
+	color: #8C8C8C;
+	font-size: 14px;
+	text-align: right;
+}
 </style>
 
 <template>
-    <div id="login-container">
+	<div class="login-wrapper">
+		<h1 class="name">中宙物业管理平台</h1>
 
-        <div class="login-form">
-            <p class="title">
-                <img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
-                登录中宙物业管理平台
-            </p>
-            <el-form
-                ref="loginForm"
-                :model="form"
-                :rules="rules"
-                label-width="140px" label-position="right">
-                <el-form-item label="手机号：" prop="username">
-                    <input class="el-input el-input__inner" v-model="form.phone" autofocus maxlength="11" placeholder="请输入" @input="change" />
-                </el-form-item>
-                <el-form-item :label="label" prop="password">
-                    <el-input type="password" v-model="form.password" placeholder="请输入密码" @keyup.native.enter="login"></el-input>
-                    <router-link class="forgot-password" to="/forgot-password">找回密码</router-link>
-                </el-form-item>
-                <el-form-item>
-                    <el-button :disabled="isDisabled" type="primary" v-if="! logining" @click="login">登录</el-button>
-					<el-button disabled type="primary" v-else>登录中...</el-button>
-				</el-form-item>
-            </el-form>
-        </div>
-    </div>
+		<div class="login-form">
+			<h4 class="title">登录</h4>
+
+			<div class="form-item">
+				<div class="svg-wrapper">
+					<svg class="icon">
+						<use xlink:href="#peo"></use>
+					</svg>
+				</div>
+				<input class="input" v-model="phone" autofocus maxlength="11" placeholder="请输入" @input="change" />
+			</div>
+			<div class="form-item">
+				<div class="svg-wrapper">
+					<svg class="icon">
+						<use xlink:href="#lock"></use>
+					</svg>
+				</div>
+				<input class="input" type="password" v-model="password" placeholder="请输入密码" @keyup.enter="login" />
+			</div>
+
+			<router-link class="forgot-password" to="/forgot-password">忘记密码？</router-link>
+
+			<div class="btn login-btn" :class="{disabled: isDisabled}" @click="login">{{disabled ? '登录中...' : '登录'}}</div>
+		</div>
+	</div>
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                label: '密码：\u3000',
+	export default {
+		data() {
+			return {
+				disabled: false,
 
-                form: {
-                    phone: '',
-                    password: ''
-                },
-                rules: {
+				phone: '',
+				password: ''
+			}
+		},
 
-                },
+		computed: {
+			isDisabled() {
+				if (this.disabled) {
+					return true
+				}
 
-                logining: false
-            }
-        },
+				if (this.phone.length === 11 && this.password) {
+					return false
+				}
 
-        computed: {
-            isDisabled() {
-                if (this.form.phone.length === 11 && this.form.password) {
-                    return false
-                }
+				return true
+			}
+		},
 
-                return true
-            }
-        },
+		methods: {
+			change(e) {
+				this.phone = e.target.value.replace(/\D/g, '')
+				e.target.value = this.phone
+			},
+			async login() {
+				if (! /^1\d{10}/.test(this.phone)) {
+					this.$message.error('请输入正确的手机号码')
+					return
+				}
 
-        methods: {
-            change(e) {
-                this.form.phone = e.target.value.replace(/\D/g, '')
-                e.target.value = this.form.phone
-            },
-            async login() {
-                if (! /^1\d{10}/.test(this.form.phone)) {
-                    this.$message.error('请输入正确的手机号码')
-                    return
-                }
+				const params = {
+					action: 'account.accountLogin',
+					account: this.phone,
+					password: this.password
+				}
 
-                const params = {
-                    action: 'account.accountLogin',
-                    account: this.form.phone,
-                    password: this.form.password
-                }
+				this.disabled = true
 
-                this.logining = true
+				const data = await axios.post('/api/dispatcher.do', params)
 
-                const data = await axios.post('/api/dispatcher.do', params)
+				this.disabled = false
 
-                this.logining = false
+				if (! data) {
+					return
+				}
 
-                if (! data) {
-                    return
-                }
+				sessionStorage.setItem('token', data.data.token)
+				this.$store.commit('setToken', data.data.token)
 
-                sessionStorage.setItem('token', data.data.token)
-                this.$store.commit('setToken', data.data.token)
+				await this.$store.dispatch('getUserInfo')
 
-                await this.$store.dispatch('getUserInfo')
+				const path = this.$store.state.path
 
-                const path = this.$store.state.path
+				if (path) {
+					this.$router.replace(path)
+				} else {
+					sessionStorage.removeItem('token')
+					this.$store.commit('setToken', '')
 
-                if (path) {
-                    this.$router.replace(path)
-                } else {
-                    sessionStorage.removeItem('token')
-                    this.$store.commit('setToken', '')
-
-                    this.$message.error('抱歉，你没有任何权限访问该系统')
-                }
-            }
-        }
-    }
+					this.$message.error('抱歉，你没有任何权限访问该系统')
+				}
+			}
+		}
+	}
 </script>
