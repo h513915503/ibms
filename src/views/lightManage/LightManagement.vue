@@ -58,10 +58,8 @@
 </template>
     
 <script>
-    import tabBar from '@/components/tab-bar.vue'
     import DeviceContent from './DeviceContent.vue'
     import ChartsContent from './ChartsContent.vue'
-    // import Building from '@/components/building.vue'
 
     export default {
         data() {
@@ -87,41 +85,6 @@
                         number: 542,
                         text: '故障中'
                     }
-                ],
-                tableData: [
-                    {
-                        lightNum: '01',
-                        brand: '公牛',
-                        model: 'v100',
-                        outDate: '2012-3-19',
-                        usedTime: 2323,
-                        calcFail: 3,
-                        floor: 5,
-                        position: '楼梯间',
-                        status: 0
-                    },
-                    {
-                        lightNum: '01',
-                        brand: '公牛',
-                        model: 'v100',
-                        outDate: '2012-3-29',
-                        usedTime: 2323,
-                        calcFail: 3,
-                        floor: 5,
-                        position: '楼梯间',
-                        status: 1
-                    },
-                    {
-                        lightNum: '01',
-                        brand: '公牛',
-                        model: 'v100',
-                        outDate: '2012-3-09',
-                        usedTime: 2323,
-                        calcFail: 3,
-                        floor: 5,
-                        position: '楼梯间',
-                        status: 2
-                    }
                 ]
             }
         },
@@ -143,7 +106,6 @@
             }
         },
         components: {
-            tabBar,
             DeviceContent,
             ChartsContent
             // Building
