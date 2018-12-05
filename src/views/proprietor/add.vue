@@ -283,6 +283,11 @@
 					return
 				}
 
+				if (file.size > 10 * 1024 * 1024) {
+					this.$message.error('图片文件过大')
+					return
+				}
+
 				if (! file.type.startsWith('image')) {
 					this.$message.error('请选择图片文件')
 					return
