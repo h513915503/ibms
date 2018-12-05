@@ -1,5 +1,5 @@
 <style scoped>
-#lease-add-wrapper {
+.lease-add-wrapper {
 	padding: 24px;
 }
 .container {
@@ -77,7 +77,7 @@
 </style>
 
 <template>
-	<div id="lease-add-wrapper">
+	<div class="lease-edit-wrapper">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item>场地</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/lease'}">办公租赁</el-breadcrumb-item>
@@ -236,7 +236,6 @@
 
 				const {rentalCompany, propertyName, propertyPhone, personnelName, personnelPhone, rentalFloorInfos} = data.data
 
-				//this.detail = data.data
 				this.form.leaseCompany = rentalCompany
 				this.form.propertyPerson = propertyName
 				this.form.propertyPersonPhone = propertyPhone
@@ -280,9 +279,7 @@
 				this.list[this.$index].leaseArea = this.floorNumberList.find((item) => item.floorId === value).leaseArea
 			},
 			blur(item) {
-				const leaseArea = this.floorNumberList.find((current) => current.floorId === item.floorId).leaseArea
-
-				if (item.area > leaseArea) {
+				if (item.area > item.leaseArea) {
 					item.error = true
 					this.checkArea = false
 				} else {
