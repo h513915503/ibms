@@ -8,25 +8,25 @@
 </style>
 
 <template>
-	<div id="lease-wrapper">
+	<div class="lease-wrapper">
 		<template v-if="loading">
 			<loading></loading>
 		</template>
 
 		<template v-else>
 			<div class="bootstrap-wrapper" v-if="noData">
-				<h1>办公租赁需要先维护场地信息</h1>
-				<ul>
-					<li class="active">
-						<strong>添加房间</strong>
-						<p>添加楼层、各楼层的房间数及面积</p>
+				<h1 class="title">办公租赁需要先维护场地信息</h1>
+				<ul class="bootstrap-list">
+					<li class="bootstrap-list-item active">
+						<strong class="sub-title">添加房间</strong>
+						<p class="bootstrap-content">添加楼层、各楼层的房间数及面积</p>
 					</li>
-					<li>
-						<strong>添加租赁单位</strong>
-						<p>添加租赁单位的信息</p>
+					<li class="bootstrap-list-item">
+						<strong class="sub-title">添加租赁单位</strong>
+						<p class="bootstrap-content">添加租赁单位的信息</p>
 					</li>
 				</ul>
-				<el-button type="primary" @click="addRoom">+ 房间</el-button>
+				<el-button type="primary" class="btn" @click="addRoom">+ 房间</el-button>
 			</div>
 
 			<div class="container" v-else>
@@ -34,18 +34,18 @@
 					<tab-bar :list="tabs"></tab-bar>
 
 					<div class="tab-wrapper">
-						<div class="tab-item" :class="{actived: stage === index}" v-text="item" v-for="(item, index) of tab" @click="stage = index"></div>
+						<div class="tab-item" :class="{actived: currentIndex === index}" v-text="item" v-for="(item, index) of tab" @click="currentIndex = index"></div>
 					</div>
 				</div>
 
-				<template v-if="stage === 0">
+				<template v-if="currentIndex === 0">
 					<div class="btn-wrapper">
 						<el-button @click="addRoom">+ 楼层</el-button>
 						<el-button type="primary" @click="redirectAdd" v-if="floorList.length > 1">+ 租赁单位</el-button>
 					</div>
 
 					<ul class="floor-list">
-						<li v-for="(item, index) of floorList">
+						<li class="floor-item" v-for="(item, index) of floorList">
 							<div class="edit-wrapper" v-if="item.isEdit">
 								<div class="operation-wrapper">
 									<div class="item" v-if="item.isFloorNumberEdit">
@@ -88,7 +88,7 @@
 									<i class="icon icon-other" @click="showCopy(item.floorNumber)"></i>
 
 									<el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="popoverModalStatus = false">
-									  	<div class="icon-more" slot="reference" @click="currentFloorNumber = item.floorNumber"></div>
+									  	<div class="icon-more" slot="reference"></div>
 									  	<div class="more-icon-wrapper">
 											<i class="icon icon-edit" @click="editFloor(index)"></i>
 											<i class="icon icon-delete" @click="forDelFloor($event, index, item)"></i>
@@ -98,7 +98,7 @@
 									</el-popover>
 								</div>
 
-								<copy-floor title="复制楼层到" :copy-start="copyStart" :copy-end="copyEnd" :index="index" v-if="copyModalStatus && currentFloorNumber === item.floorNumber" @hide="copyModalStatus = false" @complete="copyFloor">
+								<copy-floor title="复制楼层到" :copy-start="copyStart" :copy-end="copyEnd" :index="index" v-if="currentFloorNumber === item.floorNumber" @hide="currentFloorNumber = -1" @complete="copyFloor">
 								</copy-floor>
 							</div>
 						</li>
@@ -121,23 +121,22 @@
 	import chart from '@/components/lease/chart.vue'
 	import copyFloor from '@/components/copyFloor.vue'
 
+	import {dateFormatString} from '@/utils/util'
+
 	export default {
 		data() {
 			return {
 				loaded: false,
 				loading: false,
 
-				isDelete: false,
-				index: 1,
+				currentIndex: 0,
 
 				copyStart: 1,
 				copyEnd: 1,
 
 				followTarget: null,
-				copyModalStatus: false,
 				popoverModalStatus: false,
 
-				stage: 0,
 				tab: ['楼宇租赁', '报表分析'],
 
 				tabs: [
@@ -161,7 +160,7 @@
 
 				chartData: {},
 
-				currentFloorNumber: 0,
+				currentFloorNumber: -1,
 				floorList: [
 					{
 						isEdit: true,
@@ -188,9 +187,7 @@
 
 		filters: {
 			format(value) {
-				const date = new Date()
-
-				return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`.replace(/\b(\w)\b/, '0$1')
+				return dateFormatString(new Date(value))
 			}
 		},
 
@@ -211,7 +208,7 @@
 					action: 'OfficeRental.officeRentalReportInfo'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -234,7 +231,7 @@
 					action: 'OfficeRental.queryAllRentalInfo'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -255,17 +252,32 @@
 				this.$floorNumber = item.floorNumber
 				this.$totalArea = item.totalArea
 			},
+			addRoom() {
+				let index = 1
+
+				if (this.floorList.length) {
+					index = this.floorList.slice(-1)[0].floorNumber + 1
+				}
+
+				this.floorList.unshift({
+					isEdit: true,
+					isFloorNumberEdit: true,
+					floorNumber: index,
+					totalArea: 1000,
+					floorId: -1,
+					companyList: []
+				})
+
+				this.$add = true
+			},
 			handleFloorChange(item, value, index) {
 				item.isEdit = false
 
 				if (value) {
 					if (this.$add) {
-						this.addRoomService(JSON.stringify([{
-							floorNumber: this.$floor.floorNumber,
-							floorSize: this.$floor.totalArea
-						}]))
+						this.addRoomService([item])
 					} else {
-						this.editRoomService()
+						this.editRoomService(item)
 					}
 				} else {
 					item.totalArea = this.$totalArea
@@ -278,51 +290,29 @@
 
 				this.$add = null
 			},
-			updateTotalArea() {
-				this.totalArea = this.floorList.map((item) => item.totalArea).reduce((prev, next) => prev + next)
-			},
-			addRoom() {
-				let index = 1
-
-				if (this.floorList.length) {
-					index = this.floorList.slice(-1)[0].floorNumber + 1
-				}
-
-				const floor = {
-					isEdit: true,
-					isFloorNumberEdit: true,
-					floorNumber: index,
-					totalArea: 1000,
-					floorId: -1,
-					companyList: []
-				}
-
-				this.$floors = [floor]
-
-				this.floorList.push(floor)
-
-				this.$add = true
-			},
 			async addRoomService(floorInfos) {
 				const params = {
 					action: 'OfficeRental.addFloors',
-					floorInfos
+					floorInfos: JSON.stringify(floorInfos.map((item) => {
+						return {
+							floorNumber: item.floorNumber,
+							floorSize: item.totalArea
+						}
+					}))
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				if (! data) {
 					return
 				}
 
 				data.data.idList.forEach((item, index) => {
-					this.$floors[index].floorId = item
+					floorInfos[index].floorId = item
 				})
-
-				this.$floors = null
 			},
-			async editRoomService() {
-				const currentFloor = this.floorList[this.currentFloorNumber]
+			async editRoomService(item) {
+				const currentFloor = item
 
 				const params = {
 					action: 'OfficeRental.editFloor',
@@ -333,7 +323,7 @@
 					})
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				if (! data) {
 					currentFloor.floorNumber = this.$floorNumber
@@ -343,15 +333,15 @@
 				}
 			},
 			editFloor(index) {
-				// 保存当前楼层
-				this.save(this.floorList[index])
+				const floor = this.floorList[index]
 
-				this.currentFloorNumber = index
-				this.floorList[index].isEdit = true
-				this.floorList[index].isFloorNumberEdit = false
+				// 保存当前楼层
+				this.save(floor)
+
+				floor.isEdit = true
+				floor.isFloorNumberEdit = false
 			},
 			showCopy(floorNumber) {
-				this.copyModalStatus = true
 				this.currentFloorNumber = floorNumber
 
 				this.copyStart = this.floorList.slice(-1)[0].floorNumber + 1
@@ -363,15 +353,15 @@
 				}
 
 				let {start, end, index} = value
+				const copyFloor = []
 
-				this.$floors = []
-				this.copyModalStatus = false
+				this.currentFloorNumber = -1
 
 				let num = end - start + 1
 				const totalArea = this.floorList[index].totalArea
 
 				while (num--) {
-					this.$floors.push({
+					copyFloor.push({
 						isEdit: false,
 						isFloorNumberEdit: true,
 						floorNumber: start ++,
@@ -381,14 +371,9 @@
 					})
 				}
 
-				this.floorList = [... this.floorList, ... this.$floors]
+				this.floorList = [... this.floorList, ... copyFloor]
 
-				this.addRoomService(JSON.stringify(this.$floors.map((item) => {
-					return {
-						floorNumber: item.floorNumber,
-						floorSize: item.totalArea
-					}
-				})))
+				this.addRoomService(copyFloor)
 			},
 			forDelFloor(e, index, item) {
 				this.popoverModalStatus = true
@@ -403,9 +388,7 @@
 					floorId: this.$floorId
 				}
 
-				//this.popoverModalStatus = false
-
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				this.$floorId = null
 
@@ -424,15 +407,6 @@
 			},
 			redirectAdd() {
 				this.$router.push('/lease/add')
-			},
-			redirec(e) {
-				let target = e.target
-
-				while (! target.dataset.id) {
-					target = target.parentNode
-				}
-
-				this.$router.push(`/lease/detail/${target.dataset.id}`)
 			}
 		}
 	}
