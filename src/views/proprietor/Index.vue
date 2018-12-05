@@ -288,7 +288,7 @@
 				clearTimeout(this.$timer)
 				const formdata = new FormData()
 
-				formdata.append('action', 'accountManagement.batchImport')
+				formdata.append('action', 'file.batchImport')
 				formdata.append('file', e.target.files[0])
 				
 				this.$refs.input.value = null;

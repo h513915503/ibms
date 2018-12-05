@@ -44,7 +44,7 @@ import EditVisitor from './views/visitors/editVisitor'
 import PersonnelRecord from './views/personnelRecord/personnel.vue'
 
 import LightManagement from './views/lightManage/LightManagement.vue'
-import LightAdd from './views/lightManage/lightAdd.vue'
+// import LightAdd from './views/lightManage/lightAdd.vue'
 
 import AirConditioner from './views/airConditionerManage/AirConditioner.vue'
 
@@ -283,12 +283,12 @@ export const routesMap = [
 		name: 'lightManagement',
 		component: LightManagement
 	},
-	{
-		type: '8-1',
-		path: '/light/lightAdd',
-		name: 'lightAdd',
-		component: LightAdd
-	},
+	// {
+	// 	type: '8-1',
+	// 	path: '/light/lightAdd',
+	// 	name: 'lightAdd',
+	// 	component: LightAdd
+	// },
 	{
 		type: '8-2',
 		path: '/airConditioner',
