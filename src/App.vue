@@ -78,7 +78,6 @@
 .content-wrapper {
 	min-width: 1000px;
 	min-height: calc(100vh - 72px);
-	padding: 24px;
 	position: relative;
 	box-sizing: border-box;
 }
