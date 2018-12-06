@@ -35,20 +35,15 @@ export default {
             var mixers = [];
             init.call(this)
             animate();
-            var air = addAir();
-            var fov = 20;
-            var near = 1;
-            var far = 1000;
-
             function init() {
                 var InfoDiv = document.getElementById('info')
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
-                // camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
+                // camera = new THREE.PerspectiveCamera( 50, (window.innerWidth - 800) / (window.innerHeight - 520), 0.1, 20000 );//可调整展示距离
                 camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 20000 );
                 camera.position.set( 0, 200, 100 );
 
-                camera.fov = fov;
+                // camera.fov = fov;
                 // controls = new THREE.OrbitControls( camera, InfoDiv );
                 // controls.target.set( 0, 100, 0 );
                 // controls.update();
@@ -82,13 +77,8 @@ export default {
                 // grid.material.transparent = true;
                 // scene.add( grid );
                 // model
-                function addAir() {
-                    var loader = new THREE.FBXLoader();
-                    loader.load( 'singleair.fbx', function ( object ) {
-                        console.log(object)
-                    })
-                }
-                var lll = addAir()
+                
+                // var lll = addAir()
                 var loader = new THREE.FBXLoader();
                 loader.load( '03(henliangtouming)-2.fbx', function ( object ) {
                     // object.children[0].geometry.computeBoundingBox()
@@ -118,7 +108,7 @@ export default {
                         event.preventDefault();
                         const {x, y} = container.getBoundingClientRect()
                         var vector = new THREE.Vector3();//三维坐标对象
-                        vector.set( ( (event.clientX - x) / 1800 ) * 2 - 1, - ( (event.clientY - y) / 520 ) * 2 + 1, 0.5 );
+                        vector.set( ( (event.clientX - x) / ( window.innerWidth - 800) ) * 2 - 1, - ( (event.clientY - y) / 520 ) * 2 + 1, 0.5 );
                         // vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
                         vector.unproject( camera );
                         var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
@@ -147,8 +137,12 @@ export default {
 
                             cube.position.set(x, y, z)
                             // cube.position.set(x, y, z)
-                            object.add( lll );
+                            // object.add( addAir() );
 
+                            loader.load( 'singleair.fbx', function ( obj ) {
+                                console.log(obj)
+                                object.add(cube)
+                            })
 
                         }
 
@@ -158,13 +152,22 @@ export default {
                     InfoDiv.addEventListener( 'click', onMouseClick, false );
                     scene.add( object );
                 } );
+
+                function addAir() {
+                    console.log(111)
+                    // var loader = new THREE.FBXLoader();
+                    loader.load( 'singleair.fbx', function ( object ) {
+                        console.log(object)
+                        scene.add(object)
+                    })
+                }
+
                 renderer = new THREE.WebGLRenderer( { antialias: true } );
-                // renderer.setPixelRatio( window.devicePixelRatio );
+                // // renderer.setPixelRatio( window.devicePixelRatio );
                 
-                renderer.setSize( 1800, 520 );
+                renderer.setSize( (window.innerWidth - 800), 520 );
                 renderer.shadowMap.enabled = true;
                 container.appendChild( renderer.domElement );
-                
                 window.addEventListener( 'resize', onWindowResize, false );
                 // stats
                 // stats = new Stats();
@@ -172,19 +175,25 @@ export default {
                 controls = new THREE.OrbitControls( camera, InfoDiv );
                 controls.target.set( 0, 100, 0 );
                 // controls.minZoom = 5000;
+                controls.enablePan = true;
                 controls.minDistance = 10000;
                 controls.maxDistance = 15000;
+                // controls.enableRotate = false; // 控制旋转  false 不可旋转
+                // controls.maxAzimuthAngle = 15;
+                controls.maxPolarAngle = Math.PI * 0.5; // 控制旋转垂直方向旋转角度
                 controls.update();
+
+                function onWindowResize() {
+                    camera.aspect = (window.innerWidth - 800) / 520;
+                    // camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    // renderer.render(scene, camera)
+                    // renderer.clearTarget(true, true, true, true)
+                    renderer.setSize( window.innerWidth - 800, 520 );
+                    // controls.reset()
+                }
             }
 
-
-            function onWindowResize() {
-                // camera.aspect = 1800 / 520;
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize( 1800, 520 );
-                // renderer.setSize( window.innerWidth, window.innerHeight );
-            }
             function animate() {
                 requestAnimationFrame( animate );
                 if ( mixers.length > 0 ) {
@@ -194,12 +203,6 @@ export default {
                 }
                 renderer.render( scene, camera );
                 // stats.update();
-            }
-            function addAir() {
-                var loader = new THREE.FBXLoader();
-                loader.load( 'singleair.FBX', function ( object ) {
-
-                })
             }
             
         }
