@@ -1,5 +1,5 @@
 <style scoped>
-#parking-lot-detail-wrapper {
+.parking-lot-detail-wrapper {
 	padding: 24px;
 	position: relative;
 
@@ -67,7 +67,7 @@ strong {
 </style>
 
 <template>
-	<div id="parking-lot-detail-wrapper">
+	<div class="parking-lot-detail-wrapper">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item :to="{path: '/'}">场地</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/lease'}">车位租赁</el-breadcrumb-item>
@@ -177,9 +177,6 @@ strong {
 			},
 			cancel() {
 				this.index = 0
-			},
-			editComplete() {
-
 			},
 			async throwLease() {
 				const params = {
