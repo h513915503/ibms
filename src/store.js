@@ -178,26 +178,28 @@ export default new Vuex.Store({
 		}
 	},
 	actions: {
-		async getUserInfo({commit, state, dispatch}) {
+		async getUserInfo({commit, state, dispatch}, userInfo) {
+			let data
 			const params = {
 				action: 'account.getPersonnelInfo'
 			}
 
-			const data = await axios.post('/api/dispatcher.do', params)
+			if (userInfo) {
+				data = userInfo
+			} else {
+				data = await axios.post('/api/dispatcher.do', params)
+			}
 
 			if (! data) {
 				return
 			}
 
-			commit('setAccountName', data.data.accountName)
+			const {accountName, pagePermission} = data.data
 
-			//commit('setRole', 'admin')
-			commit('setPermissions', data.data.pagePermission)
+			commit('setAccountName', accountName)
+			commit('setPermissions', pagePermission)
 
 			router.addRoutes(state.routes)
-
-			// 获取公司列表
-			dispatch('getCompanyList')
 		},
 		async getCompanyList({commit}) {
 			const params = {
