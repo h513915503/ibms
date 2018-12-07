@@ -1,5 +1,5 @@
 <style scoped>
-#parking-lot-wrapper {
+.parking-lot-wrapper {
 	min-width: 1000px;
 }
 .header {
@@ -38,7 +38,7 @@
 </style>
 
 <template>
-	<div id="parking-lot-wrapper">
+	<div class="parking-lot-wrapper">
 		<loading v-if="loading"></loading>
 
 		<template v-else>
@@ -65,6 +65,8 @@
 	import carChart from '@/components/parking-lot/chart.vue'
 
 	export default {
+		name: 'parking-lot',
+
 		data() {
 			return {
 				loading: false,
@@ -89,10 +91,7 @@
 						number: 0,
 						text: '未租空闲车位'
 					}
-				],
-
-				date: '',
-				number: '',
+				]
 			}
 		},
 
@@ -133,38 +132,6 @@
 			},
 			switchIndex(index) {
 				this.currentIndex = index
-			},
-			handleClick() {
-
-			},
-			go() {
-				this.$router.push('/parking-lot/add')
-			},
-			handleTable(e) {
-				let target = e.target
-
-				while (target.dataset && ! target.dataset.type) {
-					target = target.parentNode
-				}
-
-				if (! target.dataset) {
-					return
-				}
-
-				const {type} = target.dataset
-
-				if (+ type === 1) {
-					this.$router.push(`/parking-lot/detail/${100}`)
-				}
-			},
-			redirec(e) {
-				let target = e.target
-
-				while (! target.dataset.id) {
-					target = target.parentNode
-				}
-
-				this.$router.push(`/lease/detail/${target.dataset.id}`)
 			}
 		}
 	}
