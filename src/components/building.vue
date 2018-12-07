@@ -30,7 +30,7 @@ export default {
             var InfoDiv = null;
             
             var container, controls;
-            var camera, scene, renderer, light;
+            var camera, scene, renderer, light, singleair;
             var clock = new THREE.Clock();
             var mixers = [];
             init.call(this)
@@ -39,11 +39,12 @@ export default {
                 var InfoDiv = document.getElementById('info')
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
-                // camera = new THREE.PerspectiveCamera( 50, 1800 / 520, 0.1, 20000 );
-                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
-                camera.position.set( 100, 200, 900 );
+                // camera = new THREE.PerspectiveCamera( 50, (window.innerWidth - 800) / (window.innerHeight - 520), 0.1, 20000 );//可调整展示距离
+                camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 20000 );
+                // camera.fov = 20
+                camera.position.set( 0, 200, 100 );
 
-
+                // camera.fov = fov;
                 // controls = new THREE.OrbitControls( camera, InfoDiv );
                 // controls.target.set( 0, 100, 0 );
                 // controls.update();
@@ -77,7 +78,20 @@ export default {
                 // grid.material.transparent = true;
                 // scene.add( grid );
                 // model
+                
+                // var lll = addAir()
                 var loader = new THREE.FBXLoader();
+                loader.load('singleair.fbx', function (obj) {
+                    //模型的node节点不在规范的坐标系中心点，需要获取物体包围盒设置过去
+                    var bbox3 = new THREE.Box3().setFromObject(obj);
+                    var bPos = bbox3.getBoundingSphere().center;
+                    //通过给物体添加父亲的形式，通过反向位置设置到0 0 0
+                    var sceneNode = new THREE.Object3D();
+                    sceneNode.position.set(-bPos.x, -bPos.y, -bPos.z);
+                    sceneNode.add(obj);
+                    //提供一个全局变量  只load一次模型给下面克隆用
+                    singleair = sceneNode;
+                })
                 loader.load( '03(henliangtouming)-2.fbx', function ( object ) {
                     // object.children[0].geometry.computeBoundingBox()
                     // object.children[0].geometry.center()
@@ -99,15 +113,20 @@ export default {
 
                     // var mouse = new THREE.Vector3();
 
+                    var bbox3 =new THREE.Box3().setFromObject(object);
+                    var bPos = bbox3.getBoundingSphere().center;
+                    var sceneNode = new THREE.Object3D();
+                    sceneNode.position.set(-bPos.x, -bPos.y, -bPos.z);
+                    sceneNode.add(object);
 
-
+                    scene.add(sceneNode);
 
 
                     function onMouseClick( event ) {
                         event.preventDefault();
                         const {x, y} = container.getBoundingClientRect()
                         var vector = new THREE.Vector3();//三维坐标对象
-                        vector.set( ( (event.clientX - x) / 1800 ) * 2 - 1, - ( (event.clientY - y) / 520 ) * 2 + 1, 0.5 );
+                        vector.set( ( (event.clientX - x) / ( window.innerWidth - 800) ) * 2 - 1, - ( (event.clientY - y) / 520 ) * 2 + 1, 0.5 );
                         // vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
                         vector.unproject( camera );
                         var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
@@ -128,16 +147,22 @@ export default {
                             console.log("z坐标:"+ z);
 
 
-                            var geometry = new THREE.BoxGeometry( 100, 100, 100 );
+                            var geometry = new THREE.BoxGeometry( 20, 20, 20 );
                             var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
                             var cube = new THREE.Mesh( geometry, material );
+                            // var air = addAir()
+
+                            var newObj = singleair.clone(true);
+                            var node = new THREE.Object3D();
+                            node.scale.set(20,20,20); //模型做的有问题  太小了
+                            node.position.set(x,y,z);
+                            node.add(newObj);
+                            scene.add(node);
 
 
-
-                            cube.position.set(x, y, z)
                             // cube.position.set(x, y, z)
-                            object.add( cube );
-
+                            // cube.position.set(x, y, z)
+                            // object.add( addAir() );)
 
                         }
 
@@ -145,33 +170,41 @@ export default {
 
                     // var InfoDiv = document.getElementById('#info')
                     InfoDiv.addEventListener( 'click', onMouseClick, false );
-
-                    scene.add( object );
+                    // scene.add( object );
                 } );
+
                 renderer = new THREE.WebGLRenderer( { antialias: true } );
-                // renderer.setPixelRatio( window.devicePixelRatio );
+                // // renderer.setPixelRatio( window.devicePixelRatio );
                 
-                renderer.setSize( 1800, 520 );
+                renderer.setSize( (window.innerWidth - 800), 520 );
                 renderer.shadowMap.enabled = true;
                 container.appendChild( renderer.domElement );
-                // window.addEventListener( 'resize', onWindowResize, false );
+                window.addEventListener( 'resize', onWindowResize, false );
                 // stats
                 // stats = new Stats();
                 // container.appendChild( stats.dom );
                 controls = new THREE.OrbitControls( camera, InfoDiv );
                 controls.target.set( 0, 100, 0 );
+                // controls.minZoom = 5000;
+                controls.enablePan = true;
+                controls.minDistance = 8000;
+                controls.maxDistance = 18000;
+                // controls.enableRotate = false; // 控制旋转  false 不可旋转
+                // controls.maxAzimuthAngle = 15;
+                controls.maxPolarAngle = 0; // 控制旋转垂直方向旋转角度
                 controls.update();
+
+                function onWindowResize() {
+                    camera.aspect = (window.innerWidth - 800) / 520;
+                    // camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    // renderer.render(scene, camera)
+                    // renderer.clearTarget(true, true, true, true)
+                    renderer.setSize( window.innerWidth - 800, 520 );
+                    // controls.reset()
+                }
             }
 
-
-            // function onWindowResize() {
-            //     camera.aspect = 1800 / 520;
-            //     // camera.aspect = window.innerWidth / window.innerHeight;
-            //     camera.updateProjectionMatrix();
-            //     renderer.setSize( 1800, 520 );
-            //     // renderer.setSize( window.innerWidth, window.innerHeight );
-            // }
-			//
             function animate() {
                 requestAnimationFrame( animate );
                 if ( mixers.length > 0 ) {
@@ -182,6 +215,7 @@ export default {
                 renderer.render( scene, camera );
                 // stats.update();
             }
+            
         }
     }
 }

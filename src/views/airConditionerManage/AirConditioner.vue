@@ -5,174 +5,111 @@
         box-sizing: border-box;
         background-color: #FFF;
     }
-    .operator {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 40px;
+    .header {
+        padding: 0 24px;
+        background-color: #FFF;
+        margin-bottom: 24px;
     }
-    .search-content {
-        display: flex;
-        justify-content: space-between;
+    .tabs {
+        margin-bottom: 10px;
     }
-    .btn-search {
-        margin-left: 20px;
-    }
-    .status {
-        display: flex;
-        align-items: center;
 
-        &::before {
+    .tab-wrapper {
+        display: flex;
+    }
+    .tab-item {
+        margin-right: 50px;
+        color: rgba(0, 0, 0, .65);
+        font-size: 14px;
+        cursor: pointer;
+        line-height: 46px;
+    }
+    .tab-item.actived {
+        color: #1890FF;
+        position: relative;
+
+        &::after {
             content: "";
-            width: 6px;
-            height: 6px;
-            margin-right: 10px;
-            border-radius: 50%;
-            background-color: green;
+            width: 130%;
+            height: 2px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            background-color: currentcolor;
+            transform: translateX(-50%);
         }
     }
-    .error::before {
-        background: #F5222D;
-    }
-    .lighting::before {
-        background: #52C41A;
-    }
-    .closed::before {
-        background: #BFBFBF;
-    }
-    .page-wrapper {
-        margin-top: 20px;
-	    text-align: right;
-    }
+    
 </style>
 
 <template>
-    <div id="air-conditioner-wrapper">
-        <tab-bar :list="tabs"/>
+    <div id="light-wrapper">
+        <header class="header">
+			<tab-bar :list="tabs"></tab-bar><br />
 
-        <div class="container">
-            <div class="operator">
-                <el-upload
-                    class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :on-preview="handlePreview"
-                    :on-remove="handleRemove"
-                    :before-remove="beforeRemove"
-                    :on-exceed="handleExceed">
-                    <el-button type="primary"><i class="el-icon-upload2" /> 导入</el-button>
-                </el-upload>
-                <div class="search-content">
-                    <el-input placeholder="编号/品牌/型号"></el-input>
-			        <el-button type="primary" class="btn-search">查询</el-button>
-                </div>
-            </div>
+			<div class="tab-wrapper">
+				<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
+			</div>
+		</header>
 
-            <div class="table-content">
-                <el-table :data="tableData">
-                    <el-table-column label="空调编号" prop="airNum"></el-table-column>
-                    <el-table-column label="品牌" prop="brand"></el-table-column>
-                    <el-table-column label="型号" prop="model"></el-table-column>
-                    <el-table-column label="出厂日期" sortable prop="outDate"></el-table-column>
-                    <el-table-column label="已使用" prop="usedTime" :filters="[]" :filter-method="filterHandler"></el-table-column>
-                    <el-table-column label="累计故障" prop="calcFail" :filters="[]" :filter-method="filterHandler"></el-table-column>
-                    <el-table-column label="所在楼层" prop="floor" :filters="[]" :filter-method="filterHandler"></el-table-column>
-                    <el-table-column label="详细位置" prop="floor" :filters="[]" :filter-method="filterHandler"></el-table-column>
-                    <el-table-column label="状态" prop="status" :filters="[]" :filter-method="filterHandler">
-                        <template slot-scope="scope">
-                            <span class="status closed" v-if="scope.row.status === 0">已关闭</span>
-                            <span class="status error" v-else-if="scope.row.status === 1">故障中</span>
-                            <span class="status lighting" v-else>服务中</span>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <div class="page-wrapper">
-                    <el-pagination
-                        background
-                        layout="prev, pager, next"
-                        :total="1000">
-                    </el-pagination>
-                </div>
-            </div>
-        </div>
+        <DeviceContent v-if="currentIndex === 0" />
+        <ChartsContent v-if="currentIndex === 1"/>
     </div>
 </template>
-
+    
 <script>
-    import fetch from '@/api/index.js'
-    import tabBar from '@/components/tab-bar.vue'
+    import DeviceContent from './DeviceContent.vue'
+    import ChartsContent from './ChartsContent.vue'
 
     export default {
-        created() {
-            this.getTableData();
-        },
         data() {
             return {
+                search: '',
+                currentIndex: 0,
+                
+				tab: ['设备维护', '报表分析'],
                 tabs: [
                     {
-                        number: 213,
+                        number: 123,
                         text: '空调总数'
                     },
                     {
-                        number: 123,
-                        text: '正常开启'
+                        number: 321,
+                        text: '运行中'
                     },
                     {
                         number: 432,
-                        text: '正常关闭'
-                    },
-                    {
-                        number: 312,
                         text: '故障中'
+                    },
+                    {
+                        number: 542,
+                        text: '未运行'
                     }
-                ],
-                tableData: [
-                    {
-                        airNum: '01',
-                        brand: '公牛',
-                        model: 'v100',
-                        outDate: '2012-3-19',
-                        usedTime: 2323,
-                        calcFail: 3,
-                        floor: 5,
-                        position: '楼梯间',
-                        status: 0
-                    },
-                    {
-                        airNum: '01',
-                        brand: '公牛',
-                        model: 'v100',
-                        outDate: '2012-3-19',
-                        usedTime: 2323,
-                        calcFail: 3,
-                        floor: 5,
-                        position: '楼梯间',
-                        status: 1
-                    },
-                    {
-                        airNum: '01',
-                        brand: '公牛',
-                        model: 'v100',
-                        outDate: '2012-3-19',
-                        usedTime: 2323,
-                        calcFail: 3,
-                        floor: 5,
-                        position: '楼梯间',
-                        status: 2
-                    },
                 ]
             }
         },
         methods: {
+            switchIndex(index) {
+				this.currentIndex = index
+            },
+            switchFloor(index) {
+                this.floorIndex = index
+            },
+            addDevice() {
+                this.level = 1
+            },
             filterHandler(value, row, column) {
 
             },
-            getTableData() {
-                this.$http.post('/getAirConditioner', {}).then(res => {
-
-                })
+            go() {
+                // this.$router.push('/light/lightAdd')
             }
         },
         components: {
-            tabBar
+            // tabBar,
+            DeviceContent,
+            ChartsContent
+            // Building
         }
     }
 </script>

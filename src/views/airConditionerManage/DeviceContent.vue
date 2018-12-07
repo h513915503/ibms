@@ -38,6 +38,7 @@
     }
     .floor-item {
         cursor: pointer;
+        width: 74px;
         line-height:38px;
         color: rgba(0,0,0,0.65);
     }
@@ -50,12 +51,10 @@
     .container {
         display: flex;
         flex-direction: row;
-    }
-    .detail-floor {
-
+        justify-content: space-between;
     }
     .detail-info {
-        width: 260px;
+        width: 220px;
         margin-left: 24px;
     }
     .title {
@@ -92,7 +91,7 @@
     <div class="deviceContent">
         <div class="top-button">
             <div class="left-content">
-                <el-button type="primary" @click="addDevice">+ 灯</el-button>
+                <el-button type="primary" @click="addDevice">+ 空调</el-button>
                 <el-button>批量导入</el-button>
             </div>
             
@@ -116,7 +115,7 @@
                 <p class="title">暂无设备</p>
                 <span class="about">
                     您可通过以下两种方式添加。<br /> 
-                    1. 单个添加：点击【+ 灯】按钮后，在楼层平面图中点击确定灯的位置，之后输入设备的各个信息，点击确定即可。 2. 批量导入：点击【批量导入】，系统会自动导入设备及其信息。
+                    1. 单个添加：点击【+ 空调】按钮后，在楼层平面图中点击确定灯的位置，之后输入设备的各个信息，点击确定即可。 2. 批量导入：点击【批量导入】，系统会自动导入设备及其信息。
                 </span>
             </div>
 
