@@ -34,11 +34,6 @@
 	padding: 0;
 	line-height: 32px;
 }
-/* .el-button:last-child {
-	color: #F5222D;
-	border-color: #D9D9D9;
-	background-color: rgba(0, 0, 0, .04);
-} */
 </style>
 
 <template>
@@ -58,8 +53,27 @@
 </template>
 
 <script>
+	import {updatePosition} from '@/utils/util'
+
 	export default {
-		props: ['id', 'name', 'title', 'content', 'throwLeaseModalStatus'],
+		props: {
+			id: {
+				type: String,
+				required: true
+			},
+			followTarget: {
+				type: HTMLElement,
+				required: true
+			},
+			offsetX: {
+				type: Number,
+				default: 20
+			},
+			offsetY: {
+				type: Number,
+				default: 20
+			}
+		},
 
 		data() {
 			return {
@@ -74,6 +88,8 @@
 		},
 
 		mounted() {
+			this.updatePosition()
+
 			document.addEventListener('click', (e) => {
 				if (! this.$refs['throw-lease']) {
 					return
@@ -89,18 +105,21 @@
 					return
 				}
 
-				this.$emit('update:throwLeaseModalStatus', false)
+				this.$emit('hide')
 			}, true)
 		},
 
 		methods: {
+			updatePosition() {
+				updatePosition(this.followTarget.getBoundingClientRect(), this.$refs['throw-lease'], this.offsetX, this.offsetY)
+			},
 			complete(value) {
 				if (value) {
 					this.$emit('complete', this.date[1])
 					this.containueLease()
 				}
 
-				this.$emit('update:throwLeaseModalStatus', false)
+				this.$emit('hide')
 			},
 			async containueLease() {
 				const params = {
