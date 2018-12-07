@@ -1,5 +1,5 @@
 <style scoped>
-.parking-space {
+.parking-space-wrapper {
 	padding: 24px;
 }
 .btn-add {
@@ -21,10 +21,10 @@
 
 	& .item {
 		margin-right: 50px;
+	}
 
-		& > span {
-			margin-right: 8px;
-		}
+	& .label {
+		margin-right: 8px;
 	}
 }
 .info2 {
@@ -32,15 +32,11 @@
 	align-items: center;
 	margin-bottom: 24px;
 
-	& span {
+	& .label {
 		flex-shrink: 0;
 		margin-right: 8px;
 	}
 }
-/* .number-wrapper {
-	margin: 16px 0 50px 53px;
-} */
-
 .area-list {
 	display: flex;
 	flex-wrap: wrap;
@@ -54,20 +50,20 @@
 	font-size: 16px;
 	border: 1px solid rgba(0, 0, 0, .15);
 
-	& p:nth-child(1) {
+	& .item:nth-child(1) {
 		padding-left: 36px;
 		box-sizing: border-box;
 		border-bottom: 1px solid #D9D9D9;
 	}
 
-	& p:nth-child(2) {
+	& .item:nth-child(2) {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		padding: 0 7px;
 	}
 
-	& input {
+	& .input {
 		width: 40px;
 		height: 30px;
 		margin-bottom: 5px;
@@ -130,7 +126,7 @@
 		font-size: 24px;
 	}
 
-	& p {
+	& .label {
 		margin-top: 24px;
 	}
 }
@@ -200,7 +196,7 @@
 </style>
 
 <template>
-	<div class="parking-space">
+	<div class="parking-space-wrapper">
 		<loading v-if="loading"></loading>
 
 		<template v-else>
@@ -212,21 +208,21 @@
 					<div class="edit-wrapper" v-if="item.isEdit">
 						<div class="info">
 							<div class="item">
-								<span>楼层号：</span>
+								<span class="label">楼层号：</span>
 								<el-input-number v-model="item.floorNumber" label="描述文字"></el-input-number>
 							</div>
 							<div class="item">
-								<span>车位编排方式：</span>
+								<span class="label">车位编排方式：</span>
 								<el-radio v-model="item.numberRule" :label="1">按号</el-radio>
 	  							<el-radio v-model="item.numberRule" :label="2">按区</el-radio>
 							</div>
 							<div class="item">
-								<span>车位数：</span>
+								<span class="label">车位数：</span>
 								{{item.numberRule === 1 ? item.endOrder - item.startOrder + 1 : 0}}
 							</div>
 						</div>
 						<div class="info2">
-							<span>车位：</span>
+							<span class="label">车位：</span>
 
 	  						<div class="number-wrapper" v-if="item.numberRule === 1">
 	  							<el-input-number v-model="item.startOrder" :min="1" label="描述文字"></el-input-number> ~
@@ -235,11 +231,11 @@
 
 	  						<ul class="area-list" v-if="item.numberRule === 2">
 	  							<li class="area-item" v-for="area of item.areaList">
-	  								<p>
-	  									<input class="index" type="text" v-model="area.areaStr"> 区
+	  								<p class="item">
+	  									<input class="input index" type="text" v-model="area.areaStr"> 区
 	  								</p>
-	  								<p>
-	  									<input type="text" v-model="area.startOrder"> ~ <input type="text" v-model="area.endOrder">
+	  								<p class="item">
+	  									<input class="input" type="text" v-model="area.startOrder"> ~ <input class="input" type="text" v-model="area.endOrder">
 	  								</p>
 	  							</li>
 	  							<li class="more-area" @click="addArea(item)"></li>
@@ -258,42 +254,42 @@
 							</div>
 							<div class="item">
 								<span class="num" v-text="item.allParkingSpaceCount"></span>
-								<p>总车位</p>
+								<p class="label">总车位</p>
 							</div>
 							<div class="item">
 								<span class="num" v-text="item.rentalParkingSpaceCount"></span>
-								<p>包月车位</p>
+								<p class="label">包月车位</p>
 							</div>
 							<div class="item">
 								<span class="num" v-text="item.temporaryUseParkingSpaceCount"></span>
-								<p>临时停放车辆</p>
+								<p class="label">临时停放车辆</p>
 							</div>
 							<div class="item">
 								<span class="num" v-text="item.unusedParkingSpaceCount"></span>
-								<p>未租空闲车位</p>
+								<p class="label">未租空闲车位</p>
 							</div>
 						</div>
 						<template v-else>
 							<div class="show-wrapper areas-item" v-for="(area, i) of item.areaList">
 								<div class="item">
 									{{item.floorNumber}} 层
-									<p>{{area.areaStr}} 区</p>
+									<p class="label">{{area.areaStr}} 区</p>
 								</div>
 								<div class="item">
 									<span class="num" v-text="area.allParkingSpaceCount"></span>
-									<p>总车位</p>
+									<p class="label">总车位</p>
 								</div>
 								<div class="item">
 									<span class="num" v-text="area.rentalParkingSpaceCount"></span>
-									<p>包月车位</p>
+									<p class="label">包月车位</p>
 								</div>
 								<div class="item">
 									<span class="num" v-text="area.temporaryUseParkingSpaceCount"></span>
-									<p>临时停放车辆</p>
+									<p class="label">临时停放车辆</p>
 								</div>
 								<div class="item">
 									<span class="num" v-text="area.unusedParkingSpaceCount"></span>
-									<p>未租空闲车位</p>
+									<p class="label">未租空闲车位</p>
 								</div>
 							</div>
 						</template>
@@ -307,7 +303,7 @@
 			</ul>
 		</template>
 
-		<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的车位信息会被清空。" :follow-target="followTarget" v-if="popoverModalStatus" @hide="cancelDeleteFloor" ref="popover">
+		<popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的车位信息会被清空。" :follow-target="followTarget" v-if="popoverModalStatus" @hide="cancelDeleteFloor">
 			<el-button slot="ok" @click="cancelDeleteFloor">取消</el-button>
 			<el-button type="primary" slot="cancel" class="ok" @click="deleteFloorService">确定</el-button>
 		</popover>
@@ -323,23 +319,13 @@
 				disabledAdd: false,
 
 				currentId: -1,
-				isDelete: false,
 
-				copyModalStatus: false,
 				isShowIconWrapper: false,
-
 				followTarget: null,
 				popoverModalStatus: false,
 
-				type: 0,
 				list: []
 			}
-		},
-
-		computed: {
-			isAdd() {
-				return this.type === 1
-			},
 		},
 
 		created() {
@@ -410,8 +396,8 @@
 					floorNumber,
 
 					numberRule: 1,
-					numberStart: 1,
-					numberEnd: 10,
+					startOrder: 1,
+					endOrder: 10,
 
 					allParkingSpaceCount: 0,
 					rentalParkingSpaceCount	: 0,
