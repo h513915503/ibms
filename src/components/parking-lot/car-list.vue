@@ -1,5 +1,5 @@
 <style scoped>
-#parking-lot-wrapper {
+.parking-lot-wrapper {
 	min-width: 1000px;
 }
 .container {
@@ -25,7 +25,7 @@
 	align-items: center;
 	margin-right: 20px;
 
-	& span {
+	& .label {
 		flex-shrink: 0;
 		margin-right: 10px;
 	}
@@ -40,21 +40,21 @@
 </style>
 
 <template>
-	<div id="parking-lot-wrapper">
+	<div class="parking-lot-wrapper">
 		<loading v-if="loading"></loading>
 
 		<template v-else>
-			<!-- <div class="container" v-if="! list.length">
+			<div class="container" v-if="! list.length">
 				<el-button type="primary" @click="go">+包月车辆</el-button>
 				<p class="no-data" >暂无包月车辆。</p>
-			</div> -->
+			</div>
 
-			<div class="container">
+			<div class="container" v-else>
 				<div class="search-wrapper">
 					<el-button type="primary" @click="go">+包月车辆</el-button>
 					<div class="search-content">
 						<label class="calendar-label">
-							<span>租期到期时间：</span>
+							<span class="label">租期到期时间：</span>
 							<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" placeholder="结束日期"></el-date-picker>
 						</label>
 						<el-input v-model="number" placeholder="车牌号"></el-input>
@@ -62,7 +62,7 @@
 					</div>
 				</div>
 
-				<el-table :data="list" @click.native="handleTable">
+				<el-table :data="list" @click.native="handleTable" @sort-change="sortChange">
 					<el-table-column prop="carNumber" label="车牌号"></el-table-column>
 					<el-table-column prop="masterName" label="车主姓名"></el-table-column>
 					<el-table-column prop="masterPhone" label="车主手机号码"></el-table-column>
@@ -72,25 +72,20 @@
 							{{scope.row.floorNumber}}层·{{scope.row.isConfirmed === 1 ? scope.row.parkingSpaceNumber + '号' : scope.row.parkingAreaNumber}}
 						</template>
 					</el-table-column>
-					<el-table-column label="到期时间" sortable>
+					<el-table-column label="到期时间" prop="endDate" sortable="custom">
 						<template slot-scope="scope">
 							{{scope.row.endDate | format}}
 						</template>
 					</el-table-column>
 					<el-table-column label="操作">
 			  			<template slot-scope="scope">
-					        <el-button type="text" size="small" @click="forContinueLease($event, scope.row.id, scope.$index)">续租</el-button>
-					        <el-button type="text" size="small" data-type="1" :data-id="scope.row.id">查看详情</el-button>
+					        <el-button type="text" size="small" data-type="1" :data-id="scope.row.id" :data-index="scope.$index">续租</el-button>
+					        <el-button type="text" size="small" data-type="2" :data-id="scope.row.id">查看详情</el-button>
 				      </template>
 				    </el-table-column>
 				</el-table>
 
-				<!-- <popover name="close" title="确定要删除这层楼么？" content="删除该层楼之后，该楼层的租赁信息、业主信息也会被清空。" v-if="popoverModalStatus" @hide="popoverModalStatus = false" ref="popover">
-					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
-					<el-button type="primary" slot="cancel" class="ok" @click="continueLease">确定</el-button>
-				</popover> -->
-
-				<parking-lot-throw-lease :id="currentCarId" :throwLeaseModalStatus.sync="throwLeaseModalStatus" ref="popover" v-if="throwLeaseModalStatus" @complete="complete"></parking-lot-throw-lease>
+				<parking-lot-throw-lease :follow-target="followTarget" :id="currentCarId" v-if="throwLeaseModalStatus" @hide="throwLeaseModalStatus = false" @complete="complete"></parking-lot-throw-lease>
 
 				<div class="page-wrapper" v-if="list.length">
 					<el-pagination background layout="prev, pager, next" :total="pageTotal" @current-change="pageChange"></el-pagination>
@@ -110,9 +105,9 @@
 				loading: false,
 				loaded: false,
 
+				followTarget: null,
 				throwLeaseModalStatus: false,
 				currentCarId: -1,
-				//popoverModalStatus: false,
 
 				disabled: false,
 
@@ -150,6 +145,7 @@
 					this.loaded  =true
 
 					// 保存数据
+					this.setData(data)
 					this.$root.$tempData = data
 				})
 			}
@@ -159,9 +155,23 @@
 			async search() {
 				this.disabled = true
 
-				await this.getList()
+				await this.getList().then((data) => {
+					// 保存数据
+					this.setData(data)
+					this.$root.$tempData = data
+				})
 
 				this.disabled = false
+			},
+			sortChange(column) {
+				this.$rank = column.prop
+				this.$order = column.order === 'ascending' ? false : column.order === 'descending' && true
+
+				this.getList().then((data) => {
+					// 保存数据
+					this.setData(data)
+					this.$root.$tempData = data
+				})
 			},
 			async getList() {
 				const params = {
@@ -178,18 +188,24 @@
 					params.condition.endDate = this.date
 				}
 
+				if (this.$order !== null && this.$rank) {
+					params.sortContent = [{
+						field: 'endDate',
+						isDesc: this.$order
+					}]
+				}
+
 				// 没有条件时去掉
 				! Object.keys(params.condition).length && (params.condition = void 1)
 
 				params.condition = JSON.stringify(params.condition)
+				params.sortContent = JSON.stringify(params.sortContent)
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				if (! data) {
 					return
 				}
-
-				this.setData(data.data)
 
 				return data.data
 			},
@@ -204,25 +220,6 @@
 			go() {
 				this.$router.push('/parking-lot/add')
 			},
-			forContinueLease(e, id, index) {
-				this.$index = index
-				this.currentCarId = id
-				this.throwLeaseModalStatus = true
-
-				this.$nextTick(() => {
-                    const {x, y} = e.target.getBoundingClientRect()
-
-                    this.$refs.popover.$el.style.left = `${x - 650}px`
-                    this.$refs.popover.$el.style.top = `${y - 55}px`
-                })
-			},
-			continueLease() {
-
-			},
-			complete(value) {
-				this.list[this.$index].endDate = value
-				this.$index = null
-			},
 			handleTable(e) {
 				let target = e.target
 
@@ -234,20 +231,28 @@
 					return
 				}
 
-				const {id, type} = target.dataset
+				const {id, type, index} = target.dataset
 
 				if (+ type === 1) {
+					this.forContinueLease(e, id, index)
+
+					return
+				}
+
+				if (+ type === 2) {
 					this.$router.push(`/parking-lot/detail/${id}`)
 				}
 			},
-			redirec(e) {
-				let target = e.target
+			forContinueLease(e, id, index) {
+				this.$index = index
+				this.currentCarId = id
+				this.followTarget = e.target
+				this.throwLeaseModalStatus = true
 
-				while (! target.dataset.id) {
-					target = target.parentNode
-				}
-
-				this.$router.push(`/lease/detail/${target.dataset.id}`)
+			},
+			complete(value) {
+				this.list[this.$index].endDate = value
+				this.$index = null
 			}
 		}
 	}
