@@ -28,16 +28,32 @@
 .form-item {
 	display: flex;
 	align-items: center;
-	padding-bottom: 10px;
 	margin-bottom: 50px;
+	position: relative;
 	border-bottom: 1px solid #D9D9D9;
 }
 .form-item:nth-of-type(2) {
 	margin-bottom: 0;
 }
+.form-item::after {
+	content: "";
+	height: 1px;
+	width: 0;
+	position: absolute;
+	left: 50%;
+	bottom: -1px;
+	background-color: #4278EE;
+	transform: translateX(-50%);
+	transition: all .3s;
+}
+.form-item.line::after {
+	width: 100%;
+}
 .svg-wrapper {
 	padding: 0 10px;
+	margin-bottom: 8px;
 	margin-right: 10px;
+	font-size: 0;
 	border-right: 1px solid #D9D9D9;
 }
 .icon {
@@ -45,8 +61,12 @@
 	height: 18px;
 }
 .input {
+	padding-bottom: 8px;
 	border: none;
 	font-size: 14px;
+}
+.input:-webkit-autofill {
+	box-shadow: 0 0 0px 1000px white inset !important;
 }
 .input::placeholder {
 	color: #D9D9D9;
@@ -56,7 +76,6 @@
 	border-radius: 2px;
 	font-size: 20px;
 	line-height: 48px;
-	letter-spacing: 10px;
 	background-color: #4278EE;
 }
 .login-btn:hover {
@@ -78,21 +97,21 @@
 		<div class="login-form">
 			<h4 class="title">登录</h4>
 
-			<div class="form-item">
+			<div class="form-item" :class="{line: phoneLine}">
 				<div class="svg-wrapper">
 					<svg class="icon">
 						<use xlink:href="#peo"></use>
 					</svg>
 				</div>
-				<input class="input" v-model="phone" autofocus maxlength="11" placeholder="请输入" @input="change" />
+				<input class="input" v-model="phone" autofocus maxlength="11" placeholder="请输入" @input="change" @focus="focus('phone')" @blur="blur('phone')" />
 			</div>
-			<div class="form-item">
+			<div class="form-item" :class="{line: passwordLine}">
 				<div class="svg-wrapper">
 					<svg class="icon">
 						<use xlink:href="#lock"></use>
 					</svg>
 				</div>
-				<input class="input" type="password" v-model="password" placeholder="请输入密码" @keyup.enter="login" />
+				<input class="input" type="password" v-model="password" placeholder="请输入密码" @keyup.enter="login" @focus="focus('password')" @blur="blur('password')" />
 			</div>
 
 			<router-link class="forgot-password" to="/forgot-password">忘记密码？</router-link>
@@ -106,6 +125,9 @@
 	export default {
 		data() {
 			return {
+				phoneLine: false,
+				passwordLine: false,
+
 				disabled: false,
 
 				phone: '',
@@ -128,6 +150,12 @@
 		},
 
 		methods: {
+			focus(type) {
+				type === 'phone' ? this.phoneLine = true : this.passwordLine = true
+			},
+			blur(type) {
+				type === 'phone' ? this.phoneLine = false : this.passwordLine = false
+			},
 			change(e) {
 				this.phone = e.target.value.replace(/\D/g, '')
 				e.target.value = this.phone
@@ -135,6 +163,10 @@
 			async login() {
 				if (! /^1\d{10}/.test(this.phone)) {
 					this.$message.error('请输入正确的手机号码')
+					return
+				}
+
+				if (! this.password) {
 					return
 				}
 
@@ -154,21 +186,11 @@
 					return
 				}
 
-				sessionStorage.setItem('token', data.data.token)
-				this.$store.commit('setToken', data.data.token)
+				const {token} = data.data
 
-				await this.$store.dispatch('getUserInfo')
+				sessionStorage.setItem('token', token)
 
-				const path = this.$store.state.path
-
-				if (path) {
-					this.$router.replace(path)
-				} else {
-					sessionStorage.removeItem('token')
-					this.$store.commit('setToken', '')
-
-					this.$message.error('抱歉，你没有任何权限访问该系统')
-				}
+				location.href = '/'
 			}
 		}
 	}
