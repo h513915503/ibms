@@ -98,4 +98,21 @@ const downloadExcel = (data) => {
     downloadExcel(data)
 }
 
-export {dateFormat, timeFormat, dateFormatString, downloadExcel}
+function updatePosition(rect, popover, offsetX = 20, offsetY = 20) {
+    const {x, y, bottom} = rect
+    const width = popover.offsetWidth
+    const height = popover.offsetHeight
+
+    // 240 aside width
+    // 72 header heigth
+    popover.style.transformOrigin = '100% 0'
+    popover.style.left = `${x - width - offsetX - 240}px`
+    popover.style.top = `${y + offsetY - 72 + (document.scrollingElement && document.documentElement).scrollTop}px`
+
+    if (bottom + height + 40 > innerHeight) {
+        popover.style.transformOrigin = '100% 100%'
+        popover.style.top = `${y - height - 72 + (document.scrollingElement && document.documentElement).scrollTop}px`
+    }
+}
+
+export {dateFormat, timeFormat, dateFormatString, downloadExcel, updatePosition}
