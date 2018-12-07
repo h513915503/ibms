@@ -1,8 +1,8 @@
 <style scoped>
 .popover-wrapper {
 	padding: 24px;
-	position: fixed;
-	z-index: 10000;
+	position: absolute;
+	z-index: 10;
 	font-size: 16px;
 	border-radius: 4px;
 	box-shadow: 0 0px 12px rgba(0, 0, 0, .2);
@@ -83,6 +83,8 @@
 </template>
 
 <script>
+	import {updatePosition} from '@/utils/util'
+
 	export default {
 		props: {
 			name: {
@@ -132,7 +134,7 @@
 			window.addEventListener('resize', this.updatePosition)
 
 			// 屏蔽滚动事件
-			this.$mousewheelHandler = (e) => e.preventDefault()
+			//this.$mousewheelHandler = (e) => e.preventDefault()
 
 			document.addEventListener('mousewheel', this.$mousewheelHandler)
 		},
@@ -144,19 +146,7 @@
 
 		methods: {
 			updatePosition() {
-				const {x, y, bottom} = this.followTarget.getBoundingClientRect()
-				const popover = this.$refs.popover
-				const width = popover.offsetWidth
-				const height = popover.offsetHeight
-
-				popover.style.transformOrigin = '100% 0'
-				popover.style.left = `${x - width - this.offsetX}px`
-				popover.style.top = `${y + this.offsetY}px`
-
-				if (bottom + height + 40 > innerHeight) {
-					popover.style.transformOrigin = '100% 100%'
-					popover.style.top = `${y - height}px`
-				}
+				updatePosition(this.followTarget.getBoundingClientRect(), this.$refs.popover, this.offsetX, this.offsetY)
 			}
 		}
 	}
