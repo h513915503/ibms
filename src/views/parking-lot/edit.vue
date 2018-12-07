@@ -1,5 +1,5 @@
 <style scoped>
-#parking-lot-add-wrapper {
+.parking-lot-edit-wrapper {
 	padding: 24px;
 }
 .container {
@@ -10,26 +10,6 @@
 	background-color: #FFF;
 }
 
-/* .lease-list {
-	display: flex;
-	margin-bottom: 20px;
-
-	& li {
-		width: 80px;
-		margin-right: 15px;
-		line-height: 40px;
-		cursor: pointer;
-		text-align: center;
-		border-radius: 4px;
-		border: 1px solid #D9D9D9;
-		background-color: #F5F5F5;
-	}
-
-	& li.actived {
-		border-color: #91D5FF;
-		background-color: #E6F7FF;
-	}
-} */
 .el-input, .el-select {
 	width: 354px;
 	height: 40px;
@@ -52,7 +32,7 @@
 </style>
 
 <template>
-	<div id="parking-lot-add-wrapper">
+	<div class="parking-lot-edit-wrapper">
 		<el-breadcrumb separator="/">
 			<el-breadcrumb-item>场地</el-breadcrumb-item>
 			<el-breadcrumb-item :to="{path: '/parking-lot'}">车位租赁</el-breadcrumb-item>
@@ -163,6 +143,11 @@
 		},
 
 		created() {
+			// 获取园区公司列表
+			if (! this.companyList.length) {
+				this.$store.commit('setCompanyList')
+			}
+
 			this.loading = true
 
 			this.getDetail().then(() => {
