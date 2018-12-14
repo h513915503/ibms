@@ -40,7 +40,7 @@ export default {
                 container = document.createElement( 'div' );
                 this.$refs.info.appendChild( container );
                 // camera = new THREE.PerspectiveCamera( 50, (window.innerWidth - 800) / (window.innerHeight - 520), 0.1, 20000 );//可调整展示距离
-                camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 20000 );
+                camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 40000 );
                 // camera.fov = 20
                 camera.position.set( 0, 200, 100 );
 
@@ -53,7 +53,7 @@ export default {
                 scene.background = new THREE.Color( 0xa0a0a0 );
                 // scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
                 light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-                light.position.set( 0, 200, 0 );
+                light.position.set( 0, 8000, 0 );
                 scene.add( light );
 
                 light = new THREE.DirectionalLight( 0xffffff );
@@ -66,7 +66,7 @@ export default {
                 scene.add( light );
                 
                 var helper = new THREE.AxesHelper(5000);
-                scene.add(helper);
+                // scene.add(helper);
                 // scene.add( new THREE.CameraHelper( light.shadow.camera ) );
                 // ground
                 // var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 12000, 8000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -119,7 +119,7 @@ export default {
                     sceneNode.position.set(-bPos.x, -bPos.y, -bPos.z);
                     sceneNode.add(object);
 
-                    scene.add(sceneNode);
+                    scene.add(object);
 
 
                     function onMouseClick( event ) {
@@ -187,10 +187,11 @@ export default {
                 controls.target.set( 0, 100, 0 );
                 // controls.minZoom = 5000;
                 controls.enablePan = true;
-                controls.minDistance = 8000;
-                controls.maxDistance = 18000;
+                controls.minDistance = 10000;
+                controls.maxDistance = 20000;
                 // controls.enableRotate = false; // 控制旋转  false 不可旋转
                 // controls.maxAzimuthAngle = 15;
+                controls.minPolarAngle = Math.PI * 0.2 // Z轴不可旋转
                 controls.maxPolarAngle = 0; // 控制旋转垂直方向旋转角度
                 controls.update();
 
