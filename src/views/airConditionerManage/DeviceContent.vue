@@ -19,14 +19,30 @@
     .btn-search {
         margin-left: 24px;
     }
+    .mask::after {
+        content: "";
+        width: 100%;
+        height: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+        pointer-events: none;
+        background-image: linear-gradient(to bottom, #ccc, rgba(0, 0, 0, .01));
+    }
     .all-floor {
+        position: relative;
+        margin: 0 24px;
+		box-sizing: border-box;
+        border-right: 1px solid rgba(232,232,232,1);
         width: 74px;
+        height: 544px;
         text-align: center;
         font-size:14px;
-        /* display: inline-block; */
-        margin-right: 24px;
-        /* float: left; */
-        border-right: 1px solid rgba(232,232,232,1);
+        overflow-y: scroll;
+    }
+    .all-floor::-webkit-scrollbar {
+        display: none;
     }
     .activedFloor {
         /* width: 74px; */
@@ -104,7 +120,7 @@
         </div>
         
         <div class="container">
-            <ul class="all-floor">
+            <ul class="all-floor" @scroll="scroll" :class="{mask: showMask}">
                 <li :class="{activedFloor: floorIndex === index}" class="floor-item" v-for="(item, index) of floor" :key="index" v-text="item" @click="switchFloor(index)"></li>
             </ul>
             <div class="detail-floor">
@@ -140,9 +156,10 @@
     export default {
         data() {
             return {
+                showMask: false,
                 level: 0,
                 floorIndex: 0,
-                floor: ['1F', '2F', '3F', '4F', '5F', '6F', '7F', '8F', '9F', '10F', '11F', '12F', '13F'].reverse(),
+                floor: ['-3F', '-2F', '-1F', '1F', '2F', '3F', '4F', '5F', '6F', '7F', '8F', '9F', '10F', '11F', '12F', '13F', '14F', '15F', '16F', '17F'].reverse(),
             }
         },
         methods: {
@@ -152,6 +169,13 @@
             addDevice() {
                 this.level = 1
             },
+            scroll(e) {
+				if (e.target.scrollTop > 12) {
+					this.showMask = true
+				} else {
+					this.showMask = false
+				}
+			}
         },
         components: {
             Building
