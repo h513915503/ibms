@@ -3,7 +3,7 @@
 </style>
 
 <template>
-    <div id="info" ref="info">
+    <div id="info" ref="info" @click="onClick">
 
     </div>
 </template>
@@ -14,16 +14,35 @@
 <script>
 
 export default {
+    props: {
+        level: {
+            type: Number
+        }
+    },
     data() {
         return {
-
+            addLevel: 0
+        }
+    },
+    watch: {
+        level(value) {
+            console.log(value)
+            this.addLevel = value
+            if (value === 1) {
+                // this.createBuilding()
+            }
         }
     },
     mounted() {
         this.createBuilding()
     },
     methods: {
+        onClick() {
+            // console.log(this.$parent.level)
+            // this.$emit("click", 2)
+        },
         createBuilding() {
+            console.log(this.addLevel)
             if ( WEBGL.isWebGLAvailable() === false ) {
                 this.$refs.info.appendChild( WEBGL.getWebGLErrorMessage() );
             }
@@ -66,7 +85,7 @@ export default {
                 scene.add( light );
                 
                 var helper = new THREE.AxesHelper(5000);
-                // scene.add(helper);
+                scene.add(helper);
                 // scene.add( new THREE.CameraHelper( light.shadow.camera ) );
                 // ground
                 // var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 12000, 8000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
@@ -121,8 +140,34 @@ export default {
 
                     scene.add(object);
 
+                    function onMouseMove(event) {
+                        event.preventDefault();
+                        const {x, y} = container.getBoundingClientRect()
+                        var vector = new THREE.Vector3();//三维坐标对象
+                        vector.set( ( (event.clientX - x) / ( window.innerWidth - 800) ) * 2 - 1, - ( (event.clientY - y) / 520 ) * 2 + 1, 0.5 );
+                        // vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+                        vector.unproject( camera );
+                        var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+                        var intersects = raycaster.intersectObjects(scene.children, true);
+
+                        if (intersects.length > 0) {
+                            var selected = intersects[0];//取第一个物体
+                            let {x, y, z} = selected.point
+
+                            var newObj = singleair.clone(true);
+                            var node = new THREE.Object3D();
+                            node.scale.set(20,20,20); //模型做的有问题  太小了
+                            node.position.set(x,y,z);
+                            // node.add(newObj);
+                            scene.add(node);
+                            node.remove(newObj)
+
+                        }
+                    }
+
 
                     function onMouseClick( event ) {
+                        // this.$emit("click", 2)
                         event.preventDefault();
                         const {x, y} = container.getBoundingClientRect()
                         var vector = new THREE.Vector3();//三维坐标对象
@@ -147,9 +192,9 @@ export default {
                             console.log("z坐标:"+ z);
 
 
-                            var geometry = new THREE.BoxGeometry( 20, 20, 20 );
-                            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-                            var cube = new THREE.Mesh( geometry, material );
+                            // var geometry = new THREE.BoxGeometry( 20, 20, 20 );
+                            // var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+                            // var cube = new THREE.Mesh( geometry, material );
                             // var air = addAir()
 
                             var newObj = singleair.clone(true);
@@ -169,8 +214,12 @@ export default {
                     }
 
                     // var InfoDiv = document.getElementById('#info')
+                    // if (this.addLevel === 1) {
+                    //     InfoDiv.addEventListener( 'click', onMouseClick, false );
+                    // }
                     InfoDiv.addEventListener( 'click', onMouseClick, false );
                     // scene.add( object );
+                    InfoDiv.addEventListener('mousemove', onMouseMove, false);
                 } );
 
                 renderer = new THREE.WebGLRenderer( { antialias: true } );
