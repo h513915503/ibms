@@ -41,6 +41,13 @@ const aside = [
 		reg: /^\/post/,
 		path: '/post'
 	},
+	{
+		type: '9',
+		title: '门禁',
+		index: 5,
+		reg: /^\/entrance-guard/,
+		path: '/entrance-guard'
+	},
 
 	{
 		title: '场地',
