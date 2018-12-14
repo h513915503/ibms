@@ -22,6 +22,8 @@ import Post from './views/post-management/index.vue'
 import AddPost from './views/post-management/add.vue'
 import EditPost from './views/post-management/edit.vue'
 
+import EntranceGuard from './views/entrance-guard/index.vue'
+
 import Lease from './views/lease/index.vue'
 import LeaseAdd from './views/lease/add.vue'
 import LeaseEdit from './views/lease/edit.vue'
@@ -311,6 +313,13 @@ export const routesMap = [
 		meta: {
 			dashboard: true
 		}
+	},
+
+	{
+		type: '1',
+		path: '/entrance-guard',
+		name: 'entrance-guard',
+		component: EntranceGuard
 	}
 ]
 
