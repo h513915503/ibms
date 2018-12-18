@@ -47,21 +47,23 @@
 				</div>
 			</div>
 
+			<management v-if="currentIndex === 0"></management>
 			<card-statistics v-if="currentIndex === 1"></card-statistics>
 		</template>
 	</div>
 </template>
 
 <script>
-	import tabBar from '@/components/tab-bar.vue'
-	import cardStatistics from '@/components/entrance-guard/card-statistics.vue'
+	import tabBar from '@/components/tab-bar'
+	import management from '@/components/entrance-guard/management'
+	import cardStatistics from '@/components/entrance-guard/card-statistics'
 
 	export default {
 		data() {
 			return {
 				loading: false,
 
-				currentIndex: 1,
+				currentIndex: 0,
 				tab: ['门禁管理', '卡信息统计'],
 
 				tabs: [
@@ -83,6 +85,7 @@
 
 		components: {
 			tabBar,
+			management,
 			cardStatistics
 		}
 	}
