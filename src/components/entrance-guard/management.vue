@@ -387,123 +387,127 @@
 
 <template>
 	<div class="management-wrapper">
-		<header class="header">
-			<el-button class="add-btn" type="primary" @click="addShow = true">+ 门禁</el-button>
+		<loading v-if="loading"></loading>
 
-			<template v-if="list.length">
-				<el-input type="text" placeholder="门禁编号" v-model="searchNumber"></el-input>
-				<el-button class="search-btn">查询</el-button>
-			</template>
-		</header>
-		<p class="tips" v-if="! list.length">暂无门禁，点击上方按钮添加门禁。</p>
+		<template v-else>
+			<header class="header">
+				<el-button class="add-btn" type="primary" @click="addShow = true">+ 门禁</el-button>
 
-		<div class="add-wrapper" v-if="addShow">
-			<label class="input-wrapper">
-				<input class="input" type="file" accept="image/*">
-				添加点位图
-			</label>
-			<div class="info-wrapper">
-				<div class="info-item">
-					<span class="label">楼层</span>
+				<template v-if="list.length">
+					<el-input type="text" placeholder="门禁编号" v-model="searchNumber"></el-input>
+					<el-button class="search-btn">查询</el-button>
+				</template>
+			</header>
+			<p class="tips" v-if="! list.length">暂无门禁，点击上方按钮添加门禁。</p>
+
+			<div class="add-wrapper" v-if="addShow">
+				<label class="input-wrapper">
+					<input class="input" type="file" accept="image/*">
+					添加点位图
+				</label>
+				<div class="info-wrapper">
+					<div class="info-item">
+						<span class="label">楼层</span>
+						<ul class="floor-list">
+							<li class="floor-item" :class="{actived: floorNumber === item.floorNumber}" v-for="item of floorList" v-text="item.floorNumber" @click="floorNumber = item.floorNumber"></li>
+						</ul>
+					</div>
+					<div class="info-item">
+						<span class="label">编号</span>
+						<el-input type="text" placeholder="请输入门禁编号" v-model="number"></el-input>
+					</div>
+					<div class="info-item">
+						<span class="label">位置</span>
+						<el-input type="text" placeholder="请输入电梯的详细位置" v-model="position"></el-input>
+					</div>
+					<div class="btn-wrapper">
+						<el-button class="add-btn" type="primary" :disabled="addEntranceGuardBtnDisabled" @click="addEntranceGuard">保存</el-button>
+						<el-button class="add-btn" @click="addShow = false">取消</el-button>
+					</div>
+				</div>
+			</div>
+
+			<div class="container">
+				<div class="floor-list-wrapper">
 					<ul class="floor-list">
-						<li class="floor-item" :class="{actived: floorNumber === item.floorNumber}" v-for="item of floorList" v-text="item.floorNumber" @click="floorNumber = item.floorNumber"></li>
+						<li class="floor-item" v-for="item of floorList" @click="translateGateList(item.floorNumber)">{{item.floorNumber}}F</li>
 					</ul>
 				</div>
-				<div class="info-item">
-					<span class="label">编号</span>
-					<el-input type="text" placeholder="请输入门禁编号" v-model="number"></el-input>
-				</div>
-				<div class="info-item">
-					<span class="label">位置</span>
-					<el-input type="text" placeholder="请输入电梯的详细位置" v-model="position"></el-input>
-				</div>
-				<div class="btn-wrapper">
-					<el-button class="add-btn" type="primary" :disabled="addEntranceGuardBtnDisabled" @click="addEntranceGuard">保存</el-button>
-					<el-button class="add-btn" @click="addShow = false">取消</el-button>
-				</div>
-			</div>
-		</div>
 
-		<div class="container">
-			<div class="floor-list-wrapper">
-				<ul class="floor-list">
-					<li class="floor-item" v-for="item of floorList" @click="translateGateList(item.floorNumber)">{{item.floorNumber}}F</li>
-				</ul>
-			</div>
-
-			<div class="gate-list-wrapper" ref="gate-list-wrapper">
-				<ul class="gate-list">
-					<li class="gate-item" v-for="(items, indexs) of gateList" :data-number="items.floorNumber" ref="gate-item">
-						<template v-for="(item, index) of items.list">
-							<div class="gate-wrapper" :class="{actived: currentGateId === item.id}" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
-								<div class="icon-wrapper">
-									正常通行
+				<div class="gate-list-wrapper" ref="gate-list-wrapper">
+					<ul class="gate-list">
+						<li class="gate-item" v-for="(items, indexs) of gateList" :data-number="items.floorNumber" ref="gate-item">
+							<template v-for="(item, index) of items.list">
+								<div class="gate-wrapper" :class="{actived: currentGateId === item.id}" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
+									<div class="icon-wrapper">
+										正常通行
+									</div>
+									<div class="gate-info">
+										<h4 class="gate-title" v-text="item.number"></h4>
+										<p class="gate-position" v-text="item.position"></p>
+										<p class="gate-detail">
+											人流量（人/分钟）
+											<span v-text="item.ren"></span>
+										</p>
+									</div>
 								</div>
-								<div class="gate-info">
-									<h4 class="gate-title" v-text="item.number"></h4>
-									<p class="gate-position" v-text="item.position"></p>
-									<p class="gate-detail">
-										人流量（人/分钟）
-										<span v-text="item.ren"></span>
-									</p>
-								</div>
-							</div>
 
-							<transition name="height">
-								<div class="gate-box-wrapper" v-if="item.show">
+								<transition name="height">
+									<div class="gate-box-wrapper" v-if="item.show">
 
-									<div class="info edit" v-if="item.isEdit">
-										<h4 class="title">
-											{{item.floorNumber}}F
-											<el-input type="text" v-model="numberEdit" placeholder="回车确认"></el-input>
-										</h4>
-										<div class="gate-image"></div>
-										<div class="info-footer">
-											<div class="position-input-wrapper">
-												<input type="text" v-model="positionEdit" placeholder="回车确认" />
+										<div class="info edit" v-if="item.isEdit">
+											<h4 class="title">
+												{{item.floorNumber}}F
+												<el-input type="text" v-model="numberEdit" placeholder="回车确认"></el-input>
+											</h4>
+											<div class="gate-image"></div>
+											<div class="info-footer">
+												<div class="position-input-wrapper">
+													<input type="text" v-model="positionEdit" placeholder="回车确认" />
+												</div>
+												<div class="btn cancel-btn" @click="item.isEdit = false">取消</div>
+												<div class="btn ok-btn">确定</div>
 											</div>
-											<div class="btn cancel-btn" @click="item.isEdit = false">取消</div>
-											<div class="btn ok-btn">确定</div>
+										</div>
+										<div class="info" v-else>
+											<h4 class="title">
+												{{item.number}}
+												<el-button class="open-btn">开门</el-button>
+											</h4>
+											<div class="gate-image"></div>
+											<div class="info-footer">
+												{{item.position}}
+												<div class="operation-wrapper" v-if="operationModalStatus" ref="operation-wrapper">
+													<span>编辑</span>
+													<span @click="forDelGate">删除</span>
+												</div>
+												<span class="more-btn" @click="showOperation">更多</span>
+											</div>
+										</div>
+
+										<div class="record">
+											<span class="record-header" @click="item.show = false">收起</span>
+
+											<el-table :data="recordList">
+												<el-table-column prop="time" label="卡号" sortable='custom'></el-table-column>
+												<el-table-column prop="number" label="姓名"></el-table-column>
+												<el-table-column prop="position" label="所在单位/到访单位" width="200"></el-table-column>
+												<el-table-column prop="way" label="通行方式"></el-table-column>
+												<el-table-column prop="out" label="出/入"></el-table-column>
+											</el-table>
+											<footer class="record-footer">
+												<el-button class="export-btn">导出</el-button>
+												<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
+											</footer>
 										</div>
 									</div>
-									<div class="info" v-else>
-										<h4 class="title">
-											{{item.number}}
-											<el-button class="open-btn">开门</el-button>
-										</h4>
-										<div class="gate-image"></div>
-										<div class="info-footer">
-											{{item.position}}
-											<div class="operation-wrapper" v-if="operationModalStatus" ref="operation-wrapper">
-												<span>编辑</span>
-												<span @click="forDelGate">删除</span>
-											</div>
-											<span class="more-btn" @click="showOperation">更多</span>
-										</div>
-									</div>
-
-									<div class="record">
-										<span class="record-header" @click="item.show = false">收起</span>
-
-										<el-table :data="recordList">
-											<el-table-column prop="time" label="卡号" sortable='custom'></el-table-column>
-											<el-table-column prop="number" label="姓名"></el-table-column>
-											<el-table-column prop="position" label="所在单位/到访单位" width="200"></el-table-column>
-											<el-table-column prop="way" label="通行方式"></el-table-column>
-											<el-table-column prop="out" label="出/入"></el-table-column>
-										</el-table>
-										<footer class="record-footer">
-											<el-button class="export-btn">导出</el-button>
-											<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
-										</footer>
-									</div>
-								</div>
-							</transition>
-						</template>
-					</li>
-				</ul>
+								</transition>
+							</template>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</div>
+		</template>
 
 		<popover name="close" title="确定要删除该门禁么？" :offsetX="0" :offsetY="0" content="删除该门禁后，该门禁的所有数据将被清空。" :follow-target="followTarget" ref="popover" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
 			<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
@@ -516,6 +520,8 @@
 	export default {
 		data() {
 			return {
+				loading: false,
+
 				addShow: false,
 
 				searchNumber: '',
@@ -743,7 +749,11 @@
 		},
 
 		created() {
-			this.getFloorList()
+			this.loading = true
+
+			this.getFloorList().then(() => {
+				this.loading = false
+			})
 		},
 
 		methods: {
