@@ -43,104 +43,167 @@
 
 <template>
 	<div id="parking-lot-wrapper">
-		<div class="container" v-if="! list.length">
-			<el-button type="primary" @click="go">+包月车辆</el-button>
-			<p class="no-data" >暂无包月车辆。</p>
-		</div>
+		<template v-if="loading">
+			<loading></loading>
+		</template>
 
-		<div class="container" v-else>
-			<div class="search-wrapper">
-				<label class="calendar-label">
-					<span>在场时间：</span>
-					<el-date-picker v-model="date" type="date" placeholder="入场时间"></el-date-picker>
-					<span class="mr">-</span>
-					<el-date-picker v-model="date" type="date" placeholder="出场时间"></el-date-picker>
-				</label>
-				<el-input class="car-number" v-model="number" placeholder="车牌号"></el-input>
-				<el-button type="primary" class="btn-search" @click="go">查询</el-button>
+		<template v-else>
+			<div class="container" v-if="count < 2 && ! list.length">
+				<el-button type="primary" @click="go">+包月车辆</el-button>
+				<p class="no-data" >暂无车辆出入记录。</p>
 			</div>
 
-			<el-table :data="list">
-				<el-table-column prop="time" label="时间" sortable></el-table-column>
-				<el-table-column prop="carNumber" label="车牌号"></el-table-column>
-				<el-table-column prop="isEnter" label="出/入场"></el-table-column>
-				<el-table-column prop="isMonth" label="包月/非包月"></el-table-column>
-				<el-table-column prop="parkingTime" label="停车时长"></el-table-column>
-				<el-table-column prop="parkingPrice" label="停车费用（元）"></el-table-column>
-			</el-table>
+			<div class="container" v-else>
+				<div class="search-wrapper">
+					<label class="calendar-label">
+						<span>在场时间：</span>
+						<el-date-picker v-model="startDate" type="date" value-format="yyyy-MM-dd HH:mm:ss" placeholder="入场时间"></el-date-picker>
+						<span class="mr">-</span>
+						<el-date-picker v-model="endDate" type="date" value-format="yyyy-MM-dd HH:mm:ss" placeholder="出场时间"></el-date-picker>
+					</label>
+					<el-input class="car-number" v-model="number" placeholder="车牌号"></el-input>
+					<el-button type="primary" class="btn-search" :disabled="disabled" @click="search">查询</el-button>
+				</div>
 
-			<div class="page-wrapper">
-				<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+				<el-table :data="list" @sort-change="sortChange">
+					<el-table-column prop="isDesc" label="时间" sortable="custom">
+						<template slot-scope="scope">
+							<span>{{scope.row.accessTime | format}}</span>
+						</template>
+					</el-table-column>
+					<el-table-column prop="carNumber" label="车牌号"></el-table-column>
+					<el-table-column label="出/入场">
+						<template slot-scope="scope">
+							<span>{{scope.row.accessFlag === 1 ? '入' : '出'}}</span>
+						</template>
+					</el-table-column>
+					<el-table-column prop="isMonth" label="包月/非包月">
+						<template slot-scope="scope">
+							<span>{{scope.row.monthly ? '包月' : '非包月'}}</span>
+						</template>
+					</el-table-column>
+					<el-table-column prop="stayLasts" label="停车时长"></el-table-column>
+					<el-table-column prop="tcmName" label="停车费用（元）"></el-table-column>
+				</el-table>
+
+				<div class="page-wrapper">
+					<el-pagination background layout="prev, pager, next" page-size="3" :total="pageTotal" @current-change="pageChange"></el-pagination>
+				</div>
 			</div>
-		</div>
+		</template>
 	</div>
 </template>
 
 <script>
+	import {dateFormatString} from '@/utils/util'
+
 	export default {
 		data() {
 			return {
-				date: '',
+				loading: false,
+				count: 0,
+
+				startDate: '',
+				endDate: '',
 				number: '',
 
-				list: [
-					{
-						time: '2018-12-12',
-						carNumber: '浙A · RM33V',
-						isEnter: 0,
-						isMonth: 0,
-						parkingTime: 100,
-						parkingPrice: 10,
-					},
-					{
-						time: '2018-12-12',
-						carNumber: '浙A · RM33V',
-						isEnter: 0,
-						isMonth: 0,
-						parkingTime: 100,
-						parkingPrice: 10,
-					},
-					{
-						time: '2018-12-12',
-						carNumber: '浙A · RM33V',
-						isEnter: 0,
-						isMonth: 0,
-						parkingTime: 100,
-						parkingPrice: 10,
-					}
-				]
+				disabled: false,
+
+				page: 1,
+				pageTotal: 1,
+				list: []
 			}
 		},
 
-		methods: {
-			go() {
-				this.$router.push('/parking-lot/add')
-			},
-			handleTable(e) {
-				let target = e.target
+		filters: {
+			format(value) {
+				return dateFormatString(new Date(value))
+			}
+		},
 
-				while (target.dataset && ! target.dataset.type) {
-					target = target.parentNode
+		created() {
+			this.loading = true
+
+			this.getList().then(() => {
+				this.loading = false
+				this.loaded = true
+			})
+		},
+
+		methods: {
+			async getList() {
+				const params = {
+					action: 'ParkingRental.queryCarAccessRecord',
+					pageNo: this.page,
+					pageSize: 3,
+					condition: {}
 				}
 
-				if (! target.dataset) {
+				if (this.number) {
+					params.condition.carNumber = this.number
+				}
+
+				if (this.startDate) {
+					params.condition.accessTimeStart = this.startDate
+				}
+
+				if (this.endDate) {
+					params.condition.accessTimeEnd = this.endDate
+				}
+
+				if (this.$order !== null && this.$rank) {
+					params.sortContent = [{
+						field: 'accessTime',
+						isDesc: this.$order
+					}]
+				}
+
+				// 没有条件时去掉
+				! Object.keys(params.condition).length && (params.condition = void 1)
+
+				params.condition = JSON.stringify(params.condition)
+				params.sortContent = JSON.stringify(params.sortContent)
+
+				const data = await axios.post('/capi/dispatcher.do', params)
+
+				this.count++
+
+				if (! data) {
 					return
 				}
 
-				const {type} = target.dataset
+				const {total, detail} = data.data
 
-				if (+ type === 1) {
-					this.$router.push(`/parking-lot/detail/${100}`)
-				}
+				this.pageTotal = total
+				this.list = detail
 			},
-			redirec(e) {
-				let target = e.target
+			pageChange(value) {
+				this.page = value
+				this.getList()
+			},
+			async search() {
+				this.disabled = true
 
-				while (! target.dataset.id) {
-					target = target.parentNode
+				await this.getList()
+
+				this.disabled = false
+			},
+			async sortChange(column) {
+				if (this.$flag) {
+					return
 				}
 
-				this.$router.push(`/lease/detail/${target.dataset.id}`)
+				this.$flag = true
+
+				this.$rank = column.prop
+				this.$order = column.order === 'ascending' ? true : column.order === 'descending' ? false : ''
+
+				await this.getList()
+
+				this.$flag = null
+			},
+			go() {
+				this.$router.push('/parking-lot/add')
 			}
 		}
 	}
