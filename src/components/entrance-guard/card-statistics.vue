@@ -322,6 +322,7 @@
 
 		created() {
 			this.loading = true
+
 			this.getCompanyList().then(() => {
 				this.loading = false
 			})
