@@ -2,7 +2,7 @@
 .management-wrapper {
 	padding: 24px 24px 24px 0;
 	margin: 0 24px;
-	/* position: relative; */
+	position: relative;
 	background-color: #FFF;
 
 	& .popover-wrapper {
@@ -32,8 +32,9 @@
 	display: flex;
 	justify-content: space-between;
 	width: 632px;
-	padding: 24px;
+	padding: 24px 20px 24px 24px;
 	position: absolute;
+	z-index: 1;
 	top: 72px;
 	left: 24px;
 	box-sizing: border-box;
@@ -89,7 +90,8 @@
 	display: none;
 }
 .info-wrapper {
-	width: 256px;
+	flex: 1;
+	margin-left: 50px;
 
 	& .floor-list {
 		display: flex;
@@ -125,6 +127,12 @@
 		color: rgba(0, 0, 0, .85);
 		font-size: 14px;
 	}
+
+	& .svg-icon {
+		width: 12px;
+		height: 12px;
+		margin-right: 5px;
+	}
 }
 .info-item:nth-child(n+2) {
 	align-items: center;
@@ -137,10 +145,10 @@
 .container {
 	display: flex;
 	height: 600px;
-
-	& .floor-list {
-
-	}
+}
+.floor-list-wrapper {
+	overflow: auto;
+	border-right: 1px solid #D9D9D9;
 
 	& .floor-item {
 		width: 74px;
@@ -159,10 +167,6 @@
 	& .floor-item:hover {
 		opacity: .5;
 	}
-}
-.floor-list-wrapper {
-	overflow: auto;
-	border-right: 1px solid #D9D9D9;
 }
 .floor-list-wrapper::-webkit-scrollbar, .gate-list-wrapper::-webkit-scrollbar {
 	display: none;
@@ -196,16 +200,34 @@
 	background-color: #F5F5F5;
 }
 .gate-wrapper.actived {
+	position: relative;
 	border-color: #0E7CC2;
 	background-color: #FFF;
+
+	&::after {
+		content: "";
+		position: absolute;
+		bottom: -12px;
+		left: 50%;
+		border-top: 12px solid #0E7CC2;
+		border-right: 12px solid transparent;
+		border-left: 12px solid transparent;
+		transform: translateX(-50%);
+	}
 }
 .icon-wrapper {
 	flex-shrink: 0;
-	width: 50px;
+	width: 70px;
 	padding-right: 24px;
 	color: #2FC25B;
 	font-size: 12px;
+	text-align: center;
 	border-right: 1px dashed #D9D9D9;
+
+	& .svg-icon {
+		width: 70px;
+		height: 70px;
+	}
 }
 .icon-wrapper.warning {
 	color: #FAAD14;
@@ -213,6 +235,8 @@
 .icon-wrapper.fault {
 	color: #F5222D;
 }
+
+
 .gate-info {
 	flex: 1;
 	padding-left: 16px;
@@ -239,6 +263,7 @@
 	width: 100%;
 	height: 400px;
 	padding: 0 24px;
+	margin-top: -14px;
 	margin-bottom: 14px;
 	overflow: hidden;
 	box-sizing: border-box;
@@ -386,125 +411,145 @@
 </style>
 
 <template>
-	<div class="management-wrapper">
+	<div>
 		<loading v-if="loading"></loading>
 
 		<template v-else>
-			<header class="header">
-				<el-button class="add-btn" type="primary" @click="addShow = true">+ 门禁</el-button>
+			<div class="management-wrapper">
+				<header class="header">
+					<el-button class="add-btn" type="primary" @click="addShow = true">+ 门禁</el-button>
 
-				<template v-if="list.length">
-					<el-input type="text" placeholder="门禁编号" v-model="searchNumber"></el-input>
-					<el-button class="search-btn">查询</el-button>
-				</template>
-			</header>
-			<p class="tips" v-if="! list.length">暂无门禁，点击上方按钮添加门禁。</p>
+					<template v-if="list.length">
+						<el-input type="text" placeholder="门禁编号" v-model="searchNumber"></el-input>
+						<el-button class="search-btn">查询</el-button>
+					</template>
+				</header>
+				<p class="tips" v-if="! list.length">暂无门禁，点击上方按钮添加门禁。</p>
 
-			<div class="add-wrapper" v-if="addShow">
-				<label class="input-wrapper">
-					<input class="input" type="file" accept="image/*">
-					添加点位图
-				</label>
-				<div class="info-wrapper">
-					<div class="info-item">
-						<span class="label">楼层</span>
+				<div class="add-wrapper" v-if="addShow">
+					<label class="input-wrapper">
+						<input class="input" type="file" accept="image/*">
+						添加点位图
+					</label>
+					<div class="info-wrapper">
+						<div class="info-item">
+							<span class="label">
+								<svg class="svg-icon">
+									<use xlink:href="#floor"></use>
+								</svg>
+								楼层
+							</span>
+							<ul class="floor-list">
+								<li class="floor-item" :class="{actived: floorNumber === item.floorNumber}" v-for="item of floorList" v-text="item.floorNumber" @click="floorNumber = item.floorNumber"></li>
+							</ul>
+						</div>
+						<div class="info-item">
+							<span class="label">
+								<svg class="svg-icon">
+									<use xlink:href="#number"></use>
+								</svg>
+								编号
+							</span>
+							<el-input type="text" placeholder="请输入门禁编号" v-model="number"></el-input>
+						</div>
+						<div class="info-item">
+							<span class="label">
+								<svg class="svg-icon">
+									<use xlink:href="#position"></use>
+								</svg>
+								位置
+							</span>
+							<el-input type="text" placeholder="请输入电梯的详细位置" v-model="position"></el-input>
+						</div>
+						<div class="btn-wrapper">
+							<el-button class="add-btn" type="primary" :disabled="addEntranceGuardBtnDisabled" @click="addEntranceGuard">保存</el-button>
+							<el-button class="add-btn" @click="addShow = false">取消</el-button>
+						</div>
+					</div>
+				</div>
+
+				<div class="container">
+					<div class="floor-list-wrapper">
 						<ul class="floor-list">
-							<li class="floor-item" :class="{actived: floorNumber === item.floorNumber}" v-for="item of floorList" v-text="item.floorNumber" @click="floorNumber = item.floorNumber"></li>
+							<li class="floor-item" v-for="item of floorList" @click="translateGateList(item.floorNumber)">{{item.floorNumber}}F</li>
 						</ul>
 					</div>
-					<div class="info-item">
-						<span class="label">编号</span>
-						<el-input type="text" placeholder="请输入门禁编号" v-model="number"></el-input>
-					</div>
-					<div class="info-item">
-						<span class="label">位置</span>
-						<el-input type="text" placeholder="请输入电梯的详细位置" v-model="position"></el-input>
-					</div>
-					<div class="btn-wrapper">
-						<el-button class="add-btn" type="primary" :disabled="addEntranceGuardBtnDisabled" @click="addEntranceGuard">保存</el-button>
-						<el-button class="add-btn" @click="addShow = false">取消</el-button>
-					</div>
-				</div>
-			</div>
 
-			<div class="container">
-				<div class="floor-list-wrapper">
-					<ul class="floor-list">
-						<li class="floor-item" v-for="item of floorList" @click="translateGateList(item.floorNumber)">{{item.floorNumber}}F</li>
-					</ul>
-				</div>
-
-				<div class="gate-list-wrapper" ref="gate-list-wrapper">
-					<ul class="gate-list">
-						<li class="gate-item" v-for="(items, indexs) of gateList" :data-number="items.floorNumber" ref="gate-item">
-							<template v-for="(item, index) of items.list">
-								<div class="gate-wrapper" :class="{actived: currentGateId === item.id}" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
-									<div class="icon-wrapper">
-										正常通行
+					<div class="gate-list-wrapper" ref="gate-list-wrapper">
+						<ul class="gate-list">
+							<li class="gate-item" v-for="(items, indexs) of gateList" :data-number="items.floorNumber" ref="gate-item">
+								<template v-for="(item, index) of items.list">
+									<div class="gate-wrapper" :class="{actived: currentGateId === item.id}" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
+										<div class="icon-wrapper">
+											<svg class="svg-icon success">
+												<use xlink:href="#type-3-success"></use>
+											</svg>
+											正常通行
+										</div>
+										<div class="gate-info">
+											<h4 class="gate-title" v-text="item.number"></h4>
+											<p class="gate-position" v-text="item.position"></p>
+											<p class="gate-detail">
+												人流量（人/分钟）
+												<span v-text="item.ren"></span>
+											</p>
+										</div>
 									</div>
-									<div class="gate-info">
-										<h4 class="gate-title" v-text="item.number"></h4>
-										<p class="gate-position" v-text="item.position"></p>
-										<p class="gate-detail">
-											人流量（人/分钟）
-											<span v-text="item.ren"></span>
-										</p>
-									</div>
-								</div>
 
-								<transition name="height">
-									<div class="gate-box-wrapper" v-if="item.show">
+									<transition name="height">
+										<div class="gate-box-wrapper" v-if="item.show">
 
-										<div class="info edit" v-if="item.isEdit">
-											<h4 class="title">
-												{{item.floorNumber}}F
-												<el-input type="text" v-model="numberEdit" placeholder="回车确认"></el-input>
-											</h4>
-											<div class="gate-image"></div>
-											<div class="info-footer">
-												<div class="position-input-wrapper">
-													<input type="text" v-model="positionEdit" placeholder="回车确认" />
+											<div class="info edit" v-if="item.isEdit">
+												<h4 class="title">
+													{{item.floorNumber}}F
+													<el-input type="text" v-model="numberEdit" placeholder="回车确认"></el-input>
+												</h4>
+												<div class="gate-image"></div>
+												<div class="info-footer">
+													<div class="position-input-wrapper">
+														<input type="text" v-model="positionEdit" placeholder="回车确认" />
+													</div>
+													<div class="btn cancel-btn" @click="item.isEdit = false">取消</div>
+													<div class="btn ok-btn">确定</div>
 												</div>
-												<div class="btn cancel-btn" @click="item.isEdit = false">取消</div>
-												<div class="btn ok-btn">确定</div>
+											</div>
+											<div class="info" v-else>
+												<h4 class="title">
+													{{item.number}}
+													<el-button class="open-btn">开门</el-button>
+												</h4>
+												<div class="gate-image"></div>
+												<div class="info-footer">
+													{{item.position}}
+													<div class="operation-wrapper" v-if="operationModalStatus" ref="operation-wrapper">
+														<span>编辑</span>
+														<span @click="forDelGate">删除</span>
+													</div>
+													<span class="more-btn" @click="showOperation">更多</span>
+												</div>
+											</div>
+
+											<div class="record">
+												<span class="record-header" @click="hideDetail(item)">收起</span>
+
+												<el-table :data="recordList">
+													<el-table-column prop="time" label="卡号" sortable='custom'></el-table-column>
+													<el-table-column prop="number" label="姓名"></el-table-column>
+													<el-table-column prop="position" label="所在单位/到访单位" width="200"></el-table-column>
+													<el-table-column prop="way" label="通行方式"></el-table-column>
+													<el-table-column prop="out" label="出/入"></el-table-column>
+												</el-table>
+												<footer class="record-footer">
+													<el-button class="export-btn">导出</el-button>
+													<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
+												</footer>
 											</div>
 										</div>
-										<div class="info" v-else>
-											<h4 class="title">
-												{{item.number}}
-												<el-button class="open-btn">开门</el-button>
-											</h4>
-											<div class="gate-image"></div>
-											<div class="info-footer">
-												{{item.position}}
-												<div class="operation-wrapper" v-if="operationModalStatus" ref="operation-wrapper">
-													<span>编辑</span>
-													<span @click="forDelGate">删除</span>
-												</div>
-												<span class="more-btn" @click="showOperation">更多</span>
-											</div>
-										</div>
-
-										<div class="record">
-											<span class="record-header" @click="item.show = false">收起</span>
-
-											<el-table :data="recordList">
-												<el-table-column prop="time" label="卡号" sortable='custom'></el-table-column>
-												<el-table-column prop="number" label="姓名"></el-table-column>
-												<el-table-column prop="position" label="所在单位/到访单位" width="200"></el-table-column>
-												<el-table-column prop="way" label="通行方式"></el-table-column>
-												<el-table-column prop="out" label="出/入"></el-table-column>
-											</el-table>
-											<footer class="record-footer">
-												<el-button class="export-btn">导出</el-button>
-												<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
-											</footer>
-										</div>
-									</div>
-								</transition>
-							</template>
-						</li>
-					</ul>
+									</transition>
+								</template>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -838,6 +883,10 @@
 				// this.$nextTick(() => {
 				// 	this.$refs['record-wrapper'][0].scrollIntoView({behavior: 'smooth', block: 'center'})
 				// })
+			},
+			hideDetail(item) {
+				item.show = false
+				this.currentGateId = -1
 			},
 			forEdit(item) {
 				item.isEdit = true
