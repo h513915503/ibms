@@ -208,7 +208,7 @@
 					action: 'OfficeRental.officeRentalReportInfo'
 				}
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -231,7 +231,7 @@
 					action: 'OfficeRental.queryAllRentalInfo'
 				}
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -301,7 +301,7 @@
 					}))
 				}
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -323,7 +323,7 @@
 					})
 				}
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				if (! data) {
 					currentFloor.floorNumber = this.$floorNumber
@@ -388,7 +388,7 @@
 					floorId: this.$floorId
 				}
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/dispatcher.do', params)
 
 				this.$floorId = null
 
