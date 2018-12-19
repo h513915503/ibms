@@ -103,33 +103,6 @@
             float: right;
         }
     }
-    .add-title {
-        display: flex;
-        height: 36px;
-        line-height: 24px;
-        justify-content: space-between;
-        border-bottom: 1px solid rgba(232,232,232,1);
-
-        & span {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 1px solid rgba(232,232,232,1);
-            border-radius: 2px;
-            font-size: 18px;
-            color: #ccc;
-            text-align: center;
-            cursor: pointer;
-        }
-    }
-    .cancel-add {
-        margin-left: 100px;
-        color: rgba(0, 0, 0, 0.45);
-    }
-    .concern-btn {
-        background:rgba(191,191,191,1);
-        color: rgba(255, 255, 255, 1);
-    }
 </style>
 
 <template>
@@ -174,12 +147,12 @@
             </div>
 
             <div class="detail-info device-info" v-if="level === 2">
-                <p class="title add-title">
+                <!-- <p class="title add-title">
                     新增设备
                     <span class="cancel-add">×</span>
-                    <span class="concern-btn">√</span>
+                    <span class="concern-btn" @click="commitDeviceInfo">√</span>
                     
-                </p>
+                </p> -->
                 <DetailInfo />
             </div>
 
@@ -217,9 +190,11 @@
             },
             addDevice() {
                 this.level = 1
+                this.$root.deviceStatus = 1
             },
             cancelAdd() {
                 this.level = 0
+                this.$root.deviceStatus = 0
             },
             getLevel(data) {
                 console.log(data)
@@ -236,6 +211,9 @@
         components: {
             Building,
             DetailInfo
+        },
+        created() {
+
         }
     }
 </script>
