@@ -1,5 +1,3 @@
-import XLSX from 'xlsx'
-
 const dateFormat = (val) => {
     const date = new Date(val);
     const YY = date.getFullYear() + '/';

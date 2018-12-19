@@ -43,10 +43,10 @@
 }
 .content {
 	width: 335px;
-	padding-left: 40px;
-	margin-bottom: 24px;
+	margin: 0 0 24px 40px;
 	color: rgba(0, 0, 0, .65);
 	line-height: 1.6;
+	font-size: 14px;
 }
 .btn-wrapper {
 	display: flex;
@@ -117,7 +117,7 @@
 			this.updatePosition()
 
 			// 捕获事件
-			document.addEventListener('click', (e) => {
+			const clickHandler = (e) => {
 				if (! this.$refs.popover) {
 					return
 				}
@@ -128,7 +128,11 @@
 				}
 
 				this.$emit('hide')
-			}, true)
+
+				document.removeEventListener('click', clickHandler, true)
+			}
+
+			document.addEventListener('click', clickHandler, true)
 
 			// 自动更新 position
 			window.addEventListener('resize', this.updatePosition)

@@ -109,8 +109,13 @@
 	margin: 0 15px 15px 0;
 	font-size: 12px;
 	cursor: pointer;
+	border: 1px solid transparent;
 	box-sizing: border-box;
 	background-color: #F5F5F5;
+}
+.card-item.active {
+	border-color: #0E7CC2;
+	background-color: #FFF;
 }
 .info {
 	display: flex;
@@ -125,16 +130,49 @@
 }
 .record-wrapper {
 	width: 100%;
-	height: 300px;
-	background-color: orange;
-	transition: all .3s;
+	height: 422px;
+	padding: 0 24px;
+	margin-bottom: 14px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid #0E7CC2;
+	background-color: #FFF;
+	transition: height .5s;
+
+	& .title {
+		display: flex;
+		justify-content: space-between;
+		padding: 10px 0;
+		color: #000;
+		font-size: 18px;
+	}
+
+	& .hide {
+		color: #8C8C8C;
+		font-size: 12px;
+		cursor: pointer;
+	}
+}
+.el-table {
+	font-size: 12px;
 }
 .height-enter, .height-leave-active {
 	height: 0;
 }
+.footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 0;
+}
+.export-btn {
+	padding: 8px 14px;
+}
 </style>
 <style>
-
+.aa th {
+	padding: 0;
+}
 </style>
 
 <template>
@@ -165,7 +203,7 @@
 							<span class="card-index" v-text="items.index"></span>
 							<div class="card-list" ref="card-list">
 								<template v-for="(item, index) of items.list">
-									<div class="card-item" data-type="1" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
+									<div class="card-item" :class="{active: currentCardId === item.id}" data-type="1" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
 										<p class="info">
 											<span class="name" v-text="item.name"></span>
 											{{item.type}}
@@ -174,8 +212,22 @@
 									</div>
 
 									<transition name="height">
-										<div class="record-wrapper" v-if="item.show">
-											<div @click="item.show = false">收起</div>
+										<div class="record-wrapper" v-if="item.show" ref="record-wrapper">
+											<h1 class="title">
+												{{recordName}}的通行记录
+												<div class="hide" @click="item.show = false">收起</div>
+											</h1>
+											<el-table class="aa" :data="recordList" @sort-change="sortChange">
+												<el-table-column prop="time" label="时间" sortable='custom' width="200"></el-table-column>
+												<el-table-column prop="number" label="通行门禁编号" width="200"></el-table-column>
+												<el-table-column prop="position" label="通行门禁位置"></el-table-column>
+												<el-table-column prop="way" label="通行方式"></el-table-column>
+												<el-table-column prop="out" label="出/入"></el-table-column>
+											</el-table>
+											<footer class="footer">
+												<el-button class="export-btn">导出</el-button>
+												<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
+											</footer>
 										</div>
 									</transition>
 								</template>
@@ -203,8 +255,37 @@
 				companyList: [],
 
 				cardList: [],
+				currentCardId: '',
 
-				account: ''
+				account: '',
+
+				recordName: '',
+				recordList: [
+					{
+						time: '2018/12/26 14:13:23',
+						number: '10F - 1号门 - 3号闸机',
+						position: '10F 电梯右侧',
+						way: '人脸识别',
+						out: '出'
+					},
+					{
+						time: '2018/12/26 14:13:23',
+						number: '10F - 1号门 - 3号闸机',
+						position: '10F 电梯右侧',
+						way: '人脸识别',
+						out: '出'
+					},
+					{
+						time: '2018/12/26 14:13:23',
+						number: '10F - 1号门 - 3号闸机',
+						position: '10F 电梯右侧',
+						way: '人脸识别',
+						out: '出'
+					}
+				],
+
+				page: 1,
+				pageTotal: 50
 			}
 		},
 
@@ -241,6 +322,7 @@
 
 		created() {
 			this.loading = true
+
 			this.getCompanyList().then(() => {
 				this.loading = false
 			})
@@ -289,6 +371,12 @@
 				this.disabled = false
 				this.cardLoading = false
 			},
+			sortChange(column) {
+				this.$rank = column.prop
+				this.$order = column.order === 'ascending' ? '0' : column.order === 'descending' ? '1' : ''
+
+				this.getList()
+			},
 			scroll(e) {
 				if (e.target.scrollTop > 12) {
 					this.showMask = true
@@ -302,8 +390,13 @@
 				index !== -1 && this.$refs.aa[index].scrollIntoView({behavior: 'smooth', block: 'start'})
 			},
 			showDetail(e, item, index, list) {
-				// 103 是 card-item 的 height
+				// 全部隐藏
+				this.cardList.forEach((card) => card.list.forEach((item) => item.show = false))
 
+				this.recordName = item.name
+				this.currentCardId = item.id
+
+				// 103 是 card-item 的 height
 				let target = e.target
 
 				while(target.className !== 'card-item') {
@@ -329,6 +422,10 @@
 				const bb = indexArr.findIndex((items) => items.find((current) => current.id === item.id))
 
 				indexArr[bb].slice(-1)[0].show = true
+
+				// this.$nextTick(() => {
+				// 	this.$refs['record-wrapper'][0].scrollIntoView({behavior: 'smooth', block: 'center'})
+				// })
 			},
 			handle(e) {
 				const aa = document.createElement('div')

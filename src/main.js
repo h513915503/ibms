@@ -8,9 +8,25 @@ import '@/css/common.css'
 import '@/css/element-reset.css'
 
 import 'element-ui/lib/theme-chalk/index.css'
-import ElementUI from 'element-ui'
+import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker} from 'element-ui'
 
-Vue.use(ElementUI)
+Vue.component(Button.name, Button)
+Vue.component(Select.name, Select)
+Vue.component(Option.name, Option)
+Vue.component(Pagination.name, Pagination)
+Vue.component(Input.name, Input)
+Vue.component(InputNumber.name, InputNumber)
+Vue.component(Table.name, Table)
+Vue.component(TableColumn.name, TableColumn)
+Vue.component(InputNumber.name, InputNumber)
+Vue.component(Dropdown.name, Dropdown)
+Vue.component(Dropdown.name, Dropdown)
+Vue.component(DropdownMenu.name, DropdownMenu)
+Vue.component(DropdownItem.name, DropdownItem)
+Vue.component(Popover.name, Popover)
+Vue.component(DatePicker.name, DatePicker)
+
+Vue.prototype.$message = Message
 
 Vue.config.productionTip = false
 
