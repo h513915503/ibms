@@ -25,21 +25,29 @@ export default {
     props: {
         level: {
             type: Number
+        },
+        detailInfo: {
+            type: Array
+        },
+        floorNum: {
+            type: String
         }
     },
     data() {
         return {
             addLevel: 0,
+
         }
     },
     mounted() {
         // this.createBuilding()
+        // console.log(this.level, this.detailInfo, this.floorNum)
         this.initBuilding();
         this.animate()
     },
     methods: {
         onClick() {
-            console.log(this.level)
+            // console.log(this.level)
             // if (this.addLevel === 1) {
             //     this.$emit("click", 2)
             // }
@@ -98,9 +106,6 @@ export default {
                 
                 // 为模型区域添加绑定事件
                 // console.log(addLevel)
-                if (status === 1) {
-                    // InfoDiv.addEventListener( 'click', this.onMouseClick, false );
-                }
                 InfoDiv.addEventListener( 'click', this.onMouseClick, false );
                 // InfoDiv.addEventListener('mousemove', onMouseMove, false);
             } );
@@ -130,7 +135,7 @@ export default {
             if (! this.$root.deviceStatus) {
                 return
             }
-
+            
             this.$emit("click", 2)
             event.preventDefault();
             const {x, y} = container.getBoundingClientRect()
@@ -144,13 +149,18 @@ export default {
                 var selected = intersects[0];//取第一个物体
                 let {x, y, z} = selected.point
 
+                console.log(x, y, z)
                 var newObj = singleair.clone(true);
+                // if (newObj.id)
                 var node = new THREE.Object3D();
                 node.scale.set(20,20,20); //模型做的有问题  太小了
                 node.position.set(x,y,z);
+                if (this.$root.isAdd === 0) {
+                    return
+                }
                 node.add(newObj);
                 scene.add(node);
-
+                this.$root.isAdd = 0
             }
 
         },
