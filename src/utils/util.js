@@ -17,7 +17,15 @@ const timeFormat = (val) => {
     return hh + mm;
 }
 
-const dateFormatString = (date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`.replace(/\b(\w)\b/g, '0$1')
+const dateFormatString = (date, type = 0) => {
+    if (type === 0) {
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`.replace(/\b(\w)\b/g, '0$1')
+    }
+
+    if (type === 1) {
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`.replace(/\b(\w)\b/g, '0$1')
+    }
+}
 
 const downloadExcel = (data) => {
     function downloadExcel(json, type) {

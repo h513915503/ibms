@@ -83,11 +83,11 @@
 						</template>
 					</el-table-column>
 					<el-table-column prop="stayLasts" label="停车时长"></el-table-column>
-					<el-table-column prop="tcmName" label="停车费用（元）"></el-table-column>
+					<el-table-column prop="cashAmount" label="停车费用（元）"></el-table-column>
 				</el-table>
 
 				<div class="page-wrapper">
-					<el-pagination background layout="prev, pager, next" page-size="3" :total="pageTotal" @current-change="pageChange"></el-pagination>
+					<el-pagination background layout="prev, pager, next" :total="pageTotal" @current-change="pageChange"></el-pagination>
 				</div>
 			</div>
 		</template>
@@ -117,7 +117,7 @@
 
 		filters: {
 			format(value) {
-				return dateFormatString(new Date(value))
+				return dateFormatString(new Date(value), 1)
 			}
 		},
 
@@ -135,7 +135,7 @@
 				const params = {
 					action: 'ParkingRental.queryCarAccessRecord',
 					pageNo: this.page,
-					pageSize: 3,
+					//pageSize: 3,
 					condition: {}
 				}
 
@@ -164,7 +164,7 @@
 				params.condition = JSON.stringify(params.condition)
 				params.sortContent = JSON.stringify(params.sortContent)
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/capi/dispatcher.do', params)
 
 				this.count++
 
