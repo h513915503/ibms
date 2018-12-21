@@ -66,15 +66,8 @@ requireAllSvg(req)
 
 process.env.NODE_ENV === 'development' && (window.log = console.log.bind(console))
 
-// 登录后才需要异步挂载应用
-store.state.token ? store.dispatch('getUserInfo').then(() => {
-	new Vue({
-		router,
-		store,
-		render: h => h(App)
-	}).$mount('#app')
-}) : new Vue({
-		router,
-		store,
-		render: h => h(App)
-	}).$mount('#app')
+new Vue({
+	router,
+	store,
+	render: h => h(App)
+}).$mount('#app')
