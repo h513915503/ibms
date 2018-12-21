@@ -92,15 +92,6 @@
             switchIndex(index) {
 				this.currentIndex = index
             },
-            switchFloor(index) {
-                this.floorIndex = index
-            },
-            addDevice() {
-                this.level = 1
-            },
-            filterHandler(value, row, column) {
-
-            },
             go() {
                 // this.$router.push('/light/lightAdd')
             }
