@@ -64,38 +64,41 @@
     <div class="content" id="light-container">
         <p class="title add-title">
             新增设备
-            <span class="cancel-add">×</span>
+            <span class="cancel-add" @click="cancelAdd">×</span>
             <span class="concern-btn" @click="submitDeviceInfo">√</span>
             
         </p>
-        <el-form ref="form" :model="form" label-width="84px" label-position="left" size="mini">
+        <el-form ref="form" :model="form" label-width="84px" label-position="left">
             <el-form-item label="状态">
-				<el-select v-model="form.status" size="mini">
-					<el-option>w</el-option>
+				<el-select v-model="form.state" size="mini">
+					<el-option value="1" label="正常运行"></el-option>
+                    <el-option value="2" label="正常关闭"></el-option>
+                    <el-option value="3" label="故障中"></el-option>
 				</el-select>
 			</el-form-item>
             <el-form-item label="品牌">
 				<el-input v-model="form.brand" placeholder="" size="mini"></el-input>
 			</el-form-item>
             <el-form-item label="型号">
-				<el-input v-model="form.mode" placeholder="" size="mini"></el-input>
+				<el-input v-model="form.type" placeholder="" size="mini"></el-input>
 			</el-form-item>
             <el-form-item label="出场日期">
-				<el-input v-model="form.date" placeholder="" size="mini"></el-input>
+				<el-input v-model="form.productionDate" placeholder="" size="mini"></el-input>
 			</el-form-item>
             <el-form-item label="使用年限(年)">
-				<el-input v-model="form.long" placeholder="" size="mini"></el-input>
+				<el-input v-model="form.durableYears" placeholder="" size="mini"></el-input>
 			</el-form-item>
             <el-form-item label="累计故障次数">
-				<el-input v-model="form.alltime" placeholder="" size="mini"></el-input>
+				<el-input v-model="form.failureNumber" placeholder="" size="mini"></el-input>
 			</el-form-item>
+            
             <el-form-item label="详细位置">
-                <el-select v-model="form.status" size="mini">
-					<el-option>w</el-option>
+                <el-select v-model="form.deviceLocationTypeId" size="mini">
+					<el-option :label="item.className" :value="item.id" v-for="item of positionList" :key="item.id"></el-option>
 				</el-select>
 			</el-form-item>
             <el-form-item>
-                <el-input v-model="form.position" placeholder="" size="mini"></el-input>
+                <el-input v-model="form.detailLocation" placeholder="" size="mini"></el-input>
             </el-form-item>
         </el-form>
     </div>
@@ -103,17 +106,61 @@
 
 <script>
     export default {
+        props: ['floorId', 'level'],
         data() {
             return {
                 form: {
 
-                }
+                },
+                positionList: []
+            }
+        },
+        created() {
+            if (this.level === 2) {
+                this.getDetailPosition()
             }
         },
         methods: {
-            submitDeviceInfo() {
-                console.log(this.form)
+            cancelAdd() {
+                this.$root.deviceStatus = 0
+                this.$emit('click', 0)
             },
+            async getDetailPosition() {
+                const params = {
+                    action: 'Device.queryLocationTypes'
+                }
+                const data = await axios.post('/dapi/dispatcher.do', params)
+                if (!data.data) {
+                    return
+                }
+                this.positionList = data.data;
+            },
+            async submitDeviceInfo() {
+                const params = {
+                    action: 'Device.addDevice',
+                    deviceDescribe: {
+                        state: 1,
+                        deviceTypeId: 1,
+                        deviceNo: '',
+                        brand: this.form.brand,
+                        type: this.form.type,
+                        productionDate: this.form.productionDate,
+                        durableYears: this.form.durableYears,
+                        failureNumber: this.form.failureNumber,
+                        detailLocation: this.form.detailLocation,
+                        deviceLocationTypeId: this.form.deviceLocationTypeId
+                    },
+                    deviceLocation: {
+                        floorId: this.floorId.id,
+                        xAxis: "153.875456556",
+                        yAxis: "149.36566564564",
+                        zAxis: "184.65566556"
+                    }
+                };
+                params.deviceDescribe = JSON.stringify(params.deviceDescribe)
+                params.deviceLocation = JSON.stringify(params.deviceLocation)
+                const data = await axios.post('/dapi/dispatcher.do', params)
+            }
         }
     }
 </script>
