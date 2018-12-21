@@ -94,25 +94,22 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
 	const token = sessionStorage.getItem('token')
-
-	if (to.path === '/login') {
-		if (token) {
-			next('/')
-		} else {
-			next()
-		}
-
-		return
-	}
+	const whiteList = ['/login', '/forgot-password']
 
 	if (token) {
 		if (to.path === '/login') {
 			next('/')
 		} else {
-			next()
+			if (store.state.permissions.length) {
+				next()
+			} else {
+				store.dispatch('getUserInfo').then(() => {
+					next({... to, replace: true})
+				})
+			}
 		}
 	} else {
-		if (to.path === '/forgot-password') {
+		if (whiteList.includes(to.path)) {
 			next()
 		} else {
 			next('/login')
