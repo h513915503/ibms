@@ -111,6 +111,7 @@
             <div class="left-content">
                 <el-button type="primary" @click="addDevice">+ 灯</el-button>
                 <el-button>批量导入</el-button>
+                <el-button @click="editDevice">编辑</el-button>
             </div>
             
 
@@ -123,17 +124,17 @@
         
         <div class="container">
             <ul class="all-floor" @scroll="scroll" :class="{mask: showMask}">
-                <li :class="{activedFloor: floorIndex === index}" class="floor-item" v-for="(item, index) of floor" :key="index" v-text="item" @click="switchFloor(index)"></li>
+                <li :class="{activedFloor: item.floorNumber === index}" class="floor-item" v-for="(item, index) of floorData" :key="item.id" v-text="`${item.floorNumber}F`" @click="switchFloor(item)"></li>
             </ul>
             
             <div class="detail-floor">
-                <Building :level="level" @click="getLevel"/>
+                <Building :level="level" @click="getLevel" :detailInfo="detailInfo" :floorNum="floorNum"/>
             </div>
 
             <div class="detail-info" v-if="level === 0">
                 <p class="title">暂无设备</p>
                 <span class="about">
-                    您可通过以下两种方式添加。<br /> 
+                    您可通过以下两种方式添加。<br />
                     1. 单个添加：点击【+ 灯】按钮后，在楼层平面图中点击确定灯的位置，之后输入设备的各个信息，点击确定即可。 2. 批量导入：点击【批量导入】，系统会自动导入设备及其信息。
                 </span>
             </div>
@@ -153,7 +154,17 @@
                     <span class="concern-btn" @click="commitDeviceInfo">√</span>
                     
                 </p> -->
-                <DetailInfo />
+                <DetailInfo @click="getLevel" :floorId="floorNum" :level="level" />
+            </div>
+
+            <div class="detail-info device-info" v-if="level === 3">
+                <!-- <p class="title add-title">
+                    新增设备
+                    <span class="cancel-add">×</span>
+                    <span class="concern-btn" @click="commitDeviceInfo">√</span>
+                    
+                </p> -->
+                <EditContent @click="getLevel" :detailInfo="detailInfo" :floorId="floorNum"/>
             </div>
 
             <!-- <div class="have-device detail-info" v-if="level === 1">
@@ -174,20 +185,23 @@
 
     import Building from '@/components/building.vue'
     import DetailInfo from '@/components/light-management/formData.vue'
+    import EditContent from '@/components/light-management/editData.vue'
 
     export default {
         data() {
             return {
+                loading: false,
+
                 showMask: false,
                 level: 0,
                 floorIndex: 0,
-                floor: ['-3F', '-2F', '-1F', '1F', '2F', '3F', '4F', '5F', '6F', '7F', '8F', '9F', '10F', '11F', '12F', '13F', '14F', '15F', '16F', '17F'].reverse(),
+
+                floorData: [],
+                floorNum: [],
+                detailInfo: []
             }
         },
         methods: {
-            switchFloor(index) {
-                this.floorIndex = index
-            },
             addDevice() {
                 this.level = 1
                 this.$root.deviceStatus = 1
@@ -200,20 +214,53 @@
                 console.log(data)
                 this.level = data
             },
+            editDevice() {
+                this.level = 3
+            },
             scroll(e) {
 				if (e.target.scrollTop > 12) {
 					this.showMask = true
 				} else {
 					this.showMask = false
 				}
-			}
+            },
+            async getAllFloor() {
+                const params = {
+                    action: 'Device.queryFloorList'
+                }
+                const data = await axios.post('/dapi/dispatcher.do', params)
+                if (!data.data) {
+                    return
+                }
+                this.floorData = data.data.reverse();
+                this.floorNum = this.floorData[0];
+            },
+            async switchFloor(val) {
+                console.log(val)
+                const params = {
+                    action: 'Device.queryDevice',
+                    deviceTypeId: 1,
+                    floorId: val.id
+                };
+                this.floorNum = val
+                const data = await axios.post('/dapi/dispatcher.do', params);
+                if (!data.data) {
+                    return
+                }
+
+                this.detailInfo = data.data;
+            }
         },
         components: {
             Building,
-            DetailInfo
+            DetailInfo,
+            EditContent
         },
         created() {
-
+            this.loading = true;
+            Promise.all([this.getAllFloor()]).then(() => {
+                this.loading = false
+            })
         }
     }
 </script>
