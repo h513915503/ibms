@@ -122,8 +122,7 @@
         },
         methods: {
             cancelAdd() {
-                this.$root.deviceStatus = 0
-                this.$emit('click', 0)
+                this.$emit('cancelAdd', 0)
             },
             async getDetailPosition() {
                 const params = {
@@ -135,31 +134,8 @@
                 }
                 this.positionList = data.data;
             },
-            async submitDeviceInfo() {
-                const params = {
-                    action: 'Device.addDevice',
-                    deviceDescribe: {
-                        state: 1,
-                        deviceTypeId: 1,
-                        deviceNo: '',
-                        brand: this.form.brand,
-                        type: this.form.type,
-                        productionDate: this.form.productionDate,
-                        durableYears: this.form.durableYears,
-                        failureNumber: this.form.failureNumber,
-                        detailLocation: this.form.detailLocation,
-                        deviceLocationTypeId: this.form.deviceLocationTypeId
-                    },
-                    deviceLocation: {
-                        floorId: this.floorId.id,
-                        xAxis: "153.875456556",
-                        yAxis: "149.36566564564",
-                        zAxis: "184.65566556"
-                    }
-                };
-                params.deviceDescribe = JSON.stringify(params.deviceDescribe)
-                params.deviceLocation = JSON.stringify(params.deviceLocation)
-                const data = await axios.post('/dapi/dispatcher.do', params)
+            submitDeviceInfo() {
+                this.$emit('submitDeviceInfo', this.form)
             }
         }
     }

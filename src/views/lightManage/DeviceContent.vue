@@ -128,7 +128,7 @@
             </ul>
             
             <div class="detail-floor">
-                <Building :level="level" @click="getLevel" :detailInfo="detailInfo" :floorNum="floorNum"/>
+                <Building :isEdit="isEdit" @click="getLevel" :detailInfo="detailInfo" :floorNum="floorNum" :locationObj="locationObj"/>
             </div>
 
             <div class="detail-info" v-if="level === 0">
@@ -154,7 +154,7 @@
                     <span class="concern-btn" @click="commitDeviceInfo">√</span>
                     
                 </p> -->
-                <DetailInfo @click="getLevel" :floorId="floorNum" :level="level" />
+                <AddDevice @click="getLevel" :floorId="floorNum" :level="level" @cancelAdd="cancelAdd" @submitDeviceInfo="submitDeviceInfo"/>
             </div>
 
             <div class="detail-info device-info" v-if="level === 3">
@@ -184,7 +184,7 @@
 <script>
 
     import Building from '@/components/building.vue'
-    import DetailInfo from '@/components/light-management/formData.vue'
+    import AddDevice from '@/components/light-management/formData.vue'
     import EditContent from '@/components/light-management/editData.vue'
 
     export default {
@@ -194,20 +194,32 @@
 
                 showMask: false,
                 level: 0,
+
+                isEdit: false,
+                editId: null,
                 floorIndex: 0,
 
                 floorData: [],
                 floorNum: [],
-                detailInfo: []
+                detailInfo: [],
+
+                locationObj: {}
+            }
+        },
+        computed: {
+            showDetail: function () {
+                return !this.isEdit && this.editId
             }
         },
         methods: {
             addDevice() {
                 this.level = 1
+                this.isEdit = true
                 this.$root.deviceStatus = 1
             },
             cancelAdd() {
                 this.level = 0
+                this.isEdit = false
                 this.$root.deviceStatus = 0
             },
             getLevel(data) {
@@ -236,11 +248,13 @@
                 this.floorNum = this.floorData[0];
             },
             async switchFloor(val) {
-                console.log(val)
+                // console.log(val)
+                console.log(this.floorNum)
+                this.isEdit = false
                 const params = {
                     action: 'Device.queryDevice',
                     deviceTypeId: 1,
-                    floorId: val.id
+                    floorId: val ? val.id : this.floorNum.id
                 };
                 this.floorNum = val
                 const data = await axios.post('/dapi/dispatcher.do', params);
@@ -249,18 +263,51 @@
                 }
 
                 this.detailInfo = data.data;
+            },
+            async submitDeviceInfo(value) {
+                console.log(this.locationObj, value)
+                const params = {
+                    action: 'Device.addDevice',
+                    deviceDescribe: {
+                        state: 1,
+                        deviceTypeId: 1,
+                        deviceNo: '',
+                        brand: this.form.brand,
+                        type: this.form.type,
+                        productionDate: this.form.productionDate,
+                        durableYears: this.form.durableYears,
+                        failureNumber: this.form.failureNumber,
+                        detailLocation: this.form.detailLocation,
+                        deviceLocationTypeId: this.form.deviceLocationTypeId
+                    },
+                    deviceLocation: {
+                        floorId: this.floorId.id,
+                        xAxis: this.locationObj.xAxis,
+                        yAxis: this.locationObj.yAxis,
+                        zAxis: this.locationObj.zXxis
+                    }
+                };
+                params.deviceDescribe = JSON.stringify(params.deviceDescribe)
+                params.deviceLocation = JSON.stringify(params.deviceLocation)
+                const data = await axios.post('/dapi/dispatcher.do', params)
             }
         },
         components: {
             Building,
-            DetailInfo,
+            AddDevice,
             EditContent
         },
         created() {
             this.loading = true;
             Promise.all([this.getAllFloor()]).then(() => {
                 this.loading = false
+                // this.switchFloor()
             })
+        },
+        mounted() {
+            // setTimeout(() => {
+            //     this.detailInfo = [{describe: {brand: 'shuangfeiyan'}, location: {x: '1234'}}]
+            // }, 1500)
         }
     }
 </script>
