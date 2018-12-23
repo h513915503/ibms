@@ -23,27 +23,52 @@ let mixers = [];
 
 export default {
     props: {
+        locationObj: {
+            type: Object
+        },
+        isEdit: {
+            type: Boolean
+        },
         level: {
             type: Number
         },
         detailInfo: {
             type: Array
         },
-        floorNum: {
-            type: String
-        }
+        // floorNum: {
+        //     type: String
+        // }
     },
     data() {
         return {
             addLevel: 0,
-
+            currentMesh: null
         }
     },
     mounted() {
         // this.createBuilding()
-        // console.log(this.level, this.detailInfo, this.floorNum)
+        console.log(this.detailInfo)
         this.initBuilding();
         this.animate()
+    },
+    watch: {
+        isEdit: function (val, oldVal) {
+            if (!val && oldVal) {
+                if (this.currentMesh) {
+                    scene.remove(this.currentMesh)
+                }
+            }
+        },
+        detailInfo: function (val) {
+            // console.log(val)
+            const meshArr = scene.children.slice(4)
+            meshArr.forEach(item => {
+                scene.remove(item)
+            })
+            val.forEach(({ location }) => {
+                this.addOneMesh(location.xAxis, location.yAxis, location.zAxis)
+            })
+        }
     },
     methods: {
         onClick() {
@@ -132,7 +157,9 @@ export default {
             controls.update();
         },
         onMouseClick( event ) {
-            if (! this.$root.deviceStatus) {
+            console.log(this.isEdit)
+            if (! this.isEdit) {
+                // TODO 判断是否点击到已有设备
                 return
             }
             
@@ -150,19 +177,29 @@ export default {
                 let {x, y, z} = selected.point
 
                 console.log(x, y, z)
-                var newObj = singleair.clone(true);
-                // if (newObj.id)
-                var node = new THREE.Object3D();
-                node.scale.set(20,20,20); //模型做的有问题  太小了
-                node.position.set(x,y,z);
-                if (this.$root.isAdd === 0) {
-                    return
+                this.locationObj.xAxis = x
+                this.locationObj.yAxis = y
+                this.locationObj.zXxis = z
+                if (this.currentMesh) {
+                    this.currentMesh.position.set(x, y, z)
+                } else {
+                    const node = this.addOneMesh(x, y, z)
+                    this.currentMesh = node
                 }
-                node.add(newObj);
-                scene.add(node);
-                this.$root.isAdd = 0
             }
+            this.$root.isAdd = 1
 
+        },
+        addOneMesh(x, y, z) {
+            var newObj = singleair.clone(true);
+            // if (newObj.id)
+            var node = new THREE.Object3D();
+            node.scale.set(20,20,20); //模型做的有问题  太小了
+            node.position.set(x,y,z);
+            node.add(newObj)
+            scene.add(node)
+
+            return node
         },
         onWindowResize() {
             camera.aspect = (window.innerWidth - 800) / 520;
