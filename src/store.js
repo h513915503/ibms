@@ -48,6 +48,13 @@ const aside = [
 		reg: /^\/entrance-guard/,
 		path: '/entrance-guard'
 	},
+	{
+		type: '9',
+		title: '监控',
+		index: 6,
+		reg: /^\/video-record/,
+		path: '/video-record'
+	},
 
 	{
 		title: '场地',
