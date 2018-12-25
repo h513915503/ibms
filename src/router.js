@@ -24,6 +24,8 @@ import EditPost from './views/post-management/edit.vue'
 
 import EntranceGuard from './views/entrance-guard/index.vue'
 
+import VideoPage from './views/videoPage/index.vue'
+
 import Lease from './views/lease/index.vue'
 import LeaseAdd from './views/lease/add.vue'
 import LeaseEdit from './views/lease/edit.vue'
@@ -317,6 +319,13 @@ export const routesMap = [
 		path: '/entrance-guard',
 		name: 'entrance-guard',
 		component: EntranceGuard
+	},
+
+	{
+		type: '1',
+		path: '/video-record',
+		name: 'video-record',
+		component: VideoPage
 	}
 ]
 
