@@ -194,7 +194,7 @@ export default new Vuex.Store({
 			if (userInfo) {
 				data = userInfo
 			} else {
-				data = await axios.post('/api/dispatcher.do', params)
+				data = await axios.post('/api/account/dispatcher.do', params)
 			}
 
 			if (! data) {
@@ -213,7 +213,7 @@ export default new Vuex.Store({
 				action: 'accountManagement.queryRentalInfo'
 			}
 
-			const data = await axios.post('/api/dispatcher.do', params)
+			const data = await axios.post('/api/account/dispatcher.do', params)
 
 			if (! data) {
 				return
