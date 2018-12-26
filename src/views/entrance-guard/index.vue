@@ -47,7 +47,7 @@
 				</div>
 			</div>
 
-			<management v-if="currentIndex === 0"></management>
+			<management v-if="currentIndex === 0" @complete="handleManagementComplete"></management>
 			<card-statistics v-if="currentIndex === 1"></card-statistics>
 		</template>
 	</div>
@@ -62,6 +62,9 @@
 		data() {
 			return {
 				loading: false,
+
+				// 等到门禁管理接口请求完成再关闭 loading
+				count: 0,
 
 				currentIndex: 0,
 				tab: ['门禁管理', '卡信息统计'],
@@ -87,6 +90,38 @@
 			tabBar,
 			management,
 			cardStatistics
+		},
+
+		created() {
+			this.loading = true
+
+			this.getData().then(() => {
+				this.count++
+				this.count === 1 && (this.loading = false)
+			})
+		},
+
+		methods: {
+			async getData() {
+				const params = {
+					action: 'door.queryDoorCount'
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				const {allDoorCount, faultDoorCount, unusualDoorCount} = data.data
+
+				this.tabs[0].number = allDoorCount
+				this.tabs[1].number = unusualDoorCount
+				this.tabs[2].number = faultDoorCount
+			},
+			handleManagementComplete() {
+				this.count++
+			}
 		}
 	}
 </script>
