@@ -89,6 +89,17 @@
 .input {
 	display: none;
 }
+.uploading-image {
+	width: 282px;
+	height: 282px;
+	object-fit: cover;
+}
+.uploading {
+	width: 282px;
+	line-height: 282px;
+	color: #8C8C8C;
+	text-align: center;
+}
 .info-wrapper {
 	flex: 1;
 	margin-left: 50px;
@@ -179,10 +190,6 @@
 	/* scroll-behavior: smooth; */
 	box-sizing: border-box;
 }
-.gate-list {
-	display: flex;
-	flex-wrap: wrap;
-}
 .gate-item {
 	display: flex;
 	flex-wrap: wrap;
@@ -193,8 +200,10 @@
 }
 .gate-wrapper {
 	display: flex;
+	width: 327px;
 	padding: 24px;
 	margin: 0 24px 24px 0;
+	box-sizing: border-box;
 	cursor: pointer;
 	border: 1px solid transparent;
 	background-color: #F5F5F5;
@@ -256,13 +265,17 @@
 }
 .gate-detail {
 	display: flex;
-	justify-content: space-between;
+	align-items: center;
+
+	& .count {
+		margin-left: auto;
+	}
 }
 .gate-box-wrapper {
 	display: flex;
 	width: 100%;
 	height: 400px;
-	padding: 0 24px;
+	padding: 0 24px 24px;
 	margin-top: -14px;
 	margin-bottom: 14px;
 	overflow: hidden;
@@ -277,6 +290,7 @@
 
 	& .record {
 		flex: 1;
+		position: relative;
 	}
 
 	& .el-table {
@@ -302,11 +316,10 @@
 	width: 282px;
 	height: 282px;
 	margin-bottom: 10px;
-	background-color: orange;
+	object-fit: cover;
 }
 .info-footer {
 	display: flex;
-	justify-content: space-between;
 	position: relative;
 	color: #8C8C8C;
 	font-size: 12px;
@@ -337,6 +350,7 @@
 	position: absolute;
 	top: 50%;
 	right: 40px;
+	cursor: pointer;
 	filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .15));
 	background-color: #F5F5F5;
 	transform: translateY(-50%);
@@ -344,6 +358,10 @@
 	& span:nth-child(n+2) {
 		margin-left: 16px;
 	}
+}
+.more-btn {
+	margin-left: auto;
+	cursor: pointer;
 }
 .record-header {
 	display: flex;
@@ -386,6 +404,24 @@
 .ok-btn {
 	background-color: #0E7CC2;
 }
+.no-data {
+	flex: 1;
+	padding-top: 100px;
+	text-align: center;
+}
+.call-input {
+	display: block;
+	margin-bottom: 14px;
+	color: #595959;
+	font-size: 12px;
+	text-align: center;
+	cursor: pointer;
+}
+.svg-icon {
+	width: 14px;
+	height: 10px;
+	margin-right: 8px;
+}
 </style>
 <style>
 .management-wrapper .info-wrapper .el-input__inner {
@@ -408,6 +444,22 @@
 	height: 24px;
 	line-height: 24px;
 }
+.management-wrapper .el-table td {
+	padding: 10px 0;
+	border-bottom: none;
+}
+.management-wrapper .el-date-editor.el-input {
+	width: 68px;
+	height: 24px;
+}
+.management-wrapper .el-input__inner {
+	height: 24px;
+	line-height: 24px;
+}
+.management-wrapper .date-picker {
+	display: inline-block;
+	margin-right: 5px;
+}
 </style>
 
 <template>
@@ -420,17 +472,20 @@
 					<el-button class="add-btn" type="primary" @click="addShow = true">+ 门禁</el-button>
 
 					<template v-if="list.length">
-						<el-input type="text" placeholder="门禁编号" v-model="searchNumber"></el-input>
-						<el-button class="search-btn">查询</el-button>
+						<el-input type="text" placeholder="门禁编号" v-model="searchNumber" @keyup.native.enter="search"></el-input>
+						<el-button :disabled="disabled" class="search-btn" @click="search">查询</el-button>
 					</template>
 				</header>
 				<p class="tips" v-if="! list.length">暂无门禁，点击上方按钮添加门禁。</p>
 
 				<div class="add-wrapper" v-if="addShow">
-					<label class="input-wrapper">
-						<input class="input" type="file" accept="image/*">
+					<label class="input-wrapper" v-if="uploadingIndex === 0">
+						<input class="input" type="file" accept="image/*" @change="handleChange">
 						添加点位图
 					</label>
+					<p class="uploading" v-if="uploadingIndex === 1">上传中...</p>
+					<img class="uploading-image" :src="image" v-if="uploadingIndex === 2">
+
 					<div class="info-wrapper">
 						<div class="info-item">
 							<span class="label">
@@ -463,7 +518,7 @@
 						</div>
 						<div class="btn-wrapper">
 							<el-button class="add-btn" type="primary" :disabled="addEntranceGuardBtnDisabled" @click="addEntranceGuard">保存</el-button>
-							<el-button class="add-btn" @click="addShow = false">取消</el-button>
+							<el-button class="add-btn" @click="cancelAddEntranceGuard">取消</el-button>
 						</div>
 					</div>
 				</div>
@@ -471,27 +526,34 @@
 				<div class="container">
 					<div class="floor-list-wrapper">
 						<ul class="floor-list">
-							<li class="floor-item" v-for="item of floorList" @click="translateGateList(item.floorNumber)">{{item.floorNumber}}F</li>
+							<li class="floor-item" :class="{actived: currentFloorNumber === + item.floorNumber}" v-for="item of floorList" @click="translateGateList(item.floorNumber)">{{item.floorNumber}}F</li>
 						</ul>
 					</div>
 
-					<div class="gate-list-wrapper" ref="gate-list-wrapper">
+					<div class="gate-list-wrapper" ref="gate-list-wrapper" v-if="gateList.length">
 						<ul class="gate-list">
 							<li class="gate-item" v-for="(items, indexs) of gateList" :data-number="items.floorNumber" ref="gate-item">
 								<template v-for="(item, index) of items.list">
-									<div class="gate-wrapper" :class="{actived: currentGateId === item.id}" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
-										<div class="icon-wrapper">
+									<div class="gate-wrapper" :class="{actived: currentGateId === item.recordId}" :data-index="indexs" @click="showDetail($event, item, index, indexs, items.list)">
+										<div class="icon-wrapper" :class="{warning: ! item.online, fault: item.online && item.alarmstate}">
 											<svg class="svg-icon success">
 												<use xlink:href="#type-3-success"></use>
 											</svg>
 											正常通行
 										</div>
 										<div class="gate-info">
-											<h4 class="gate-title" v-text="item.number"></h4>
-											<p class="gate-position" v-text="item.position"></p>
+											<h4 class="gate-title">{{item.floorId}}F-{{item.childName}}</h4>
+											<p class="gate-position">
+												<svg class="svg-icon">
+													<use xlink:href="#location"></use>
+												</svg>
+												{{item.floorId}}F {{item.address}}</p>
 											<p class="gate-detail">
+												<svg class="svg-icon">
+													<use xlink:href="#people"></use>
+												</svg>
 												人流量（人/分钟）
-												<span v-text="item.ren"></span>
+												<span class="count" v-text="item.peopleCount"></span>
 											</p>
 										</div>
 									</div>
@@ -499,30 +561,37 @@
 									<transition name="height">
 										<div class="gate-box-wrapper" v-if="item.show">
 
-											<div class="info edit" v-if="item.isEdit">
+											<div class="info edit" v-if="currentGate.isEdit">
 												<h4 class="title">
-													{{item.floorNumber}}F
+													{{currentGate.floorId}}F
 													<el-input type="text" v-model="numberEdit" placeholder="回车确认"></el-input>
 												</h4>
-												<div class="gate-image"></div>
+												<img :src="currentGate.imageUrl" class="gate-image">
+												<label class="call-input">
+													<input class="input" type="file" accept="image/*" @change="handleChange($event, 1)">
+													更换点位图
+												</label>
 												<div class="info-footer">
 													<div class="position-input-wrapper">
 														<input type="text" v-model="positionEdit" placeholder="回车确认" />
 													</div>
-													<div class="btn cancel-btn" @click="item.isEdit = false">取消</div>
-													<div class="btn ok-btn">确定</div>
+													<div class="btn cancel-btn" @click="currentGate.isEdit = false">取消</div>
+													<div class="btn ok-btn" @click="editGateService">确定</div>
 												</div>
 											</div>
 											<div class="info" v-else>
 												<h4 class="title">
-													{{item.number}}
-													<el-button class="open-btn">开门</el-button>
+													{{currentGate.childName}}
+													<el-button class="open-btn" :disabled="item.disabled" @click="openDoor(item)">开门</el-button>
 												</h4>
-												<div class="gate-image"></div>
+												<img :src="currentGate.imageUrl" class="gate-image">
 												<div class="info-footer">
-													{{item.position}}
+													<svg class="svg-icon">
+														<use xlink:href="#location"></use>
+													</svg>
+													{{item.floorId}}F {{currentGate.address}}
 													<div class="operation-wrapper" v-if="operationModalStatus" ref="operation-wrapper">
-														<span>编辑</span>
+														<span @click="forEdit(item)">编辑</span>
 														<span @click="forDelGate">删除</span>
 													</div>
 													<span class="more-btn" @click="showOperation">更多</span>
@@ -532,17 +601,35 @@
 											<div class="record">
 												<span class="record-header" @click="hideDetail(item)">收起</span>
 
-												<el-table :data="recordList">
-													<el-table-column prop="time" label="卡号" sortable='custom'></el-table-column>
-													<el-table-column prop="number" label="姓名"></el-table-column>
-													<el-table-column prop="position" label="所在单位/到访单位" width="200"></el-table-column>
-													<el-table-column prop="way" label="通行方式"></el-table-column>
-													<el-table-column prop="out" label="出/入"></el-table-column>
-												</el-table>
-												<footer class="record-footer">
-													<el-button class="export-btn">导出</el-button>
-													<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
-												</footer>
+												<loading v-if="recordLoading"></loading>
+												<template v-else>
+													<el-table :data="recordList" @sort-change="sortChange">
+														<el-table-column sortable='custom' width="140">
+															<template slot-scope="scope">
+																{{scope.row.punchTime | timeFormat}}
+															</template>
+														</el-table-column>
+
+
+
+														<el-table-column prop="accountName" label="姓名"></el-table-column>
+														<el-table-column prop="rentalCompany" label="所在单位/到访单位" width="400"></el-table-column>
+														<el-table-column label="通行方式">
+															<template slot-scope="scope">
+																<span>{{scope.row.travelWay | format}}</span>
+															</template>
+														</el-table-column>
+														<el-table-column label="出/入">
+															<template slot-scope="scope">
+																<span>{{scope.row.direction === 1 ? '入' : '出'}}</span>
+															</template>
+														</el-table-column>
+													</el-table>
+													<footer class="record-footer" v-if="recordList.length">
+														<el-button class="export-btn">导出</el-button>
+														<el-pagination small layout="prev, pager, next" :page-size="5" :total="recordPageTotal" @current-change="pageChange"></el-pagination>
+													</footer>
+												</template>
 											</div>
 										</div>
 									</transition>
@@ -550,6 +637,8 @@
 							</li>
 						</ul>
 					</div>
+
+					<p class="no-data" v-if="noData !== -1">大哥，没有数据</p>
 				</div>
 			</div>
 		</template>
@@ -567,6 +656,8 @@
 			return {
 				loading: false,
 
+				clickDisabled: false,
+				disabled: false,
 				addShow: false,
 
 				searchNumber: '',
@@ -574,7 +665,13 @@
 				followTarget: null,
 				popoverModalStatus: false,
 
+				currentFloorNumber: '',
 				floorNumber: '',
+
+				// 点位图
+				image: '',
+				uploadingIndex: 0,
+
 				number: '',
 				position: '',
 				floorList: [],
@@ -592,200 +689,26 @@
 				operationModalStatus: false,
 
 				currentGateId: '',
-				recordList: [
-					{
-						time: '00E2E63120',
-						number: '10F - 1号门 - 3号闸机',
-						position: '10F 电梯右侧',
-						way: '人脸识别',
-						out: '出'
-					},
-					{
-						time: '00E2E63120',
-						number: '10F - 1号门 - 3号闸机',
-						position: '10F 电梯右侧',
-						way: '人脸识别',
-						out: '出'
-					},
-					{
-						time: '00E2E63120',
-						number: '10F - 1号门 - 3号闸机',
-						position: '10F 电梯右侧',
-						way: '人脸识别',
-						out: '出'
-					}
-				],
+				currentGate: {},
+				recordList: [],
+				recordPageTotal: 1,
+				recordTime: '',
+				recordLoading: false,
+
+				noData: -1,
 				page: 1,
 				pageTotal: 100,
-				gateList: [
-					{
-						floorNumber: 10,
-						list: [{
-							number: '10F - 1号门 - 1号闸机',
-							id: 1,
-							show: false,
-							isEdit: false,
-							position: '10F 电梯左侧',
-							ren: 123,
-							floorNumber: 10
-						},
-						{
-							number: '10F - 1号门 - 1号闸机',
-							id: 12,
-							show: false,
-							isEdit: false,
-							position: '10F 电梯左侧',
-							ren: 123,
-							floorNumber: 10
-						},
-						{
-							number: '10F - 1号门 - 1号闸机',
-							id: 13,
-							show: false,
-							isEdit: false,
-							position: '10F 电梯左侧',
-							ren: 123,
-							floorNumber: 10
-						},
-						{
-							number: '10F - 1号门 - 1号闸机',
-							id: 14,
-							show: false,
-							isEdit: false,
-							position: '10F 电梯左侧',
-							ren: 123,
-							floorNumber: 10
-						},
-						{
-							number: '10F - 1号门 - 1号闸机',
-							id: 15,
-							show: false,
-							isEdit: false,
-							position: '10F 电梯左侧',
-							ren: 123,
-							floorNumber: 10
-						}]
-					},
-				 	{
-				 		floorNumber: 9,
-				 		list: [{
-							number: '9F - 1号门 - 1号闸机',
-							id: 65453,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						},
-						{
-							number: '9F - 1号门 - 1号闸机',
-							id: 623,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						},
-						{
-							number: '9F - 1号门 - 1号闸机',
-							id: 67,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						},
-						{
-							number: '9F - 1号门 - 1号闸机',
-							id: 65,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						},
-						{
-							number: '9F - 1号门 - 1号闸机',
-							id: 63,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						},
-						{
-							number: '9F - 1号门 - 1号闸机',
-							id: 62,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						},
-						{
-							number: '9F - 1号门 - 1号闸机',
-							id: 61,
-							show: false,
-							isEdit: false,
-							position: '9F 电梯左侧',
-							ren: 123,
-							floorNumber: 9
-						}],
-				 	},
-				 	{
-				 		floorNumber: 11,
-				 		list: [{
-							number: '11F - 1号门 - 1号闸机',
-							id: 654444,
-							show: false,
-							isEdit: false,
-							position: '11F 电梯左侧',
-							ren: 123,
-							floorNumber: 11
-						},
-						{
-							number: '11F - 1号门 - 1号闸机',
-							id: 65422,
-							show: false,
-							isEdit: false,
-							position: '11F 电梯左侧',
-							ren: 123,
-							floorNumber: 11
-						},
-						{
-							number: '11F - 1号门 - 1号闸机',
-							id: 6546,
-							show: false,
-							isEdit: false,
-							position: '11F 电梯左侧',
-							ren: 123,
-							floorNumber: 11
-						},
-						{
-							number: '11F - 1号门 - 1号闸机',
-							id: 6543,
-							show: false,
-							isEdit: false,
-							position: '11F 电梯左侧',
-							ren: 123,
-							floorNumber: 11
-						},
-						{
-							number: '11F - 1号门 - 1号闸机',
-							id: 6542,
-							show: false,
-							isEdit: false,
-							position: '11F 电梯左侧',
-							ren: 123,
-							floorNumber: 11
-						}]
-				 	}]
+				gateList: []
 			}
 		},
 
 		computed: {
 			addEntranceGuardBtnDisabled() {
-				if (this.floorNumber && this.number && this.position) {
+				if (this.clickDisabled) {
+					return true
+				}
+
+				if (this.image && this.floorNumber && this.number && this.position) {
 					return false
 				}
 
@@ -793,15 +716,47 @@
 			}
 		},
 
+		filters: {
+			format(value) {
+				const map = {
+					3: '人脸识别',
+					4: '刷卡',
+					5: '二维码'
+				}
+
+				return map[value]
+			},
+			timeFormat(value) {
+				const date = new Date(value)
+
+				return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`.replace(/\b(\w)\b/g, '0$1')
+			}
+		},
+
+		watch: {
+			recordTime(value) {
+				this.getRecordList()
+			}
+		},
+
 		created() {
 			this.loading = true
 
-			this.getFloorList().then(() => {
+			Promise.all([this.getFloorList(), this.getGateList()]).then(() => {
 				this.loading = false
 			})
 		},
 
 		methods: {
+			renderHeader(h, c) {
+				log(c)
+         		return (
+            		<p class="date-picker" onClick={(e) => e.stopPropagation()}>
+		           		<el-date-picker v-model="recordTime" type="date" value-format="timestamp" placeholder="选择日期">
+		           		</el-date-picker>
+		            </p>
+         		)
+    		},
 			async getFloorList() {
 				const params = {
 					action: 'OfficeRental.queryAllRentalInfo'
@@ -815,17 +770,174 @@
 
 				this.floorList = data.data
 			},
-			addEntranceGuard() {
-				this.list.push({
-					number: this.number,
-					floorNumber: this.floorNumber,
-					position: this.position
+			async getGateList() {
+				const params = {
+					action: 'door.queryDoor'
+				}
+
+				this.searchNumber && (params.childName = this.searchNumber)
+
+				this.noData = -1
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				// 处理数据
+				let result = []
+
+				data.data.forEach((item) => {
+					item.isEdit = false
+					item.show = false
+
+					// 开门按钮
+					item.disabled = false
+
+					const index = result.findIndex((current) => current.floorNumber === item.floorId)
+
+					if (index !== -1) {
+						result[index].list.push(item)
+					} else {
+						result.push({
+							floorNumber: item.floorId,
+							list: [item]
+						})
+					}
 				})
 
-				//this.addEntranceGuardService()
+				this.gateList = result
+
+				result[0] && (this.currentFloorNumber = result[0].floorNumber)
+
+				if (! data.data.length) {
+					this.noData = 1
+				}
+			},
+			async search() {
+				if (this.$searchFlag) {
+					return
+				}
+
+				this.$searchFlag = true
+
+				this.disabled = true
+				this.currentFloorNumber = ''
+
+				await this.getGateList()
+
+				this.$searchFlag = null
+
+				this.disabled = false
+			},
+			async handleChange(e, type) {
+				const file = e.target.files[0]
+
+				if (! file.type.includes('image')) {
+					this.$message.error('请选择图片')
+
+					return
+				}
+
+				const formdata = new FormData()
+
+				formdata.append('action', 'file.upload')
+				formdata.append('file', file)
+
+				if (type === 1) {
+					this.currentGate.imageUrl = URL.createObjectURL(file)
+				} else {
+					this.uploadingIndex = 1
+					this.image = URL.createObjectURL(file)
+				}
+
+				const data = await axios.post('/api/account/dispatcher.do', formdata)
+
+				// 上传失败
+				this.uploadingIndex = 0
+
+				if (! data) {
+					return
+				}
+
+				if (type === 1) {
+					this.currentGate.imageUrl = data.data.url
+				} else {
+					this.uploadingIndex = 2
+					this.image = data.data.url
+				}
+			},
+			async addEntranceGuard() {
+				const params = {
+					action: 'door.addDoor',
+					floorId: this.floorNumber,
+					childName: this.number,
+					address: this.position
+				}
+
+				this.clickDisabled = true
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				this.clickDisabled = false
+
+				if (! data) {
+					return
+				}
+
+				const index = this.gateList.findIndex((item) => item.floorNumber === + this.floorNumber)
+
+				if (index === -1) {
+					this.gateList.push({
+						floorNumber: this.floorNumber,
+						list: [{
+							isEdit: false,
+							show: false,
+							disabled: false,
+							floorId: this.floorNumber,
+							childName: this.number,
+							address: this.position,
+							peopleCount: 0,
+							online: true,
+							alarmstate: false,
+							recordId: data.data.recordId
+						}]
+					})
+				} else {
+					this.gateList[index].list.push({
+						isEdit: false,
+						show: false,
+						disabled: false,
+						floorId: this.floorNumber,
+						childName: this.number,
+						address: this.position,
+						peopleCount: 0,
+						online: true,
+						alarmstate: false,
+						recordId: data.data.recordId
+					})
+				}
+
 				this.addShow = false
 			},
+			cancelAddEntranceGuard() {
+				this.addShow = false
+
+				this.position = ''
+				this.number = ''
+				this.floorNumber = ''
+
+				this.image = ''
+				this.uploadingIndex = 0
+			},
 			translateGateList(floorNumber) {
+				if (! this.gateList.length) {
+					return
+				}
+
+				this.currentFloorNumber = floorNumber
+
 				let start = 0
 				const during = 40
 				const maxTop = this.$refs['gate-item'].find((item) => item.dataset.number === floorNumber).offsetTop
@@ -847,11 +959,15 @@
 	            if ((t /= d / 2) < 1) return c / 2 * t * t + b;
 	            return -c / 2 * ((--t) * (t-2) - 1) + b;
 	        },
-	        showDetail(e, item, index, list) {
+	        showDetail(e, item, index, indexs, list) {
+	        	this.recordLoading = true
+				this.currentGate = item
+	        	this.getRecordList()
+
 				// 全部隐藏
 				this.gateList.forEach((gate) => gate.list.forEach((item) => item.show = false))
 
-				this.currentGateId = item.id
+				this.currentGateId = item.recordId
 
 				// 103 是 card-item 的 height
 				let target = e.target
@@ -876,36 +992,100 @@
 
 				}
 
-				const bb = indexArr.findIndex((items) => items.find((current) => current.id === item.id))
+				const bb = indexArr.findIndex((items) => items.find((current) => current.recordId === item.recordId))
 
-				indexArr[bb].slice(-1)[0].show = true
+				this.$index = index
+				this.$indexs = indexs
+				this.$gateDetailTemp = indexArr[bb].slice(-1)[0]
+				this.$gateDetailTemp.show = true
 
 				// this.$nextTick(() => {
 				// 	this.$refs['record-wrapper'][0].scrollIntoView({behavior: 'smooth', block: 'center'})
 				// })
 			},
+			async getRecordList(page = 1) {
+				const params = {
+					action: 'door.queryDoorPunch',
+					deviceId: this.currentGate.deviceId,
+					childId: this.currentGate.childId,
+					pageNo: page,
+					pageSize: 5
+				}
+
+				if (this.$order) {
+					params.orderBy = this.$order
+				}
+
+				if (this.recordTime) {
+					params.punchTimeTamp = this.recordTime
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.recordList = data.data.list
+				this.recordPageTotal = data.data.total
+				this.recordLoading = false
+			},
+			sortChange(column) {
+				this.$order = column.order === 'ascending' ? 'allDate_asc ' : column.order === 'descending' ? 'allDate_desc' : ''
+
+				this.getRecordList()
+			},
+			pageChange(value) {
+				this.recordLoading = true
+				this.getRecordList(value)
+			},
 			hideDetail(item) {
 				item.show = false
 				this.currentGateId = -1
 			},
-			forEdit(item) {
+			forEdit() {
+				const item = this.currentGate
+
 				item.isEdit = true
 
-				this.numberEdit = item.number
-				this.positionEdit = item.position
+				this.operationModalStatus = false
+				this.numberEdit = item.childName
+				this.positionEdit = item.address
+			},
+			async editGateService() {
+				const params = {
+					action: 'door.editDoor',
+					recordId: this.currentGate.recordId,
+					childName: this.numberEdit,
+					address: this.positionEdit,
+					imageUrl: this.currentGate.imageUrl
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.currentGate.isEdit = false
+
+				this.currentGate.childName = this.numberEdit
+				this.currentGate.address = this.positionEdit
+
+				this.$message.success('修改成功')
 			},
 			showOperation() {
 				this.operationModalStatus = true
 
 				this.$nextTick(() => {
 					const clickHandler = (e) => {
+						document.removeEventListener('click', clickHandler, true)
+
 						if (this.$refs['operation-wrapper'][0].contains(e.target)) {
 							return
 						}
 
 						this.operationModalStatus = false
-
-						document.removeEventListener('click', clickHandler, true)
 					}
 
 					document.addEventListener('click', clickHandler, true)
@@ -915,8 +1095,41 @@
 				this.popoverModalStatus = true
 				this.followTarget = e.target
 			},
-			delGate() {
+			async delGate() {
+				const params = {
+					action: 'door.removeDoor',
+					recordId: this.currentGate.recordId
+				}
 
+				this.popoverModalStatus = false
+				this.$gateDetailTemp.show = false
+				this.currentGateId = ''
+				this.gateList[this.$indexs].list.splice(this.$index, 1)
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+			},
+			async openDoor(item) {
+				const params = {
+					action: 'door.remoteOpenDoor',
+					devIp: '',
+					childId: ''
+				}
+
+				item.disabled = true
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				item.disabled = false
+
+				if (! data) {
+					return
+				}
+
+				this.message.success('开门成功')
 			}
 		}
 	}
