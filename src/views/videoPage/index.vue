@@ -163,9 +163,9 @@
                                 <template>
                                     <div :class="{showOrNo: item.floorNumber === floorIndex}" class="detail-video">
                                         <ul class="all-video">
-                                            <li><el-checkbox>备选项</el-checkbox></li>
-                                            <li><el-checkbox>备选项</el-checkbox></li>
-                                            <li><el-checkbox>备选项</el-checkbox></li>
+                                            <li v-for="item of allCamera" :key="item.id" @click="chooseOneCamera(item)">
+                                                <el-checkbox>{{item.key}}</el-checkbox>
+                                            </li>
                                         </ul>
                                     </div>
                                     
@@ -178,7 +178,9 @@
                                 <div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
                             </div>
                             
-                            <Preview v-if="currentIndex === 0"/>
+                            <Preview :cameraId="cameraId" v-if="currentIndex === 0"/>
+                            <History :cameraId="cameraId" v-else-if="currentIndex === 1"/>
+                            <div class="quick-photo" v-else-if="currentIndex === 2"></div>
                         </div>
                     </div>
                 </div>
@@ -191,6 +193,7 @@
 <script>
 import AddDialog from '@/components/videoPage/addDialog.vue'
 import Preview from '@/components/videoPage/preview.vue'
+import History from '@/components/videoPage/history.vue'
 
 export default {
     data() {
@@ -201,6 +204,7 @@ export default {
             showAddDialog: false,
             showVideo: false,
             currentIndex: 0,
+            cameraId: '',
             // currentChoose: 0,
             tab: ["实时预览", "历史回放", "快照夹"],
             // allChoose: ["lskf", "fsd", "fdsf"],
@@ -223,7 +227,8 @@ export default {
                 }
             ],
             floorIndex: 10,
-            floorList: [{floorNumber: 1, id: 1},{floorNumber: 2},{floorNumber: 3},{floorNumber: 4},{floorNumber: 5},{floorNumber: 6},{floorNumber: 7},{floorNumber: 8},{floorNumber: 9},{floorNumber: 10}].reverse()
+            floorList: [{floorNumber: 1, id: 1},{floorNumber: 2},{floorNumber: 3},{floorNumber: 4},{floorNumber: 5},{floorNumber: 6},{floorNumber: 7},{floorNumber: 8},{floorNumber: 9},{floorNumber: 10}].reverse(),
+            allCamera: [{key: '监控1', value: '1'}, {key: '监控2', value: '2'}, {key: '监控3', value: '3'}]
         }
     },
     methods: {
@@ -247,11 +252,16 @@ export default {
             console.log(val)
             this.floorIndex = val.floorNumber
             this.showVideo = ! this.showVideo
+        },
+        chooseOneCamera(val) {
+            console.log(val)
+            this.cameraId = val.id
         }
     },
     components: {
         AddDialog,
-        Preview
+        Preview,
+        History
     }
 }
 </script>
