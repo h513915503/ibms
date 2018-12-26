@@ -8,8 +8,13 @@ import '@/css/common.css'
 import '@/css/element-reset.css'
 
 import 'element-ui/lib/theme-chalk/index.css'
-import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker} from 'element-ui'
+import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker, Form, Breadcrumb, BreadcrumbItem, FormItem, Checkbox} from 'element-ui'
 
+Vue.component(Checkbox.name, Checkbox)
+Vue.component(Breadcrumb.name, Breadcrumb)
+Vue.component(BreadcrumbItem.name, BreadcrumbItem)
+Vue.component(Form.name, Form)
+Vue.component(FormItem.name, FormItem)
 Vue.component(Button.name, Button)
 Vue.component(Select.name, Select)
 Vue.component(Option.name, Option)
