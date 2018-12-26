@@ -4,7 +4,7 @@
 	justify-content: flex-end;
 	align-items: center;
 	height: 100vh;
-	background: url(~@/assets/a.png) center no-repeat, linear-gradient(to bottom, #4278EE 60%, #684FD8);
+	background: url(/images/a.png) center no-repeat, linear-gradient(to bottom, #4278EE 60%, #684FD8);
 	background-size: cover;
 }
 .name {
@@ -178,7 +178,7 @@
 
 				this.disabled = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/account/dispatcher.do', params)
 
 				this.disabled = false
 
