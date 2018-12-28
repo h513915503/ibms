@@ -274,7 +274,7 @@
 .gate-box-wrapper {
 	display: flex;
 	width: 100%;
-	height: 400px;
+	height: 410px;
 	padding: 0 24px 24px;
 	margin-top: -14px;
 	margin-bottom: 14px;
@@ -291,6 +291,7 @@
 	& .record {
 		flex: 1;
 		position: relative;
+		overflow: auto;
 	}
 
 	& .el-table {
@@ -411,7 +412,7 @@
 }
 .call-input {
 	display: block;
-	margin-bottom: 14px;
+	margin: -5px 0 5px 0;
 	color: #595959;
 	font-size: 12px;
 	text-align: center;
@@ -448,17 +449,21 @@
 	padding: 10px 0;
 	border-bottom: none;
 }
-.management-wrapper .el-date-editor.el-input {
+.management-wrapper .el-table .el-date-editor.el-input {
 	width: 68px;
-	height: 24px;
+	padding: 0;
 }
-.management-wrapper .el-input__inner {
+#app .management-wrapper .el-table .el-input__inner {
+	width: 68px;
+	padding: 0 0 0 27px;
 	height: 24px;
 	line-height: 24px;
+	font-size: 10px;
 }
 .management-wrapper .date-picker {
 	display: inline-block;
 	margin-right: 5px;
+	vertical-align: middle;
 }
 </style>
 
@@ -604,16 +609,14 @@
 												<loading v-if="recordLoading"></loading>
 												<template v-else>
 													<el-table :data="recordList" @sort-change="sortChange">
-														<el-table-column sortable='custom' width="140">
+														<el-table-column sortable='custom' width="140" :render-header="renderHeader">
 															<template slot-scope="scope">
 																{{scope.row.punchTime | timeFormat}}
 															</template>
 														</el-table-column>
 
-
-
 														<el-table-column prop="accountName" label="姓名"></el-table-column>
-														<el-table-column prop="rentalCompany" label="所在单位/到访单位" width="400"></el-table-column>
+														<el-table-column prop="rentalCompany" label="所在单位/到访单位" :show-overflow-tooltip="true"></el-table-column>
 														<el-table-column label="通行方式">
 															<template slot-scope="scope">
 																<span>{{scope.row.travelWay | format}}</span>
@@ -627,7 +630,7 @@
 													</el-table>
 													<footer class="record-footer" v-if="recordList.length">
 														<el-button class="export-btn">导出</el-button>
-														<el-pagination small layout="prev, pager, next" :page-size="5" :total="recordPageTotal" @current-change="pageChange"></el-pagination>
+														<el-pagination small layout="prev, pager, next" :page-size="5" :current-page="page" :total="recordPageTotal" @current-change="pageChange"></el-pagination>
 													</footer>
 												</template>
 											</div>
@@ -749,10 +752,9 @@
 
 		methods: {
 			renderHeader(h, c) {
-				log(c)
-         		return (
+				return (
             		<p class="date-picker" onClick={(e) => e.stopPropagation()}>
-		           		<el-date-picker v-model="recordTime" type="date" value-format="timestamp" placeholder="选择日期">
+		           		<el-date-picker type="date" clearable={false} format="MM-dd" value={this.recordTime} onInput={(e) => this.recordTime = e} value-format="timestamp" placeholder="">
 		           		</el-date-picker>
 		            </p>
          		)
@@ -762,7 +764,7 @@
 					action: 'OfficeRental.queryAllRentalInfo'
 				}
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -936,7 +938,7 @@
 					return
 				}
 
-				this.currentFloorNumber = floorNumber
+				this.currentFloorNumber = + floorNumber
 
 				let start = 0
 				const during = 40
@@ -1037,6 +1039,7 @@
 			},
 			pageChange(value) {
 				this.recordLoading = true
+				this.page = value
 				this.getRecordList(value)
 			},
 			hideDetail(item) {
@@ -1115,8 +1118,8 @@
 			async openDoor(item) {
 				const params = {
 					action: 'door.remoteOpenDoor',
-					devIp: '',
-					childId: ''
+					devIp: item.devIp,
+					childId: item.childId
 				}
 
 				item.disabled = true
@@ -1129,7 +1132,7 @@
 					return
 				}
 
-				this.message.success('开门成功')
+				this.$message.success('开门成功')
 			}
 		}
 	}
