@@ -93,6 +93,10 @@
 }
 .all-video {
     margin-left: -30px;
+
+    & li:hover .icon-more {
+        display: inline-block;
+    }
 }
 .real-time-video {
     width: 100%;
@@ -123,6 +127,62 @@
         background-color: currentcolor;
         transform: translateX(-50%);
     }
+}
+.quick-photo {
+    width: 100%;
+    height: 600px;
+    margin-top: 24px;
+    /* background: #e7d8d8; */
+}
+.search-content {
+    display: flex;
+}
+.time-picker {
+    margin-right: 24px;
+}
+.right {
+    margin-left: auto;
+}
+.photo-content {
+
+}
+
+.icon-more {
+    display: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background: url(~@/assets/more.png) center no-repeat;
+    background-size: 100%;
+}
+.more-icon-wrapper {
+	display: flex;
+	padding: 13px 21px;
+	position: absolute;
+	bottom: 0;
+	right: 30px;
+	border-radius: 4px;
+	box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .15);
+	background-color: #F5F5F5;
+
+	& .icon {
+		width: 24px;
+		height: 24px;
+	}
+
+	& .icon-delete {
+		margin-left: 25px;
+	}
+}
+.icon-edit {
+	cursor: pointer;
+	background: url(~@/assets/edit.png) center no-repeat;
+	background-size: 100%;
+}
+.icon-delete {
+	cursor: pointer;
+	background: url(~@/assets/delete.png) center no-repeat;
+	background-size: 100%;
 }
 
 </style>
@@ -165,6 +225,16 @@
                                         <ul class="all-video">
                                             <li v-for="item of allCamera" :key="item.id" @click="chooseOneCamera(item)">
                                                 <el-checkbox>{{item.key}}</el-checkbox>
+
+                                                <el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="popoverModalStatus = false">
+                                                    <div class="icon-more" slot="reference"></div>
+                                                    <div class="more-icon-wrapper">
+                                                        <i class="icon icon-edit" @click="editDevice"></i>
+                                                        <i class="icon icon-delete" @click="delDevice"></i>
+
+
+                                                    </div>
+                                                </el-popover>
                                             </li>
                                         </ul>
                                     </div>
@@ -178,9 +248,8 @@
                                 <div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
                             </div>
                             
-                            <Preview :cameraId="cameraId" v-if="currentIndex === 0"/>
-                            <History :cameraId="cameraId" v-else-if="currentIndex === 1"/>
-                            <div class="quick-photo" v-else-if="currentIndex === 2"></div>
+                            <Preview :cameraId="cameraId" v-if="currentIndex === 0" :currentIndex="currentIndex"/>
+                            <History :cameraId="cameraId" v-else-if="currentIndex === 1" :currentIndex="currentIndex"/>
                         </div>
                     </div>
                 </div>
@@ -203,27 +272,20 @@ export default {
             showMask: false,
             showAddDialog: false,
             showVideo: false,
+            popoverModalStatus: false,
             currentIndex: 0,
             cameraId: '',
             // currentChoose: 0,
-            tab: ["实时预览", "历史回放", "快照夹"],
+            tab: ["实时预览", "历史回放"],
             // allChoose: ["lskf", "fsd", "fdsf"],
             tabs: [
                 {
                     number: 123,
-                    text: '灯总数'
+                    text: '监控总数'
                 },
                 {
                     number: 321,
-                    text: '正常开启'
-                },
-                {
-                    number: 432,
-                    text: '正常关闭'
-                },
-                {
-                    number: 542,
-                    text: '故障中'
+                    text: '离线监控'
                 }
             ],
             floorIndex: 10,
@@ -232,6 +294,15 @@ export default {
         }
     },
     methods: {
+        editDevice() {
+
+        },
+        delDevice() {
+
+        },
+        search() {
+
+        },
         addVideo() {
             this.showAddDialog = true
         },
@@ -246,6 +317,7 @@ export default {
             }
         },
         switchIndex(index) {
+            console.log(index)
             this.currentIndex = index
         },
         switchFloor(val) {
