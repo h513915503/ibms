@@ -1,40 +1,33 @@
 <style scoped>
-.preview {
+.container {
 
 }
-/* .three-choose {
-    display: flex;
-    margin-left: 35%;
-    margin-top: 44px;
-}
-.tab-choose {
-    margin-right: 50px;
-    color: rgba(0, 0, 0, .65);
-    font-size: 14px;
-    cursor: pointer;
-    line-height: 46px;
-}
-.choosen {
-    color: #1890FF;
-    position: relative;
-} */
-.preview-content {
+.history-content {
     width: 100%;
     height: 600px;
     margin-top: 24px;
-    background: #cccccc;
+    background: #e7d8d8;
+}
+.search-content {
+    display: flex;
+}
+.time-picker {
+    margin-right: 24px;
 }
 </style>
 
 <template>
-    <div class="preview">
-        <!-- <div class="three-choose">
-            <div class="tab-choose" :class="{choosen: currentChoose === index}" v-for="(item, index) of allChoose" v-text="item" @click="switchChoose(index)"></div>
-        </div> -->
-        <div class="preview-content">
+    <div class="container">
+        <div class="search-content">
+            <el-date-picker v-model="startTimeStamp" value-format="timestamp" type="datetime" placeholder="开始时间" class="time-picker"></el-date-picker>
+            <el-date-picker v-model="endTimeStamp" value-format="timestamp" type="datetime" placeholder="结束时间" class="time-picker"></el-date-picker>
+            <el-button type="primary" @click="onSearch">查询</el-button>
+        </div>
+        <div class="history-content">
             <div class="only-one" id="playWnd"></div>
         </div>
     </div>
+    
 </template>
 
 <script>
@@ -50,46 +43,20 @@ let iLastCoverBottom = 0;
 let initCount = 0;
 
 export default {
-    props: ['cameraId', 'currentIndex'],
+    props: ['cameraId'],
     data() {
         return {
-            // currentChoose: 0,
-            locationHref: location.pathname 
-            // allChoose: ["lskf", "fsd", "fdsf"],
+            startTimeStamp: '',
+            endTimeStamp: ''
         }
-    },
-    watch: {
-        currentIndex: function(val, oldVal) {
-            if(val !== 0) {
-                this.onUnload()
-                this.uninit()
-                this.onStopView()
-            }
-        },
-        locationHref: function(val) {
-            if(val !== '/video-record' ) {
-                
-            }
-        }
-    },
-    created() {
-        
-        Promise.all([this.initPlugin()]).then(() => {
-            this.onInit()
-        })
     },
     mounted() {
-        this.onPreview()
-    },
-    destroyed() {
-        console.log(this.currentIndex, this.locationHref)
-        if (this.currentIndex !== 0 || this.locationHref !== '/video-record') {
-            this.onUnload()
-            this.uninit()
-            this.onStopView()
-        }
+        this.initPlugin()
     },
     methods: {
+        onSearch() {
+            console.log(this.startTimeStamp, this.endTimeStamp)
+        },
         onUnload() {
             // 标签关闭
             this.uninit()
@@ -124,13 +91,14 @@ export default {
             // 窗口resize
             if (oWebControl != null) {
                 oWebControl.JS_Resize(600, 400);
-                this.setWndCover();
+                setWndCover();
             }
         },
         onScroll() {
+            // 滚动条scroll
             if (oWebControl != null) {
                 oWebControl.JS_Resize(600, 400);
-                this.setWndCover();
+                setWndCover();
             }
         },
         setWndCover() {
@@ -178,12 +146,12 @@ export default {
                 iServicePortStart: 15900,
                 iServicePortEnd: 15909,
                 cbConnectSuccess: function () {
-
+                    
                     oWebControl.JS_StartService("window", {
                         dllPath: "./VideoPluginConnect.dll"
                         //dllPath: "./DllForTest-Win32.dll"
                     }).then(function () {
-                        oWebControl.JS_CreateWnd("playWnd", 800, 600).then(function () {
+                        oWebControl.JS_CreateWnd("playWnd", 600, 400).then(function () {
                             console.log("JS_CreateWnd success");
                         });
                     }, function () {
@@ -198,7 +166,7 @@ export default {
                     initCount ++;
                     if (initCount < 3) {
                         setTimeout(function () {
-                            this.initPlugin();
+                            initPlugin();
                         }, 3000)
                     } else {
                         $("#playWnd").html("插件启动失败，请检查插件是否安装！");
@@ -209,7 +177,6 @@ export default {
                     oWebControl = null;
                 }
             });
-            console.log(oWebControl.JS_RequestInterface)
         },
         getPubKey (callback) {
             // 获取公钥
@@ -234,18 +201,58 @@ export default {
         },
         onInit() {
             // 初始化
-            const that = this
-            // console.log(this)
-            this.getPubKey(function () {
-                var appkey = "28859432";
-                var secret = that.setEncrypt('vnNh32VMcA89eOyaBFa6');
-                var ip ="122.224.240.78";
-                var port = Number.parseInt(36100);
-                var snapDir = "D:\SnapDir";
-                var layout = "1x1";
+            getPubKey(function () {
+                // var appkey = $("#appkey").val();
+                // var secret = setEncrypt($("#secret").val());
+                // var ip = $("#ip").val();
+                // var port = Number.parseInt($("#port").val());
+                // var snapDir = $("#snapDir").val();
+                // var layout = $("#layout").val();
                 var encryptedFields = ['secret'];
+                $(".encryptedFields").each(function (index, item) {
+                    var $item = $(item);
+                    if ($item.prop('checked')) {
+                        var value = $item.val();
+                        if (value !== 'secret') {
+                            encryptedFields.push(value);
+                        }
+                        
+                        // secret固定加密，其它根据用户勾选加密
+                        if (value == 'ip') {
+                            ip = setEncrypt(ip)
+                        }
+                        if (value == 'appkey') {
+                            appkey = setEncrypt(appkey)
+                        }
+                        if (value == 'snapDir') {
+                            snapDir = setEncrypt(snapDir)
+                        }
+                        if (value == 'layout') {
+                            layout = setEncrypt(layout)
+                        }
+                    }
+                })
                 encryptedFields = encryptedFields.join(",");
 
+                // if (!appkey) {
+                //     showCBInfo("appkey不能为空！", 'error');
+                //     return
+                // }
+                // if (!$("#secret").val()) {
+                //     showCBInfo("secret不能为空！", 'error');
+                //     return
+                // }
+                // if (!ip) {
+                //     showCBInfo("ip不能为空！", 'error');
+                //     return
+                // }
+                // if (!$("#port").val()) {
+                //     showCBInfo("端口不能为空！", 'error');
+                //     return
+                // } else if (!/^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/.test($("#port").val())) {
+                //     showCBInfo("端口填写有误！", 'error');
+                //     return
+                // }
                 console.log({
                     appkey: appkey,
                     secret: secret,
@@ -283,18 +290,25 @@ export default {
                 // showCBInfo(JSON.stringify(oData ? oData.responseMsg : ''));
             });
         },
-        onPreview() {
-            // 预览
-            var cameraIndexCode  = "98d3d1287e124097a7a711d726871502";
-            var streamMode = 0;
-            var transMode = 1;
-            var gpuMode = 0;
+        onPlayBack() {
+            // 回放
+            // var cameraIndexCode  = $("#cameraIndexCode ").val();
+            // var streamMode = +$("#streamMode").val();
+            // var transMode = +$("#transMode").val();
+            // var gpuMode = +$("#gpuMode").val();
+
+            if (!Number.isNaN(+startTimeStamp) || Number.isNaN(+endTimeStamp) ) {
+                // showCBInfo("监控点编号不能为空！", 'error');
+                return
+            }
 
             oWebControl.JS_RequestInterface({
-                funcName: "startPreview",
+                funcName: "startPlayback",
                 argument: JSON.stringify({
-                    cameraIndexCode : cameraIndexCode ,
-                    streamMode: streamMode,
+                    cameraIndexCode: cameraIndexCode,
+                    startTimeStamp: Math.floor(startTimeStamp / 1000),
+                    endTimeStamp: Math.floor(endTimeStamp / 1000),
+                    recordLocation: recordLocation,
                     transMode: transMode,
                     gpuMode: gpuMode
                 })
@@ -302,15 +316,14 @@ export default {
                 // showCBInfo(JSON.stringify(oData ? oData.responseMsg : ''));
             });
         },
-        onStopView() {
-            // 停止预览
+        onStopPlayBack() {
+            // 停止回放
             oWebControl.JS_RequestInterface({
-                funcName: "stopAllPreview"
+                funcName: "stopAllPlayback"
             }).then(function (oData) {
                 // showCBInfo(JSON.stringify(oData ? oData.responseMsg : ''));
             });
         }
-        
     }
 }
 </script>
