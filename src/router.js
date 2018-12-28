@@ -56,6 +56,11 @@ import DeviceFault from './views/deviceFault/index.vue'
 
 import Dashboard from './views/Dashboard/Dashboard.vue'
 
+import Elevator from './views/elevator/index.vue'
+import Monitor from './views/elevator/monitor.vue'
+import WarningRecord from './views/elevator/warning-record.vue'
+import ServiceRecord from './views/elevator/service-record.vue'
+
 import NotFound from './views/not-found/index.vue'
 
 const router = new Router({
@@ -323,9 +328,24 @@ export const routesMap = [
 
 	{
 		type: '1',
-		path: '/video-record',
-		name: 'video-record',
-		component: VideoPage
+
+		path: '/elevator',
+		name: 'elevator-monitor',
+		children: [
+			{
+				path: 'monitor',
+				component: Monitor
+			},
+			{
+				path: 'warning-record',
+				component: WarningRecord
+			},
+			{
+				path: 'service-record',
+				component: ServiceRecord
+			}
+		],
+		component: Elevator
 	}
 ]
 
