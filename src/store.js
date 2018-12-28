@@ -57,6 +57,14 @@ const aside = [
 	},
 
 	{
+		type: '9',
+		title: '电梯',
+		index: 5,
+		reg: /^\/elevator/,
+		path: '/elevator/monitor'
+	},
+
+	{
 		title: '场地',
 		items: [
 			{
