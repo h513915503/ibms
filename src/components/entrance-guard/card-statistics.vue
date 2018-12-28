@@ -125,6 +125,10 @@
 	font-size: 14px;
 }
 .name {
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	color: #000;
 	font-size: 18px;
 }
@@ -134,6 +138,7 @@
 	padding: 0 24px;
 	margin-bottom: 14px;
 	overflow: hidden;
+	position: relative;
 	box-sizing: border-box;
 	border: 1px solid #0E7CC2;
 	background-color: #FFF;
@@ -174,6 +179,11 @@
 	padding: 0;
 }
 </style>
+<style>
+.card-statistics-wrapper .el-table td, .card-statistics-wrapper .el-table th {
+	padding: 6px 0;
+}
+</style>
 
 <template>
 	<div class="card-statistics-wrapper">
@@ -181,9 +191,9 @@
 
 		<template v-else>
 			<div class="company-list-wrapper" :class="{mask: showMask}">
-				<el-input v-model="companyName" placeholder="单位名称"></el-input>
+				<el-input v-model="companyName" placeholder="单位名称" @keyup.native.enter="getCompanyList"></el-input>
 				<ul class="company-list" @scroll="scroll">
-					<li class="company-item" :class="{active: companyId === item.id}" v-for="item of companyList" @click="companyId = item.id">{{item.name}}</li>
+					<li class="company-item" :class="{active: companyId === item.chainid}" v-for="item of companyList" @click="companyId = item.chainid">{{item.rentalCompany}}</li>
 				</ul>
 			</div>
 
@@ -203,12 +213,12 @@
 							<span class="card-index" v-text="items.index"></span>
 							<div class="card-list" ref="card-list">
 								<template v-for="(item, index) of items.list">
-									<div class="card-item" :class="{active: currentCardId === item.id}" data-type="1" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
+									<div class="card-item" :class="{active: currentCardId === item.chainId}" data-type="1" :data-index="indexs" @click="showDetail($event, item, index, items.list)">
 										<p class="info">
-											<span class="name" v-text="item.name"></span>
+											<span class="name" v-text="item.accountName"></span>
 											{{item.type}}
 										</p>
-										<p class="card-id" v-text="item.id"></p>
+										<p class="card-id" v-text="item.cardNo"></p>
 									</div>
 
 									<transition name="height">
@@ -217,17 +227,33 @@
 												{{recordName}}的通行记录
 												<div class="hide" @click="item.show = false">收起</div>
 											</h1>
-											<el-table class="aa" :data="recordList" @sort-change="sortChange">
-												<el-table-column prop="time" label="时间" sortable='custom' width="200"></el-table-column>
-												<el-table-column prop="number" label="通行门禁编号" width="200"></el-table-column>
-												<el-table-column prop="position" label="通行门禁位置"></el-table-column>
-												<el-table-column prop="way" label="通行方式"></el-table-column>
-												<el-table-column prop="out" label="出/入"></el-table-column>
-											</el-table>
-											<footer class="footer">
-												<el-button class="export-btn">导出</el-button>
-												<el-pagination small layout="prev, pager, next" :total="pageTotal"></el-pagination>
-											</footer>
+
+											<loading v-if="recordLoading"></loading>
+											<template v-else>
+												<el-table class="aa" :data="recordList" @sort-change="sortChange">
+													<el-table-column label="时间" sortable='custom' width="200">
+														<template slot-scope="scope">
+																<span>{{scope.row.punchTime | timeFormat}}</span>
+															</template>
+													</el-table-column>
+													<el-table-column prop="childName" label="通行门禁编号" width="200"></el-table-column>
+													<el-table-column prop="address" label="通行门禁位置"></el-table-column>
+													<el-table-column label="通行方式">
+															<template slot-scope="scope">
+																<span>{{scope.row.travelWay | format}}</span>
+															</template>
+														</el-table-column>
+													<el-table-column label="出/入">
+															<template slot-scope="scope">
+																<span>{{scope.row.direction === 1 ? '入' : '出'}}</span>
+															</template>
+														</el-table-column>
+												</el-table>
+												<footer class="footer" v-if="recordList.length">
+													<el-button class="export-btn">导出</el-button>
+													<el-pagination small layout="prev, pager, next" :page-size="8" :current-page="page" :total="pageTotal" @current-change="pageChange"></el-pagination>
+												</footer>
+											</template>
 										</div>
 									</transition>
 								</template>
@@ -260,29 +286,8 @@
 				account: '',
 
 				recordName: '',
-				recordList: [
-					{
-						time: '2018/12/26 14:13:23',
-						number: '10F - 1号门 - 3号闸机',
-						position: '10F 电梯右侧',
-						way: '人脸识别',
-						out: '出'
-					},
-					{
-						time: '2018/12/26 14:13:23',
-						number: '10F - 1号门 - 3号闸机',
-						position: '10F 电梯右侧',
-						way: '人脸识别',
-						out: '出'
-					},
-					{
-						time: '2018/12/26 14:13:23',
-						number: '10F - 1号门 - 3号闸机',
-						position: '10F 电梯右侧',
-						way: '人脸识别',
-						out: '出'
-					}
-				],
+				recordLoading: false,
+				recordList: [],
 
 				page: 1,
 				pageTotal: 50
@@ -309,6 +314,23 @@
 			}
 		},
 
+		filters: {
+			format(value) {
+				const map = {
+					3: '人脸识别',
+					4: '刷卡',
+					5: '二维码'
+				}
+
+				return map[value]
+			},
+			timeFormat(value) {
+				const date = new Date(value)
+
+				return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`.replace(/\b(\w)\b/g, '0$1')
+			}
+		},
+
 		watch: {
 			companyId(value) {
 				this.cardList = []
@@ -330,36 +352,86 @@
 
 		methods: {
 			async getCompanyList() {
-				const params = {
-					id: this.companyId
+				if (this.$searchCompanyFlag) {
+					return
 				}
 
-				const data = await axios.post('/dapi/getCompanyList', params)
+				this.$searchCompanyFlag = true
+
+				const params = {
+					action: 'accountManagement.queryRentalInfo',
+				}
+
+				if (this.companyName) {
+					params.rentalCompany = this.companyName
+				}
+
+				const data = await axios.post('/api/account/dispatcher.do', params)
+
+				this.$searchCompanyFlag = null
 
 				if (! data) {
 					return
 				}
 
-				this.companyList = data.list
-				this.companyId = data.list[0] && data.list[0].id
+				if (! data.data.length) {
+					this.$message.error('没有数据')
+
+					return
+				}
+
+				this.companyList = data.data
+				this.companyId = data.data[0] && data.data[0].chainid
 			},
 			async getCardList() {
-				const params = {
-					action: '',
-					id: this.companyId,
-					account: this.account
+				if (this.$searchFlag) {
+					return
 				}
 
-				const data = await axios.post('/dapi/clist', params)
+				this.$searchFlag = true
+
+				const params = {
+					action: 'door.queryCard',
+					rentalCompany: this.companyId
+				}
+
+				if (this.account) {
+					params.nameOrCard = this.account
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				this.$searchFlag = null
 
 				if (! data) {
 					return
 				}
 
-				data.list.forEach((item) => item.list.forEach((current) => current.show = false))
-				log(data.list)
+				if (! data.data.length) {
+					this.$message.error('没有数据')
 
-				this.cardList = data.list
+					return
+				}
+
+				let result = []
+
+				// 排序
+				data.data = data.data.sort((a, b) => a.firstChar.charCodeAt() - b.firstChar.charCodeAt())
+
+				data.data.forEach((item) => {
+					const index = result.findIndex((current) => current.index === item.firstChar)
+
+					if (index !== -1) {
+						result[index].list.push({... item, show: false})
+					} else {
+						result.push({
+							index: item.firstChar,
+							list: [{... item, show: false}]
+						})
+					}
+				})
+
+				this.cardList = result
 			},
 			async searchCardList() {
 				this.cardList = []
@@ -372,10 +444,13 @@
 				this.cardLoading = false
 			},
 			sortChange(column) {
-				this.$rank = column.prop
-				this.$order = column.order === 'ascending' ? '0' : column.order === 'descending' ? '1' : ''
+				this.$order = column.order === 'ascending' ? 'allDate_asc ' : column.order === 'descending' ? 'allDate_desc ' : ''
 
-				this.getList()
+				this.getRecordList()
+			},
+			pageChange(value) {
+				this.page = value
+				this.getRecordList(value)
 			},
 			scroll(e) {
 				if (e.target.scrollTop > 12) {
@@ -389,12 +464,48 @@
 
 				index !== -1 && this.$refs.aa[index].scrollIntoView({behavior: 'smooth', block: 'start'})
 			},
+			async getRecordList() {
+				if (this.$searchFlag) {
+					return
+				}
+
+				this.$searchFlag = true
+
+				const params = {
+					action: 'door.queryYZDoorPunch',
+					rentalCompany: this.companyId,
+					pageNo: this.page,
+					pageSize: 8,
+					chainId: this.currentCardId
+					//orderBy
+				}
+
+				if (this.$order) {
+					params.orderBy = this.$order
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				this.$searchFlag = null
+
+				if (! data) {
+					return
+				}
+
+				this.recordLoading = false
+				this.pageTotal = data.data.total
+				this.recordList = data.data.list
+			},
 			showDetail(e, item, index, list) {
 				// 全部隐藏
 				this.cardList.forEach((card) => card.list.forEach((item) => item.show = false))
 
-				this.recordName = item.name
-				this.currentCardId = item.id
+				this.recordName = item.accountName
+				this.currentCardId = item.chainId
+
+				this.recordLoading = true
+				this.page = 1
+				this.getRecordList()
 
 				// 103 是 card-item 的 height
 				let target = e.target
@@ -419,7 +530,7 @@
 
 				}
 
-				const bb = indexArr.findIndex((items) => items.find((current) => current.id === item.id))
+				const bb = indexArr.findIndex((items) => items.find((current) => current.chainId === item.chainId))
 
 				indexArr[bb].slice(-1)[0].show = true
 
