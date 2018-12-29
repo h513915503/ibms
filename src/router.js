@@ -318,6 +318,12 @@ export const routesMap = [
 			dashboard: true
 		}
 	},
+	{
+		type: '1',
+		path: '/video-record',
+		name: 'video-record',
+		component: VideoPage
+	},
 
 	{
 		type: '1',
