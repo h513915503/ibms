@@ -16,6 +16,12 @@ axios.defaults.timeout = 30 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 axios.interceptors.request.use((config) => {
+	if (config.url.startsWith('/hapi')) {
+		config.headers['Content-Type'] = 'application/json'
+
+		return config
+	}
+
 	const isFormData = config.data instanceof FormData
 
 	const timestamp = Date.now()
@@ -49,7 +55,18 @@ let isShowErrors = false
 
 axios.interceptors.response.use((res) => {
 	let timer
-	const {success, errorMessage, statusCode} = res.data
+	const {code, success, message, errorMessage, statusCode} = res.data
+
+	if (res.config.url.startsWith('/hapi')) {
+		if (code !== 0) {
+			Vue.prototype.$message.error(message)
+
+			return null
+		}
+
+
+		return res.data
+	}
 
 	// Token 过期
 	if (statusCode === 401 && ! timer) {
