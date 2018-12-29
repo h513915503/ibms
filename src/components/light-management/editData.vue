@@ -24,34 +24,34 @@
     color:rgba(0,0,0,1);
 }
 .add-title {
-        display: flex;
-        height: 36px;
-        position: relative;
-        line-height: 24px;
-        justify-content: space-between;
-        border-bottom: 1px solid rgba(232,232,232,1);
+    display: flex;
+    height: 36px;
+    position: relative;
+    line-height: 24px;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(232,232,232,1);
 
-        & span {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 1px solid rgba(232,232,232,1);
-            border-radius: 2px;
-            font-size: 18px;
-            color: #ccc;
-            text-align: center;
-            cursor: pointer;
-        }
+    & span {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(232,232,232,1);
+        border-radius: 2px;
+        font-size: 18px;
+        color: #ccc;
+        text-align: center;
+        cursor: pointer;
     }
-    .icon-more {
-		display: inline-block;
-		width: 20px;
-		height: 20px;
-		cursor: pointer;
-		background: url(~@/assets/more.png) center no-repeat;
-		background-size: 100%;
-    }
-    .more-icon-wrapper {
+}
+.icon-more {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background: url(~@/assets/more.png) center no-repeat;
+    background-size: 100%;
+}
+.more-icon-wrapper {
 	display: flex;
 	padding: 13px 21px;
 	position: absolute;
@@ -182,9 +182,9 @@
                         <el-option :label="item.className" :value="item.id" v-for="item of positionList" :key="item.id"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item>
+                <el-formitem->
                     <el-input v-model="form.detailLocation" placeholder="" size="mini"></el-input>
-                </el-form-item>
+                </el-formitem->
             </el-form>
         </template>
         
