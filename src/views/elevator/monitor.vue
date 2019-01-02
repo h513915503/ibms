@@ -2,20 +2,32 @@
 .elevator-list {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 50px 72px;
+	/* padding-bottom: 0px; */
+	margin: 50px 72px 0;
 }
 .elevator-item {
 	display: flex;
 	flex-direction: column;
-	width: 455px;
-	margin: 0 50px 50px 0;
-	background-color: orange;
+	width: 228px;
+	margin: 0 30px 50px 0;
+	position: relative;
+	background-color: #FFF;
 }
 .video-wrapper {
-	height: 556px;
+	height: 278px;
 }
 .video {
 	object-fit: contain;
+}
+.flag {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	color: #2FC25B;
+	transform: translate(-50%, -50%);
+}
+.has-person {
+	color: #595959;
 }
 .footer {
 	display: flex;
@@ -40,12 +52,34 @@
 
 	& .item:nth-child(3) {
 		color: #595959;
+		user-select: none;
 		border-right: none;
 	}
 }
 .arrow {
 	width: 10px;
 	height: 12px;
+}
+.view {
+	cursor: pointer;
+}
+.tips {
+	width: 192px;
+	position: absolute;
+	left: 50%;
+	bottom: 65px;
+	color: #FFF;
+	font-size: 12px;
+	text-align: center;
+	line-height: 28px;
+	border-radius: 32px;
+	transition: all .15s;
+	transform: translateX(-50%);
+	background-color: rgba(0, 0, 0, .5);
+}
+.fade-enter , .fade-leave-active  {
+	opacity: 0;
+	transform: translateX(-50%) scale(.8);
 }
 </style>
 
@@ -54,25 +88,28 @@
 		<loading v-if="loading"></loading>
 
 		<template v-else>
-			<!-- <video :src="src"></video> -->
 			<ul class="elevator-list">
-				<li class="elevator-item" v-for="item of list">
+				<li class="elevator-item" v-for="(item, index) of list">
 					<div class="video-wrapper">
-						<video class="video" ref="video"></video>
+						<video class="video" ref="video" :data-index="index" v-if="item.isView"></video>
+
+						<template v-else>
+							<span class="flag has-person" v-if="item.hasPerson === 1">有人</span>
+							<span class="flag ok" v-else>正常</span>
+						</template>
 					</div>
 					<footer class="footer">
 						<div class="item">
 							{{item.floor}}F
-							<svg class="svg-icon arrow" v-if="item.direction === 1">
-								<use xlink:href="#success"></use>
-							</svg>
-							<svg class="svg-icon arrow" v-if="item.direction === 2">
-								<use xlink:href="#peo"></use>
-							</svg>
+							<i class="el-icon-download" v-if="item.direction === 1"></i>
+							<i class="el-icon-upload2" v-if="item.direction === 2"></i>
 						</div>
 						<div class="item">{{item.name}}</div>
-						<div class="item">正常</div>
+						<div class="item view" @click="view(index, item)">{{item.isView ? '关闭监控' : '查看监控'}}</div>
 					</footer>
+					<transition name="fade">
+						<p class="tips" v-if="item.tips">最多可同时查看6个电梯的监控</p>
+					</transition>
 				</li>
 			</ul>
 		</template>
@@ -85,13 +122,22 @@
 			return {
 				loading: false,
 
-				list: [],
-				src: ''
+				list: []
 			}
 		},
 
 		mounted() {
+			this.$player = []
+
 			this.getData()
+		},
+
+		beforeDestroy() {
+			clearTimeout(this.$wsTimer)
+			clearTimeout(this.$tipsTimer)
+
+			// 清除播放器实例
+			this.list.forEach((item) => item.player && item.player.stop())
 		},
 
 		methods: {
@@ -141,32 +187,35 @@
 						floor: '',
 						name: '',
 						videoURL: '',
-						direction: 3
+						direction: 3,
+						hasPerson: 0,
+						isView: false,
+						tips: false
 					})
 				})
 
-				let index = 0
+				// 轮询更新
+				this.ws()
 
-				const getVideo = () => {
-					log(index)
-					this.getMonitorInfo(data.data[index].registerCode)
-					this.getMonitorVideoInfo(index, data.data[index].registerCode)
-
-					index++
-					if (index < 8) {
-						setTimeout(() => {
-							getVideo()
-						}, 1000)
-					}
-				}
-
-				getVideo()
-				// setTimeout(() => {
-				// 	getVideo()
-				// }, 2000)
-
+				// 更新电梯信息
 				this.$elevatorNameList = data.data.map((item) => item.registerCode)
 				this.getElevatorInfo()
+			},
+			async ws() {
+				this.$wsTimer = setTimeout(function run () {
+					const arr = this.list.slice(0, 8).map((item, index) => {
+						return new Promise((resolve, reject) => {
+							setTimeout(() => {
+								this.getMonitorInfo(item.registerCode).then(() => {
+									resolve()
+								})
+							}, 100 * index)
+						})
+					})
+					Promise.all([arr]).then(() => {
+						this.$wsTimer = setTimeout(run.bind(this), 2000)
+					})
+				}.bind(this), 2000)
 			},
 			async getElevatorInfo() {
 				const params = {
@@ -180,9 +229,6 @@
 
 				data.data.forEach((item) => {
 					this.list.find((current) => current.registerCode === item.registerCode).name = item.liftName
-
-					//log(this.list)
-					//this.list.sort((a, b) => parseInt(a.name) - parseInt(b.name))
 				})
 			},
 			async getMonitorInfo(registerCode) {
@@ -198,10 +244,18 @@
 
 				const temp = this.list.find((item) => item.registerCode === registerCode)
 
-				temp.floor = data.data.floor
-				temp.direction = data.data.direction
+				// 可能报调用频率过高错误
+				if (! data.data) {
+					return
+				}
+
+				const {floor, direction, hasPerson} = data.data
+
+				temp.floor = floor
+				temp.direction = direction
+				temp.hasPerson = hasPerson
 			},
-			async getMonitorVideoInfo(index, registerCode) {
+			async getMonitorVideoInfo(registerCode) {
 				const params = {
 					registerCode
 				}
@@ -213,15 +267,38 @@
 				}
 
 				this.list.find((item) => item.registerCode === registerCode).videoURL = data.data.urls[0].httpUrl
+			},
+			async view(index, item) {
+				if (item.isView) {
+					item.isView = false
+					item.player.stop()
 
-				const config = {
-					url: data.data.urls[0].httpUrl,
-
+					return
 				}
 
-				const player = zlplayer.createPlayer(this.$refs.video[index], config)
+				if (this.list.filter((current) => current.isView).length === 6) {
+					item.tips = true
 
-				player.play()
+					this.$tipsTimer = setTimeout(() => {
+						item.tips = false
+					}, 2000)
+
+					return
+				}
+
+				item.isView = true
+
+				await this.getMonitorVideoInfo(item.registerCode)
+
+				const config = {
+					url: item.videoURL,
+					isLive: true
+				}
+
+				this.$nextTick(() => {
+					item.player = zlplayer.createPlayer(this.$refs.video.find((current) => + current.dataset.index === index), config)
+					item.player.play()
+				})
 			}
 		}
 	}
