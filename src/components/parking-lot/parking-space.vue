@@ -342,7 +342,7 @@
 					action: 'ParkingRental.queryFloorAreaCount'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -482,7 +482,7 @@
 
 				this.disabledAdd = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabledAdd = false
 
@@ -528,7 +528,7 @@
 
 				this.disabledAdd = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabledAdd = false
 
@@ -571,7 +571,7 @@
 				this.popoverModalStatus = false
 				this.isShowIconWrapper = false
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return

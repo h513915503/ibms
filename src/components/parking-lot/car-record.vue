@@ -164,7 +164,7 @@
 				params.condition = JSON.stringify(params.condition)
 				params.sortContent = JSON.stringify(params.sortContent)
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.count++
 
