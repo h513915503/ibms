@@ -69,7 +69,7 @@
 					<el-table-column prop="masterCompany" label="所在单位" width="320"></el-table-column>
 					<el-table-column label="车位">
 						<template slot-scope="scope">
-							{{scope.row.floorNumber}}层·{{scope.row.isConfirmed === 1 ? scope.row.parkingSpaceNumber + '号' : scope.row.parkingAreaNumber}}
+							{{scope.row.floorNumber}}层·{{scope.row.isConfirmed === 1 ? scope.row.parkingSpaceNumber + '号' : '不固定'}}
 						</template>
 					</el-table-column>
 					<el-table-column label="到期时间" prop="endDate" sortable="custom">
@@ -201,7 +201,7 @@
 				params.condition = JSON.stringify(params.condition)
 				params.sortContent = JSON.stringify(params.sortContent)
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
