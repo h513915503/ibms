@@ -139,7 +139,7 @@ strong {
 
 				this.loading = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.loading = false
 
@@ -181,7 +181,7 @@ strong {
 				this.disabled = true
 				this.popoverModalStatus = false
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabled = false
 

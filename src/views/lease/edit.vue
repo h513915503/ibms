@@ -226,7 +226,7 @@
 
 				this.loading = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.loading = false
 
@@ -258,7 +258,7 @@
 					action: 'OfficeRental.queryAllRentalInfo'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -334,7 +334,7 @@
 
 				this.disabled = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabled = false
 

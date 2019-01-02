@@ -53,6 +53,7 @@
 			<parking-space v-if="currentIndex === 0"></parking-space>
 			<car-list v-if="currentIndex === 1"></car-list>
 			<car-record v-if="currentIndex === 2"></car-record>
+			<car-chart v-if="currentIndex === 3"></car-chart>
 		</template>
 	</div>
 </template>
@@ -117,7 +118,7 @@
 					action: 'ParkingRental.queryAllCount'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
