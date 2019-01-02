@@ -1,219 +1,202 @@
 <style scoped>
-    .parking-chart-wrapper {
-        min-height: 571px;
-        padding: 24px;
-        margin: 24px;
-        box-sizing: border-box;
-        background-color: #FFF;
-    }
-    .header {
-        color: RGBA(0, 0, 0, 0.85);
-        & h2 {
-            display: inline;
-        }
-    }
-    .btn-export {
-        float: right;
-    }
-    .content {
-        padding-top: 20px;
-    }
-    .line-chart {
-        /* flex: 1; */
-        height: 624px;
-    }
-    .operation {
-        display: flex;
-        align-items: center;
-        margin-left: auto;
+.chart-analysis-wrapper {
+    padding: 24px 24px 0;
+    margin: 24px;
+    background-color: #FFF;
+}
+.operation-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
 
-        & .btn-text {
-			display: inline-block;
-			margin-right: 24px;
-			color: rgba(0, 0, 0, .65);
-			font-size: 14px;
-			cursor: pointer;
-		}
-
-		& .btn-text.actived {
-			color: #1890FF;
-		}
-
-		& .btn-text:nth-child(4) {
-			margin-right: 48px;
-		}
+    & h4 {
+        color: rgba(0, 0, 0, .85);
+        font-size: 16px;
     }
+}
+.operation {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+
+    & .btn-text {
+        display: inline-block;
+        margin-right: 24px;
+        color: rgba(0, 0, 0, .65);
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    & .btn-text.actived {
+        color: #1890FF;
+    }
+
+    & .btn-text:nth-child(4) {
+        margin-right: 38px;
+    }
+
+    & >>> .el-input__inner {
+        height: 32px;
+        line-height: 32px;
+    }
+
+    & >>> .el-input__icon {
+        line-height: 32px;
+    }
+}
+
+& .el-input {
+    width: 256px;
+}
+.btn-export {
+    width: 74px;
+    padding: 0;
+    margin-left: 24px;
+    line-height: 32px;
+}
+.unit-tips {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+    color: rgba(0, 0, 0, .45);
+    font-size: 12px;
+
+    & .item::before {
+        content: "";
+        display: inline-block;
+        width: 18px;
+        height: 2px;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+}
+.electric {
+    margin-right: 50px;
+}
+.electric::before {
+    background-color: #1890FF;
+}
+.water::before {
+    background-color: #9013FE;
+}
+.chart {
+    height: 481px;
+}
 </style>
+
 <template>
-    <div class="parking-chart-wrapper">
-        <div class="header">
-			<h2>车辆停放分析</h2>
-			<el-button class="btn-export">导出</el-button>
+    <div class="chart-analysis-wrapper">
+        <div class="operation-wrapper">
+            <h4>车辆停放分析</h4>
             <div class="operation">
                 <div class="btn-text" :class="{actived: dateType === 0}" @click="dateType = 0">今日</div>
                 <div class="btn-text" :class="{actived: dateType === 1}" @click="dateType = 1">本周</div>
                 <div class="btn-text" :class="{actived: dateType === 2}" @click="dateType = 2">本月</div>
                 <div class="btn-text" :class="{actived: dateType === 3}" @click="dateType = 3">全年</div>
                 <el-date-picker v-model="date" type="date" placeholder="选择时间"></el-date-picker>
+                <el-button class="btn-export">导出</el-button>
             </div>
-		</div>
-
-        <loading v-if="loading"></loading>
-        <div class="content" v-else>
-            <chart class="line-chart" :type="1" :data="generateChartOption"></chart>
         </div>
-
+        <div class="unit-tips">
+            <div class="item electric">包月车辆</div>
+            <div class="item water">临时停放</div>
+        </div>
+        <chart class="chart" :data="chartConfig"></chart>
     </div>
-
 </template>
 
 <script>
-    import mixin from '@/mixins'
     import chart from '@/components/chart'
 
     export default {
-        props: {
-            // data: {
-            //     type: Array,
-            //     required: true
-            // }
-        },
         data() {
             return {
-                chartData: [],
                 loading: false,
+                loaded: false,
+
+                devicesId: '',
+                devicesName: '',
+                devicesList: [],
+
+                date: '',
                 dateType: 0,
-                date: ''
+                chartData: [[0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300], [3, 2, 1, 1, 2, 3, 4, 7, 6, 5, 8, 7, 5, 4]]
             }
         },
+
         components: {
-			chart
+            chart
         },
-        mixins: [mixin],
+
         computed: {
-            currentDate() {
-				const date = new Date()
+            energyChartxAxisData() {
+                const dateType = this.dateType
+                let xAxisData = {}
 
-				return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
+                // 设置当月天数
+                let days = []
+                const currentDate = new Date()
+                let day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0).getDate()
+
+                while (day--) {
+                    days.unshift(day + 1)
+                }
+
+                xAxisData = days
+
+
+                return xAxisData
             },
-            // chartxAxisData() {
-			// 	const dateType = this.dateType
-			// 	let xAxisData = {}
-
-			// 	// 设置当月天数
-			// 	let days = []
-			// 	const currentDate = new Date()
-			// 	let day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0).getDate()
-
-			// 	while (day--) {
-			// 		days.unshift(day + 1)
-			// 	}
-
-			// 	xAxisData = days
-
-
-			// 	return xAxisData
-			// },
-            generateChartOption() {
-
+            chartConfig() {
                 return {
-                    // title: {
-                    //     top: 0,
-                    //     text: 'lslls'
-                    // },
-                    color: ['rgba(24, 144, 255, .2)', '#9013FE'],
+                    color: ['#1890FF', '#F14382', '#000', '#22CC22', '#9370DB'],
                     grid: {
-                        top: 10,
-                        right: 15,
-                        bottom: 70,
-                        left: 45,
+                        top: 20,
+                        right: 30,
+                        bottom: 50,
+                        left: 50,
                     },
                     tooltip: {
-						trigger: 'axis'
-					},
-                    xAxis: [
-						{
-							type: 'category',
-							axisLabel: {
-								color: '#545454'
-							},
-							axisLine: {
-								lineStyle: {
-									color: '#BFBFBF'
-								}
-                            },
-                            boundaryGap: false,
-							data: this.chartxAxisData
-						}
-					],
+                        trigger: 'axis',
+                    },
+                    xAxis: {
+                        type: 'category',
+                        axisLabel: {
+                            color: 'rgba(0, 0, 0, .65)'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#D9D9D9'
+                            }
+                        },
+                        boundaryGap: false,
+                        data: this.energyChartxAxisData
+                    },
                     yAxis: {
                         type: 'value',
-                        show: true,
+                        splitNumber: 5,
                         axisLine: {
-                            show: true,
-                            lineStyle: {
-                                color: '#BFBFBF'
-                            }
-
-						},
-                        axisLabel: {
-							color: '#545454'
-						},
+                            show: false
+                        },
+                        axisTick: {
+                            show: false,
+                        },
                         splitLine: {
-							lineStyle: {
-								type: 'dashed',
-								color: '#E8E8E8'
-							}
-						}
+                            lineStyle: {
+                                type: 'dashed',
+                                color: '#E8E8E8'
+                            }
+                        }
                     },
-                    series: this.chartData,
-                    // {
-                        // type: 'line',
-                        // symbol: 'none',
-                        // // areaStyle: {},
-                        // smooth: true,
-                        // data: this.chartData,
-                    // }
-                };
-            },
+                    series:{
+                        name: '萨达萨达',
+                        type: 'line',
+                        areaStyle: null,
+                        smooth: false,
+                        data: [[0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300], [3, 2, 1, 1, 2, 3, 4, 7, 6, 5, 8, 7, 5, 4]],
+                    }
+                }
+            }
         },
-        created() {
-            this.getData()
-        },
-        methods: {
-            async getData() {
-                this.loading = true
-                const [data] = await Promise.all([this.getChartData()]).catch(() => {
-                    this.loading = false
-
-                })
-                this.loading = false
-
-                this.chartData = data
-            },
-            async getChartData() {
-				return new Promise((resolve, reject) => {
-					setTimeout(() => {
-                        this.$d = [
-						{
-							name: '已出租',
-							type: 'line',
-                            // barGap: 0,
-                            smooth: true,
-							data: [320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
-						},
-						{
-							name: '即将到期',
-                            type: 'line',
-                            smooth: true,
-							data: [220, 182, 191, 234, 290, 320, 332, 301, 334, 390, 320, 332, 301, 334, 390, 200, 300]
-						}
-					]
-                        resolve(this.$d)
-						// resolve([200, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24])
-					}, 1000)
-				})
-			},
-        }
     }
 </script>
