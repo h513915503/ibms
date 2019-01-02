@@ -16,6 +16,10 @@ axios.defaults.timeout = 30 * 1000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 axios.interceptors.request.use((config) => {
+	if (config.url.includes('heweather')) {
+		return config
+	}
+
 	if (config.url.startsWith('/hapi')) {
 		config.headers['Content-Type'] = 'application/json'
 
@@ -57,8 +61,13 @@ axios.interceptors.response.use((res) => {
 	let timer
 	const {code, success, message, errorMessage, statusCode} = res.data
 
+	if (res.config.url.includes('heweather')) {
+		return res.data
+	}
+
 	if (res.config.url.startsWith('/hapi')) {
-		if (code !== 0) {
+		// 10007 去掉电梯接口调用频率过高提示
+		if (code !== 0 && code !== 10007) {
 			Vue.prototype.$message.error(message)
 
 			return null
