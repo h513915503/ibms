@@ -32,6 +32,10 @@
             <div class="tab-choose" :class="{choosen: currentChoose === index}" v-for="(item, index) of allChoose" v-text="item" @click="switchChoose(index)"></div>
         </div> -->
         <div class="preview-content">
+            <button @click="onInit">初始化</button>
+            <button @click="onPreview">预览</button>
+            <button @click="onStopView">停止预览</button>
+            <button @click="uninit">反初始化</button>
             <div class="only-one" id="playWnd"></div>
         </div>
     </div>
@@ -50,16 +54,18 @@ let iLastCoverBottom = 0;
 let initCount = 0;
 
 export default {
-    props: ['cameraId', 'currentIndex'],
+    props: ['cameraId', 'currentIndex', 'cameraInfo'],
     data() {
         return {
             // currentChoose: 0,
-            locationHref: location.pathname 
+            locationHref: location.pathname,
             // allChoose: ["lskf", "fsd", "fdsf"],
+            currentTab: this.currentIndex
         }
     },
     watch: {
-        currentIndex: function(val, oldVal) {
+        currentTab: function(val) {
+            console.log(val)
             if(val !== 0) {
                 this.onUnload()
                 this.uninit()
@@ -70,20 +76,25 @@ export default {
             if(val !== '/video-record' ) {
                 
             }
+        },
+        cameraInfo: function(val) {
+            console.log(val)
         }
     },
     created() {
-        
-        Promise.all([this.initPlugin()]).then(() => {
-            this.onInit()
-        })
+        // Promise.all([this.initPlugin()]).then(() => {
+        //     this.onInit()
+        // })
     },
     mounted() {
-        this.onPreview()
+        // this.initPlugin()
+        // this.onInit()
+        // this.onPreview()
     },
     destroyed() {
         console.log(this.currentIndex, this.locationHref)
         if (this.currentIndex !== 0 || this.locationHref !== '/video-record') {
+            debugger
             this.onUnload()
             this.uninit()
             this.onStopView()

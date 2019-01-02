@@ -24,6 +24,9 @@
             <el-button type="primary" @click="onSearch">查询</el-button>
         </div>
         <div class="history-content">
+            <el-button @click="initPlugin">初始化插件</el-button>
+            <el-button @click="onInit">初始化</el-button>
+            <el-button @click="onPlayBack">回放</el-button>
             <div class="only-one" id="playWnd"></div>
         </div>
     </div>
@@ -43,15 +46,19 @@ let iLastCoverBottom = 0;
 let initCount = 0;
 
 export default {
-    props: ['cameraId'],
+    props: ['cameraId', 'currentIndex', 'cameraInfo'],
     data() {
         return {
             startTimeStamp: '',
             endTimeStamp: ''
         }
     },
+    created() {
+        // this.initPlugin()
+        // this.onInit()
+    },
     mounted() {
-        this.initPlugin()
+        // this.onPlayBack()
     },
     methods: {
         onSearch() {
@@ -91,14 +98,14 @@ export default {
             // 窗口resize
             if (oWebControl != null) {
                 oWebControl.JS_Resize(600, 400);
-                setWndCover();
+                this.setWndCover();
             }
         },
         onScroll() {
             // 滚动条scroll
             if (oWebControl != null) {
                 oWebControl.JS_Resize(600, 400);
-                setWndCover();
+                this.setWndCover();
             }
         },
         setWndCover() {
@@ -166,7 +173,7 @@ export default {
                     initCount ++;
                     if (initCount < 3) {
                         setTimeout(function () {
-                            initPlugin();
+                            this.initPlugin();
                         }, 3000)
                     } else {
                         $("#playWnd").html("插件启动失败，请检查插件是否安装！");
@@ -201,63 +208,21 @@ export default {
         },
         onInit() {
             // 初始化
-            getPubKey(function () {
-                // var appkey = $("#appkey").val();
-                // var secret = setEncrypt($("#secret").val());
-                // var ip = $("#ip").val();
-                // var port = Number.parseInt($("#port").val());
-                // var snapDir = $("#snapDir").val();
-                // var layout = $("#layout").val();
+            const that = this
+            this.getPubKey(function () {
+                var appkey = '28859432';
+                var secret = that.setEncrypt('vnNh32VMcA89eOyaBFa6');
+                var ip = '172.16.100.102';
+                var port = Number.parseInt(36100);
+                var snapDir = 'D:\SnapDir';
+                var layout = '2*2';
                 var encryptedFields = ['secret'];
-                $(".encryptedFields").each(function (index, item) {
-                    var $item = $(item);
-                    if ($item.prop('checked')) {
-                        var value = $item.val();
-                        if (value !== 'secret') {
-                            encryptedFields.push(value);
-                        }
-                        
-                        // secret固定加密，其它根据用户勾选加密
-                        if (value == 'ip') {
-                            ip = setEncrypt(ip)
-                        }
-                        if (value == 'appkey') {
-                            appkey = setEncrypt(appkey)
-                        }
-                        if (value == 'snapDir') {
-                            snapDir = setEncrypt(snapDir)
-                        }
-                        if (value == 'layout') {
-                            layout = setEncrypt(layout)
-                        }
-                    }
-                })
                 encryptedFields = encryptedFields.join(",");
-
-                // if (!appkey) {
-                //     showCBInfo("appkey不能为空！", 'error');
-                //     return
-                // }
-                // if (!$("#secret").val()) {
-                //     showCBInfo("secret不能为空！", 'error');
-                //     return
-                // }
-                // if (!ip) {
-                //     showCBInfo("ip不能为空！", 'error');
-                //     return
-                // }
-                // if (!$("#port").val()) {
-                //     showCBInfo("端口不能为空！", 'error');
-                //     return
-                // } else if (!/^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/.test($("#port").val())) {
-                //     showCBInfo("端口填写有误！", 'error');
-                //     return
-                // }
                 console.log({
                     appkey: appkey,
                     secret: secret,
                     ip: ip,
-                    playMode: 0, // 预览
+                    playMode: 1, // 预览
                     port: port,
                     snapDir: snapDir,
                     layout: layout,
@@ -266,11 +231,12 @@ export default {
 
                 oWebControl.JS_RequestInterface({
                     funcName: "init",
+                    // 所有的argument都从父组件那里拿到  这边不做参数的获取
                     argument: JSON.stringify({
                         appkey: appkey,
                         secret: secret,
                         ip: ip,
-                        playMode: 0, // 预览
+                        playMode: 1, // 回放
                         port: port,
                         snapDir: snapDir,
                         layout: layout,
@@ -292,23 +258,24 @@ export default {
         },
         onPlayBack() {
             // 回放
-            // var cameraIndexCode  = $("#cameraIndexCode ").val();
-            // var streamMode = +$("#streamMode").val();
-            // var transMode = +$("#transMode").val();
-            // var gpuMode = +$("#gpuMode").val();
+            var cameraIndexCode  = "ab92eae8e39a430abb5e8882f5ddc3b6";
+            var transMode = 1;
+            var gpuMode = 0;
+            var startTime = 1545926399000;
+            var endTime = 1545840000000;
 
-            if (!Number.isNaN(+startTimeStamp) || Number.isNaN(+endTimeStamp) ) {
+            // if (!Number.isNaN(+startTimeStamp) || Number.isNaN(+endTimeStamp) ) {
                 // showCBInfo("监控点编号不能为空！", 'error');
-                return
-            }
+                // return
+            // }
 
             oWebControl.JS_RequestInterface({
                 funcName: "startPlayback",
                 argument: JSON.stringify({
                     cameraIndexCode: cameraIndexCode,
-                    startTimeStamp: Math.floor(startTimeStamp / 1000),
-                    endTimeStamp: Math.floor(endTimeStamp / 1000),
-                    recordLocation: recordLocation,
+                    startTimeStamp: Math.floor(startTime / 1000),
+                    endTimeStamp: Math.floor(endTime / 1000),
+                    recordLocation: 0,
                     transMode: transMode,
                     gpuMode: gpuMode
                 })

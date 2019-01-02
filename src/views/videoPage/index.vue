@@ -16,6 +16,9 @@
     align-items: center;
     margin-bottom: 40px;
 }
+.lead-in input {
+	display: none;
+}
 .search-input {
     width: 208px;
     margin-left: auto;
@@ -72,6 +75,7 @@
 }
 .floor-item {
     cursor: pointer;
+    /* position: relative; */
     min-height: 38px;
     line-height: 38px;
     text-indent: 24px;
@@ -92,7 +96,7 @@
     display: block;
 }
 .all-video {
-    margin-left: -30px;
+    margin-left: -50px;
 
     & li:hover .icon-more {
         display: inline-block;
@@ -152,6 +156,8 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
+    float: right;
+    margin-top: 9px;
     background: url(~@/assets/more.png) center no-repeat;
     background-size: 100%;
 }
@@ -160,18 +166,18 @@
 	padding: 13px 21px;
 	position: absolute;
 	bottom: 0;
-	right: 30px;
+	right: 20px;
 	border-radius: 4px;
 	box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, .15);
 	background-color: #F5F5F5;
 
 	& .icon {
-		width: 24px;
-		height: 24px;
+		width: 16px;
+		height: 16px;
 	}
 
 	& .icon-delete {
-		margin-left: 25px;
+		/* margin-left: 25px; */
 	}
 }
 .icon-edit {
@@ -183,6 +189,10 @@
 	cursor: pointer;
 	background: url(~@/assets/delete.png) center no-repeat;
 	background-size: 100%;
+}
+.notice-popover {
+    /* top: 500px;
+    left: 120px; */
 }
 
 </style>
@@ -201,8 +211,11 @@
 
             <div class="container">
                 <div class="operator">
-                    <el-button type="primary" @click="addVideo">+ 监控</el-button>
-                    <el-button>批量导入</el-button>
+                    <!-- <el-button type="primary" @click="addVideo">+ 监控</el-button> -->
+                    <el-button class="lead-in" @click="leadIn">
+						<input type="file" ref="input" @change="change">
+						批量导入
+					</el-button>
                     <el-input class="search-input" placeholder="监控点名称/设备编号/位置"></el-input>
 					<el-button class="btn-search" type="primary" @click="search">查询</el-button>
                 </div>
@@ -210,10 +223,10 @@
                 <div class="detail-content">
                     <p v-if="hadVideo" class="no-data">暂无监控，点击上方按钮添加监控。</p>
 
-                    <AddDialog v-if="showAddDialog" @cancelAdd="cancelAdd"/>
+                    <!-- <AddDialog v-if="showAddDialog" @cancelAdd="cancelAdd"/> -->
                     <div class="main-content">
                         <ul class="all-floor" @scroll="scroll" :class="{mask: showMask}">
-                            <li :class="{activedFloor: item.floorNumber === floorIndex}" class="floor-item" v-for="(item) of floorList" :key="item.id" @click="switchFloor(item)">
+                            <li :class="{activedFloor: item.floorNumber === floorIndex}" class="floor-item" v-for="(item) of floorList" :key="item.id" @click.stop="getCameras(item)">
                                 {{item.floorNumber}}F
                                 
                                 <span class="right-icon">
@@ -223,14 +236,13 @@
                                 <template>
                                     <div :class="{showOrNo: item.floorNumber === floorIndex}" class="detail-video">
                                         <ul class="all-video">
-                                            <li v-for="item of allCamera" :key="item.id" @click="chooseOneCamera(item)">
-                                                <el-checkbox>{{item.key}}</el-checkbox>
-
+                                            <li v-for="item of allCamera" :key="item.id" @click.stop="chooseOneCamera(item)">
+                                                <el-checkbox>{{item.mname}}</el-checkbox>
                                                 <el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="popoverModalStatus = false">
                                                     <div class="icon-more" slot="reference"></div>
                                                     <div class="more-icon-wrapper">
-                                                        <i class="icon icon-edit" @click="editDevice"></i>
-                                                        <i class="icon icon-delete" @click="delDevice"></i>
+                                                        <!-- <i class="icon icon-edit" @click="editDevice"></i> -->
+                                                        <i class="icon icon-delete" slot="reference" @click.stop="forDelCamera($event, index, item)"></i>
 
 
                                                     </div>
@@ -248,11 +260,16 @@
                                 <div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
                             </div>
                             
-                            <Preview :cameraId="cameraId" v-if="currentIndex === 0" :currentIndex="currentIndex"/>
-                            <History :cameraId="cameraId" v-else-if="currentIndex === 1" :currentIndex="currentIndex"/>
+                            <Preview :cameraId="cameraId" :cameraInfo="cameraInfo" v-if="currentIndex === 0" :currentIndex="currentIndex"/>
+                            <History :cameraId="cameraId" :cameraInfo="cameraInfo" v-else-if="currentIndex === 1" :currentIndex="currentIndex"/>
                         </div>
                     </div>
                 </div>
+
+                <popover class="notice-popover" name="close" title="确定要删除该监控吗？" content="删除该监控后，该监控的配置及视频将无法看到。" :follow-target="followTarget" :offset-x="-400" :offset-y="30" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
+					<el-button slot="ok" @click="popoverModalStatus = false">取消</el-button>
+					<el-button type="primary" slot="cancel" class="ok" @click="delDevice">确定</el-button>
+				</popover>
             </div>
         </template>
         
@@ -260,7 +277,7 @@
 </template>
 
 <script>
-import AddDialog from '@/components/videoPage/addDialog.vue'
+// import AddDialog from '@/components/videoPage/addDialog.vue'
 import Preview from '@/components/videoPage/preview.vue'
 import History from '@/components/videoPage/history.vue'
 
@@ -274,6 +291,7 @@ export default {
             showVideo: false,
             popoverModalStatus: false,
             currentIndex: 0,
+            followTarget: null,
             cameraId: '',
             // currentChoose: 0,
             tab: ["实时预览", "历史回放"],
@@ -289,18 +307,55 @@ export default {
                 }
             ],
             floorIndex: 10,
-            floorList: [{floorNumber: 1, id: 1},{floorNumber: 2},{floorNumber: 3},{floorNumber: 4},{floorNumber: 5},{floorNumber: 6},{floorNumber: 7},{floorNumber: 8},{floorNumber: 9},{floorNumber: 10}].reverse(),
-            allCamera: [{key: '监控1', value: '1'}, {key: '监控2', value: '2'}, {key: '监控3', value: '3'}]
+            floorList: [],
+            defaultItem: {},
+            allCamera: [],
+            cameraInfo: {},
+            deleteCameraId: ''
         }
+    },
+    created() {
+        // this.getFloorsList()
+        Promise.all([this.getFloorsList()]).then(() => {
+            this.getCameras()
+        })
+        
+    },
+    destroyed() {
+        // clearTimeout(this.$timer)
     },
     methods: {
         editDevice() {
 
         },
-        delDevice() {
-
+        forDelCamera(e, index, item) {
+            this.popoverModalStatus = true
+            this.$deleteCameraId = item.id
+            this.followTarget = e.target
+        },
+        async delDevice() {
+            const params = {
+                action: 'monitor.removeMonitor',
+                id: this.$deleteCameraId
+            }
+            const data = await axios.post('/api/device/dispatcher.do', params)
+            if(!data) {
+                return
+            }
+            this.allCamera = []
+            // this.getCameras(val)
         },
         search() {
+
+        },
+        handleOpen(key, keyPath) {
+            console.log(key, keyPath);
+            this.getCameras(key)
+        },
+        handleClose(key, keyPath) {
+            console.log(key, keyPath);
+            this.allCamera = []
+
 
         },
         addVideo() {
@@ -320,18 +375,72 @@ export default {
             console.log(index)
             this.currentIndex = index
         },
-        switchFloor(val) {
-            console.log(val)
-            this.floorIndex = val.floorNumber
-            this.showVideo = ! this.showVideo
+        async leadIn() {
+            this.$refs.input.click()
         },
-        chooseOneCamera(val) {
+        async change(e) {
+            // clearTimeout(this.$timer)
+            console.log(e.target.files[0])
+            const formdata = new FormData()
+
+            formdata.append('action', 'file.batchImport')
+            formdata.append('file', e.target.files[0])
+            
+            this.$refs.input.value = null;
+            const data = await axios.post('/api/device/dispatcher.do', formdata, {
+                headers: {'Content-Type': 'multipart/form-data'}
+            })
+
+            if (data) {
+                this.toolBarStatus = true
+                this.batchImportData = data.data
+                // this.timeBack()
+            } else if(! data) {
+                return
+            }
+        },
+        async chooseOneCamera(val) {
             console.log(val)
             this.cameraId = val.id
+            const params = {
+                action: 'monitor.queryMonitorById',
+                id: val.id
+            }
+            const data = await axios.post('/api/device/dispatcher.do', params)
+            if (!data.data) {
+                return
+            }
+            this.cameraInfo = data.data
+            console.log(this.cameraInfo)
+        },
+        async getFloorsList() {
+            const params = {
+                action: 'OfficeRental.queryFloorList',
+            }
+            const data = await axios.post('/api/field/dispatcher.do', params)
+            if (!data.data) {
+                return
+            }
+            this.floorList = data.data.reverse()
+            this.defaultItem = this.floorList[0]
+            this.floorIndex = this.defaultItem.floorNumber
+        },
+        async getCameras(val) {
+            this.allCamera = []
+            this.floorIndex = val ? val.floorNumber : this.defaultItem.floorNumber
+            const params = {
+                action: 'monitor.queryMonitorByFloor',
+                floorId: val ? val.floorNumber : this.defaultItem.floorNumber
+            }
+            const data = await axios.post('/api/device/dispatcher.do', params)
+            if (!data.data) {
+                return
+            }
+            this.allCamera = data.data;
         }
     },
     components: {
-        AddDialog,
+        // AddDialog,
         Preview,
         History
     }

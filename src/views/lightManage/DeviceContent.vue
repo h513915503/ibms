@@ -36,7 +36,7 @@
 		box-sizing: border-box;
         border-right: 1px solid rgba(232,232,232,1);
         width: 74px;
-        height: 544px;
+        height: 600px;
         text-align: center;
         font-size:14px;
         overflow-y: scroll;
@@ -60,17 +60,18 @@
     .detail-floor {
         display: inline-block;
         /* float: right; */
-        /* width: 70%; */
+        width: 80%;
         height: 520px;
+        margin-top: 24px;
     }
     .container {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        /* justify-content: space-between; */
     }
     .detail-info {
         width: 220px;
-        margin: 0 24px;
+        margin: 24px;
     }
     .title {
         margin-bottom: 24px;
@@ -107,11 +108,10 @@
 
 <template>
     <div class="deviceContent">
-        <div class="top-button">
+        <!-- <div class="top-button">
             <div class="left-content">
-                <el-button type="primary" @click="addDevice">+ 灯</el-button>
+                
                 <el-button>批量导入</el-button>
-                <el-button @click="editDevice">编辑</el-button>
             </div>
             
 
@@ -120,14 +120,15 @@
                 <el-button type="primary" class="btn-search">查询</el-button>
             </div>
             
-        </div>
+        </div> -->
         
         <div class="container">
             <ul class="all-floor" @scroll="scroll" :class="{mask: showMask}">
-                <li :class="{activedFloor: item.floorNumber === index}" class="floor-item" v-for="(item, index) of floorData" :key="item.id" v-text="`${item.floorNumber}F`" @click="switchFloor(item)"></li>
+                <li :class="{activedFloor: item.floorNumber === floorIndex}" class="floor-item" v-for="(item) of floorData" :key="item.id" v-text="`${item.floorNumber}`" @click="switchFloor(item)"></li>
             </ul>
             
             <div class="detail-floor">
+                <el-button type="primary" @click="addDevice">+ 灯</el-button>
                 <Building :isEdit="isEdit" @click="getLevel" :detailInfo="detailInfo" :floorNum="floorNum" :locationObj="locationObj"/>
             </div>
 
@@ -199,7 +200,7 @@
                 editId: null,
                 floorIndex: 0,
 
-                floorData: [],
+                floorData: [{floorNumber: '泛光', id: 1}, {floorNumber: '景观', id: 2}, {floorNumber: '室外1', id: 3}, {floorNumber: '室外2', id: 4}, {floorNumber: 'B1', id: 5}, {floorNumber: 'B2', id: 6}, {floorNumber: 'B3', id: 7}],
                 floorNum: [],
                 detailInfo: [],
 
@@ -236,60 +237,32 @@
 					this.showMask = false
 				}
             },
-            async getAllFloor() {
-                const params = {
-                    action: 'Device.queryFloorList'
-                }
-                const data = await axios.post('/dapi/dispatcher.do', params)
-                if (!data.data) {
-                    return
-                }
-                this.floorData = data.data.reverse();
-                this.floorNum = this.floorData[0];
-            },
-            async switchFloor(val) {
-                // console.log(val)
-                console.log(this.floorNum)
-                this.isEdit = false
-                const params = {
-                    action: 'Device.queryDevice',
-                    deviceTypeId: 1,
-                    floorId: val ? val.id : this.floorNum.id
-                };
-                this.floorNum = val
-                const data = await axios.post('/dapi/dispatcher.do', params);
-                if (!data.data) {
-                    return
-                }
-
-                this.detailInfo = data.data;
-            },
-            async submitDeviceInfo(value) {
+            submitDeviceInfo(value) {
                 console.log(this.locationObj, value)
-                const params = {
-                    action: 'Device.addDevice',
-                    deviceDescribe: {
-                        state: 1,
-                        deviceTypeId: 1,
-                        deviceNo: '',
-                        brand: this.form.brand,
-                        type: this.form.type,
-                        productionDate: this.form.productionDate,
-                        durableYears: this.form.durableYears,
-                        failureNumber: this.form.failureNumber,
-                        detailLocation: this.form.detailLocation,
-                        deviceLocationTypeId: this.form.deviceLocationTypeId
-                    },
-                    deviceLocation: {
-                        floorId: this.floorId.id,
-                        xAxis: this.locationObj.xAxis,
-                        yAxis: this.locationObj.yAxis,
-                        zAxis: this.locationObj.zXxis
-                    }
-                };
-                params.deviceDescribe = JSON.stringify(params.deviceDescribe)
-                params.deviceLocation = JSON.stringify(params.deviceLocation)
-                const data = await axios.post('/dapi/dispatcher.do', params)
+                // const params = {
+                //     action: 'Device.addDevice',
+                //     deviceDescribe: {
+                //         state: 1,
+                //         deviceTypeId: 1,
+                //         deviceNo: '',
+                //         brand: this.form.brand,
+                //         type: this.form.type,
+                //         productionDate: this.form.productionDate,
+                //         durableYears: this.form.durableYears,
+                //         failureNumber: this.form.failureNumber,
+                //         detailLocation: this.form.detailLocation,
+                //         deviceLocationTypeId: this.form.deviceLocationTypeId
+                //     },
+                //     deviceLocation: {
+                //         floorId: this.floorId.id,
+                //         xAxis: this.locationObj.xAxis,
+                //         yAxis: this.locationObj.yAxis,
+                //         zAxis: this.locationObj.zAxis
+                //     }
+                // };
+                // params.deviceDescribe = JSON.stringify(params.deviceDescribe)
+                // params.deviceLocation = JSON.stringify(params.deviceLocation)
+                // const data = await axios.post('/dapi/dispatcher.do', params)
             }
         },
         components: {
@@ -298,16 +271,10 @@
             EditContent
         },
         created() {
-            this.loading = true;
-            Promise.all([this.getAllFloor()]).then(() => {
-                this.loading = false
-                // this.switchFloor()
-            })
+            
         },
         mounted() {
-            // setTimeout(() => {
-            //     this.detailInfo = [{describe: {brand: 'shuangfeiyan'}, location: {x: '1234'}}]
-            // }, 1500)
+            
         }
     }
 </script>
