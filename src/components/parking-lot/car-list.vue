@@ -38,13 +38,18 @@
 	margin-top: 30px;
 }
 </style>
+<style>
+.parking-lot-wrapper .el-table__header-wrapper th, .parking-lot-wrapper .el-table__header-wrapper tr {
+	background-color: #FAFAFA;
+}
+</style>
 
 <template>
 	<div class="parking-lot-wrapper">
 		<loading v-if="loading"></loading>
 
 		<template v-else>
-			<div class="container" v-if="! list.length">
+			<div class="container" v-if="count < 2 && ! list.length">
 				<el-button type="primary" @click="go">+包月车辆</el-button>
 				<p class="no-data" >暂无包月车辆。</p>
 			</div>
@@ -57,7 +62,7 @@
 							<span class="label">租期到期时间：</span>
 							<el-date-picker v-model="date" type="date" value-format="yyyy-MM-dd" placeholder="结束日期"></el-date-picker>
 						</label>
-						<el-input v-model="number" placeholder="车牌号"></el-input>
+						<el-input v-model="number" placeholder="车牌号" @keyup.native.enter="search"></el-input>
 						<el-button type="primary" :disabled="disabled" class="btn-search" @click="search">查询</el-button>
 					</div>
 				</div>
@@ -66,10 +71,13 @@
 					<el-table-column prop="carNumber" label="车牌号"></el-table-column>
 					<el-table-column prop="masterName" label="车主姓名"></el-table-column>
 					<el-table-column prop="masterPhone" label="车主手机号码"></el-table-column>
-					<el-table-column prop="masterCompany" label="所在单位" width="320"></el-table-column>
+					<!-- <el-table-column prop="masterCompany" label="所在单位" width="320"></el-table-column> -->
 					<el-table-column label="车位">
 						<template slot-scope="scope">
-							{{scope.row.floorNumber}}层·{{scope.row.isConfirmed === 1 ? scope.row.parkingSpaceNumber + '号' : '不固定'}}
+							<span v-if="scope.row.isConfirmed === 1">
+								{{scope.row.floorNumber}}层·{{scope.row.parkingSpaceNumber}}号
+							</span>
+							<span v-else>不固定</span>
 						</template>
 					</el-table-column>
 					<el-table-column label="到期时间" prop="endDate" sortable="custom">
@@ -80,7 +88,7 @@
 					<el-table-column label="操作">
 			  			<template slot-scope="scope">
 					        <el-button type="text" size="small" data-type="1" :data-id="scope.row.id" :data-index="scope.$index">续租</el-button>
-					        <el-button type="text" size="small" data-type="2" :data-id="scope.row.id">查看详情</el-button>
+					        <!-- <el-button type="text" size="small" data-type="2" :data-id="scope.row.id">查看详情</el-button> -->
 				      </template>
 				    </el-table-column>
 				</el-table>
@@ -104,6 +112,8 @@
 			return {
 				loading: false,
 				loaded: false,
+
+				count: 0,
 
 				followTarget: null,
 				throwLeaseModalStatus: false,
@@ -135,8 +145,8 @@
 		},
 
 		created() {
-			if (this.$root.$tempData) {
-				this.setData(this.$root.$tempData)
+			if (this.$parent.$carListTempData) {
+				this.setData(this.$parent.$carListTempData)
 			} else {
 				this.loading = true
 
@@ -144,23 +154,37 @@
 					this.loading = false
 					this.loaded  =true
 
+					if (! data) {
+						return
+					}
+
 					// 保存数据
 					this.setData(data)
-					this.$root.$tempData = data
+					this.$parent.$carListTempData = data
 				})
 			}
 		},
 
 		methods: {
 			async search() {
+				if (this.$flag) {
+					return
+				}
+
+				this.$flag = true
 				this.disabled = true
 
 				await this.getList().then((data) => {
+					if (! data) {
+						return
+					}
+
 					// 保存数据
 					this.setData(data)
-					this.$root.$tempData = data
+					this.$parent.$tempData = data
 				})
 
+				this.$flag = null
 				this.disabled = false
 			},
 			sortChange(column) {
@@ -202,6 +226,8 @@
 				params.sortContent = JSON.stringify(params.sortContent)
 
 				const data = await axios.post('/api/field/dispatcher.do', params)
+
+				this.count++
 
 				if (! data) {
 					return
