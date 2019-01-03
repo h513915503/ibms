@@ -236,8 +236,8 @@
                                 <template>
                                     <div :class="{showOrNo: item.floorNumber === floorIndex}" class="detail-video">
                                         <ul class="all-video">
-                                            <li v-for="item of allCamera" :key="item.id" @click.stop="chooseOneCamera(item)">
-                                                <el-checkbox>{{item.mname}}</el-checkbox>
+                                            <li v-for="item of allCamera" :key="item.id">
+                                                <el-checkbox @change="chooseOneCamera(item, $event)">{{item.mname}}</el-checkbox>
                                                 <el-popover popper-class="no-shadow" placement="bottom-end" trigger="click" @hide="popoverModalStatus = false">
                                                     <div class="icon-more" slot="reference"></div>
                                                     <div class="more-icon-wrapper">
@@ -348,16 +348,6 @@ export default {
         search() {
 
         },
-        handleOpen(key, keyPath) {
-            console.log(key, keyPath);
-            this.getCameras(key)
-        },
-        handleClose(key, keyPath) {
-            console.log(key, keyPath);
-            this.allCamera = []
-
-
-        },
         addVideo() {
             this.showAddDialog = true
         },
@@ -399,8 +389,11 @@ export default {
                 return
             }
         },
-        async chooseOneCamera(val) {
-            console.log(val)
+        async chooseOneCamera(val, isChecked) {
+            console.log(val, isChecked)
+            if (!isChecked) {
+                return
+            }
             this.cameraId = val.id
             const params = {
                 action: 'monitor.queryMonitorById',
@@ -411,7 +404,7 @@ export default {
                 return
             }
             this.cameraInfo = data.data
-            console.log(this.cameraInfo)
+            // console.log(this.cameraInfo)
         },
         async getFloorsList() {
             const params = {
@@ -426,8 +419,14 @@ export default {
             this.floorIndex = this.defaultItem.floorNumber
         },
         async getCameras(val) {
-            this.allCamera = []
+            // this.allCamera = []
+            let isHadVal = false
             this.floorIndex = val ? val.floorNumber : this.defaultItem.floorNumber
+
+            // 判断是否已经获取到楼层的监控摄像头信息
+            if (isHadVal) {
+                return
+            }
             const params = {
                 action: 'monitor.queryMonitorByFloor',
                 floorId: val ? val.floorNumber : this.defaultItem.floorNumber
@@ -436,7 +435,10 @@ export default {
             if (!data.data) {
                 return
             }
+            
             this.allCamera = data.data;
+            isHadVal = true
+            
         }
     },
     components: {
