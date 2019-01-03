@@ -7,9 +7,14 @@ import 'normalize.css'
 import '@/css/common.css'
 import '@/css/element-reset.css'
 
-import 'element-ui/lib/theme-chalk/index.css'
-import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker, Form, Breadcrumb, BreadcrumbItem, FormItem, Checkbox, Menu, Submenu, MenuItem, MenuItemGroup} from 'element-ui'
+import VueDraggableResizable from 'vue-draggable-resizable'
 
+import 'element-ui/lib/theme-chalk/index.css'
+import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker, Form, Breadcrumb, BreadcrumbItem, FormItem, Checkbox, Menu, Submenu, MenuItem, MenuItemGroup, Switch} from 'element-ui'
+
+Vue.component('vue-draggable-resizable', VueDraggableResizable)
+
+Vue.component(Switch.name, Switch)
 Vue.component(MenuItemGroup.name, MenuItemGroup)
 Vue.component(MenuItem.name, MenuItem)
 Vue.component(Submenu.name, Submenu)
