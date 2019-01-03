@@ -9,7 +9,6 @@
 .tabs {
 	margin-bottom: 10px;
 }
-
 .tab-wrapper {
 	display: flex;
 }
@@ -46,7 +45,7 @@
 				<tab-bar :list="tabs"></tab-bar><br />
 
 				<div class="tab-wrapper">
-					<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
+					<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="currentIndex = index"></div>
 				</div>
 			</header>
 
@@ -107,13 +106,13 @@
 		created() {
 			this.loading = true
 
-			this.getOverview().then(() => {
+			this.getData().then(() => {
 				this.loading = false
 			})
 		},
 
 		methods: {
-			async getOverview() {
+			async getData() {
 				const params = {
 					action: 'ParkingRental.queryAllCount'
 				}
@@ -130,9 +129,6 @@
 				this.tabs[1].number = rentalParkingSpaceCount
 				this.tabs[2].number = temporaryUseParkingSpaceCount
 				this.tabs[3].number = unusedParkingSpaceCount
-			},
-			switchIndex(index) {
-				this.currentIndex = index
 			}
 		}
 	}
