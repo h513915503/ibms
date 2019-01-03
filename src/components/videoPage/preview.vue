@@ -60,7 +60,8 @@ export default {
             // currentChoose: 0,
             locationHref: location.pathname,
             // allChoose: ["lskf", "fsd", "fdsf"],
-            currentTab: this.currentIndex
+            currentTab: this.currentIndex,
+            requestInfo: {}
         }
     },
     watch: {
@@ -78,27 +79,22 @@ export default {
             }
         },
         cameraInfo: function(val) {
-            console.log(val)
+            this.requestInfo = val
+            console.log(this.requestInfo)
+            this.onInit()
         }
     },
     created() {
-        // Promise.all([this.initPlugin()]).then(() => {
-        //     this.onInit()
-        // })
+        
     },
     mounted() {
-        // this.initPlugin()
-        // this.onInit()
-        // this.onPreview()
+        this.initPlugin()
     },
     destroyed() {
-        console.log(this.currentIndex, this.locationHref)
-        if (this.currentIndex !== 0 || this.locationHref !== '/video-record') {
-            debugger
-            this.onUnload()
-            this.uninit()
-            this.onStopView()
-        }
+        console.log(111)
+        this.onUnload()
+        this.uninit()
+        this.onStopView()
     },
     methods: {
         onUnload() {
