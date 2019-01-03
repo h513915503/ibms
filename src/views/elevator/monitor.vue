@@ -33,6 +33,7 @@
 	display: flex;
 	justify-content: space-between;
 	line-height: 40px;
+	border-top: 1px solid #E8E8E8;
 	background-color: #FFF;
 
 	& .item {
