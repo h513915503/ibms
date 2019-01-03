@@ -143,6 +143,8 @@ export default new Vuex.Store({
 		role: '',
 		accountName: '',
 
+		error500: false,
+
 		routes: [],
 		aside: [],
 
@@ -213,7 +215,7 @@ export default new Vuex.Store({
 			}
 
 			if (! data) {
-				return
+				return Promise.reject()
 			}
 
 			const {accountName, pagePermission} = data.data
