@@ -1,4 +1,9 @@
 <style scoped>
+.environment-wrapper {
+	display: flex;
+	flex-direction: column;
+	padding-bottom: 24px;
+}
 .header {
 	display: flex;
 	align-items: center;
@@ -56,7 +61,8 @@
 }
 
 .container {
-	margin: 24px;
+	flex: 1;
+	margin: 24px 24px 0;
 	border-radius: 4px;
 	background-color: #FFF;
 }
@@ -64,7 +70,6 @@
 	display: flex;
 	align-items: center;
 	padding: 0 24px;
-	border-bottom: 1px solid #E8E8E8;
 
 	& .item {
 		width: 88px;
@@ -80,8 +85,30 @@
 
 	& .actived {
 		color: #0E7CC2;
-		border-bottom: 1px solid currentcolor;
+		border-bottom: 2px solid currentcolor;
 	}
+}
+.checkbox-container {
+	display: flex;
+	align-items: center;
+	height: 32px;
+	margin: 14px 24px 0;
+	background-color: #FAFAFA;
+
+	& .arrow {
+		width: 32px;
+		line-height: 32px;
+		cursor: pointer;
+		color: #595959;
+		text-align: center;
+		user-select: none;
+		background-color: #F2F2F2;
+	}
+}
+.checkbox-overflow {
+	flex: 1;
+	margin: 0 14px;
+	overflow: hidden;
 }
 .function {
 	display: flex;
@@ -98,7 +125,7 @@
 	font-size: 12px;
 }
 .chart-wrapper {
-	height: 600px;
+	height: 570px;
 }
 
 .co svg {
@@ -108,6 +135,23 @@
 .co2 svg {
 	width: 26px;
 	height: 14px;
+}
+
+.attr-list {
+	display: flex;
+	align-items: center;
+	transition: all .4s;
+}
+</style>
+<style>
+.echart-point {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-right: 10px;
+	border-radius: 50%;
+	vertical-align: middle;
+	background-color: currentcolor;
 }
 </style>
 
@@ -140,17 +184,30 @@
 				</div>
 			</header>
 
-			<div class="container">
+			<div class="container" ref="container">
 				<div class="tab-bar">
 					<div class="item" :class="{actived: currentIndex === index}" v-text="item" v-for="(item, index) of tabs" @click="currentIndex = index"></div>
 				</div>
-				<div class="function">
-					近30天数据
-					<el-button>导出</el-button>
+				<div class="checkbox-container">
+					<span class="arrow el-icon-arrow-left" @click="slideLeft"></span>
+					<div class="checkbox-overflow">
+						<el-checkbox-group v-model="checkList" class="attr-list" ref="attr-list" :max="5">
+						    <el-checkbox :label="item.attrId" v-for="item of attrList" ref="checkbox">{{item.attrName}}</el-checkbox>
+						</el-checkbox-group>
+					</div>
+					<span class="arrow el-icon-arrow-right" @click="slideRight"></span>
 				</div>
-				<p class="type" v-text="type"></p>
 
-				<chart :data="chartConfig"></chart>
+				<loading v-if="envLoading"></loading>
+				<template v-else>
+					<div class="function">
+						近30天数据
+						<el-button>导出</el-button>
+					</div>
+					<p class="type">{{type}}{{unit}}</p>
+
+					<chart :data="chartConfig"></chart>
+				</template>
 			</div>
 		</template>
 	</div>
@@ -163,6 +220,7 @@
 		data() {
 			return {
 				loading: false,
+				envLoading: false,
 
 				envType: 0,
 				chartData: [],
@@ -170,38 +228,44 @@
 				weatherType: '',
 				weatherImage: '',
 
+				attrList: [],
+				checkList: [],
+
 				datas: [
 					[{
-						text: '室内湿度',
+						text: '相对湿度',
 						data: '70%'
 					},
 					{
-						text: '室内温度',
+						text: '大气压强',
 						data: '26%'
 					},],
 
-					[{
-						text: '',
-						data: '450ppm',
-						cname: 'co2'
-					},
-					{
-						text: '',
-						data: '8ppm',
-						cname: 'co'
-					},],
-					[{
-						text: '水压',
-						data: '0.6MPa'
-					},
-					{
-						text: '室外湿度',
-						data: '70%'
-					}]
+					// [{
+					// 	text: '',
+					// 	data: '450ppm',
+					// 	cname: 'co2'
+					// },
+					// {
+					// 	text: '',
+					// 	data: '8ppm',
+					// 	cname: 'co'
+					// },],
+					// [{
+					// 	text: '水压',
+					// 	data: '0.6MPa'
+					// },
+					// {
+					// 	text: '室外湿度',
+					// 	data: '70%'
+					// }]
 				],
 
 				currentIndex: 0,
-				tabs: ['室外温度', '室外湿度', '室内温度', '室内湿度', 'CO2', 'CO', '水压']
+				tabs: ['一氧化碳', '水压', '湿度', '温度'],
+
+				series: [],
+				unit: []
 			}
 		},
 
@@ -216,7 +280,7 @@
 				return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
 			},
 			type() {
-				return ['温度 ℃', '湿度 %', '温度 ℃', '湿度 %', 'CO2 ppm', 'CO ppm', '水压 MPa'][this.currentIndex]
+				return this.tabs[this.currentIndex]
 			},
 			energyChartxAxisData() {
 				const dateType = this.dateType
@@ -238,7 +302,7 @@
 			},
 			chartConfig() {
 				return {
-					color: ['#1890FF'],
+					color: ['#1890FF', '#F14382', '#000', '#22CC22', '#9370DB'],
 					grid: {
 						top: 20,
 						right: 30,
@@ -247,7 +311,15 @@
 					},
 					tooltip: {
 						trigger: 'axis',
-						formatter: `{b}点<br/>{a}：{c}${['℃', '%', '℃', '%', 'ppm', 'ppm', 'MPa'][this.currentIndex]}`
+						formatter: (params) => {
+							let result = `${params[0].dataIndex}日<br/>`
+
+							params.forEach((item) => {
+								result += `<span class="echart-point" style="color: ${item.color}"></span>${item.seriesName}：${item.data}${this.unit}<br/>`
+							})
+
+							return result
+						}
 					},
 					xAxis: {
 						type: 'category',
@@ -278,13 +350,7 @@
 							}
 						}
 					},
-					series: {
-						name: this.type.split(' ')[0],
-						type: 'line',
-						areaStyle: null,
-						smooth: false,
-						data: this.chartData
-					}
+					series: this.series
 				}
 			},
 		},
@@ -297,47 +363,136 @@
 
 		watch: {
 			currentIndex(value) {
-				this.chartData = this.$d.reverse()
+				this.series = []
+				this.unit = ''
+				this.envLoading = true
+
+				this.$refs['attr-list'].$el.style.transform = `translateX(0px)`
+
+				this.getAttrList()
+			},
+			checkList(value) {
+				//this.series =  this.series.filter((item) => value.includes(item.$attrId))
+
+				this.series = []
+				this.unit = ''
+				this.envLoading = true
+
+				this.getEnvData()
 			}
 		},
 
-		created() {
+		mounted() {
+			this.getWeatherInfo()
 			this.getData()
+
+			this.$containerWidth = this.$refs.container.offsetWidth
+			this.$disance = 0
 		},
 
 		methods: {
 			async getData() {
 				this.loading = true
 
-				const [data] = await Promise.all([this.getEnvData(), this.getWeatherInfo()]).catch(() => {
+				const [data] = await Promise.all([this.getAttrList()]).catch(() => {
 					this.loading = false
 				})
 
 				this.loading = false
 
-				this.chartData = data
+				//this.chartData = data
+			},
+			async getAttrList() {
+				const params = {
+					action: 'consumer.queryConsumer1002Info',
+					Id: this.currentIndex + 1
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.attrList = data.data
+				this.checkList = data.data.map((item) => item.attrId).slice(0, 5)
+
+				//this.getEnvData()
+			},
+			async getEnvData() {
+				const params = {
+					action: 'consumer.queryConsumer4002Info',
+					attrId: this.checkList.join(',')
+				}
+
+				const data = await axios.post('/api/device/dispatcher.do', params)
+
+				if (! data) {
+					return
+				}
+
+				this.unit = data.data[0].unit
+				this.attrList.filter(((item) => this.checkList.includes(item.attrId))).forEach((attrItem) => {
+					let chartData
+					let result = Array.from({length: 31}, ((item, index) => index + 1))
+
+					chartData = result.map((item) => {
+						const index = data.data.findIndex((current) => {
+							if (+ current.timestamp.split('-').pop() === item && current.attrId === attrItem.attrId) {
+								return true
+							}
+						})
+
+						if (index !== -1) {
+							return data.data[index].value
+						}
+
+						return 0
+					})
+
+					this.series.push({
+						name: attrItem.attrName,
+						type: 'line',
+						areaStyle: null,
+						smooth: false,
+						data: chartData,
+						$attrId: attrItem.attrId
+					})
+				})
+
+				this.envLoading = false
 			},
 			async getWeatherInfo() {
 				const params = {
-					location: '115.236.39.114',
+					location: '115.192.119.193',
 					key: '85b5120e44404f66972df1e7588aa60e'
 				}
 
-				const {HeWeather6: [{now}]} = await axios.get('https://free-api.heweather.com/s6/weather/now', {
-					params
-				})
+				const {HeWeather6: [{now}]} = await axios.get('https://free-api.heweather.net/s6/weather', {params})
+
+				this.datas[0][0].data = now.hum
+				this.datas[0][1].data = now.pres
 
 				this.temperature = now.tmp
 				this.weatherType = now.cond_txt
 				this.weatherImage = `https://cdn.heweather.com/cond_icon/${now.cond_code}.png`
 			},
-			async getEnvData() {
-				return new Promise((resolve, reject) => {
-					setTimeout(() => {
-						this.$d = [9, 8, 6, 5, 2, 2, 2, 6, 8, 10, 15, 17, 19, 24, 27, 22, 18, 10, 20]
-						resolve(this.$d)
-					}, 1000)
-				})
+			slideLeft() {
+				if (this.$disance <= 0) {
+					return
+				}
+
+				this.$disance -= 300
+				this.$refs['attr-list'].$el.style.transform = `translateX(-${this.$disance}px)`
+			},
+			slideRight() {
+				// 200 是侧边栏的 width 再减小点
+				if (this.$refs.checkbox.slice(-1)[0].$el.getBoundingClientRect().right > this.$containerWidth + 200) {
+					this.$disance += 300
+					this.$refs['attr-list'].$el.style.transform = `translateX(-${this.$disance}px)`
+				}
+
+
 			}
 		}
 	}

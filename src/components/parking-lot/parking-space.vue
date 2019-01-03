@@ -148,9 +148,9 @@
 	}
 }
 
-.floor-item:hover .icon-wrapper {
+/* .floor-item:hover .icon-wrapper {
 	display: flex;
-}
+} */
 .floor-item.edit:hover .icon-wrapper {
 	display: none;
 }
@@ -200,7 +200,7 @@
 		<loading v-if="loading"></loading>
 
 		<template v-else>
-			<el-button class="btn-add" type="primary" @click="forAddParkingPlace">+ 车位</el-button>
+			<!-- <el-button class="btn-add" type="primary" @click="forAddParkingPlace">+ 车位</el-button> -->
 
 			<p class="no-data" v-if="! list.length">暂无车位信息。</p>
 			<ul class="list" v-else>
@@ -250,46 +250,46 @@
 					<template v-else>
 						<div class="show-wrapper" v-if="item.numberRule === 1">
 							<div class="item">
-								{{item.floorNumber}} 层
+								{{item.floorNumber}}
 							</div>
 							<div class="item">
 								<span class="num" v-text="item.allParkingSpaceCount"></span>
 								<p class="label">总车位</p>
 							</div>
-							<div class="item">
+							<!-- <div class="item">
 								<span class="num" v-text="item.rentalParkingSpaceCount"></span>
 								<p class="label">包月车位</p>
 							</div>
 							<div class="item">
 								<span class="num" v-text="item.temporaryUseParkingSpaceCount"></span>
 								<p class="label">临时停放车辆</p>
-							</div>
+							</div> -->
 							<div class="item">
 								<span class="num" v-text="item.unusedParkingSpaceCount"></span>
-								<p class="label">未租空闲车位</p>
+								<p class="label">空闲车位</p>
 							</div>
 						</div>
 						<template v-else>
 							<div class="show-wrapper areas-item" v-for="(area, i) of item.areaList">
 								<div class="item">
-									{{item.floorNumber}} 层
+									{{item.floorNumber}}
 									<p class="label">{{area.areaStr}} 区</p>
 								</div>
 								<div class="item">
 									<span class="num" v-text="area.allParkingSpaceCount"></span>
 									<p class="label">总车位</p>
 								</div>
-								<div class="item">
+								<!-- <div class="item">
 									<span class="num" v-text="area.rentalParkingSpaceCount"></span>
 									<p class="label">包月车位</p>
 								</div>
 								<div class="item">
 									<span class="num" v-text="area.temporaryUseParkingSpaceCount"></span>
 									<p class="label">临时停放车辆</p>
-								</div>
+								</div> -->
 								<div class="item">
 									<span class="num" v-text="area.unusedParkingSpaceCount"></span>
-									<p class="label">未租空闲车位</p>
+									<p class="label">空闲车位</p>
 								</div>
 							</div>
 						</template>
@@ -329,11 +329,23 @@
 		},
 
 		created() {
-			this.loading = true
+			if (this.$parent.$parkingSpaceTempData) {
+				this.setData(this.$parent.$parkingSpaceTempData)
+			} else {
+				this.loading = true
 
-			this.getList().then(() => {
-				this.loading = false
-			})
+				this.getList().then((data) => {
+					this.loading = false
+
+					if (! data) {
+						return
+					}
+
+					// 保存数据
+					this.setData(data)
+					this.$parent.$parkingSpaceTempData = data
+				})
+			}
 		},
 
 		methods: {
@@ -342,15 +354,18 @@
 					action: 'ParkingRental.queryFloorAreaCount'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
 				}
 
+				return data.data
+			},
+			setData(data) {
 				let result = []
 
-				data.data.forEach((item) => {
+				data.forEach((item) => {
 					if (item.numberRule === 1) {
 						item.isEdit = false
 
@@ -482,7 +497,7 @@
 
 				this.disabledAdd = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabledAdd = false
 
@@ -528,7 +543,7 @@
 
 				this.disabledAdd = true
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabledAdd = false
 
@@ -571,7 +586,7 @@
 				this.popoverModalStatus = false
 				this.isShowIconWrapper = false
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return

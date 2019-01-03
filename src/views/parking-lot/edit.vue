@@ -162,7 +162,7 @@
 					parkingRentalId: this.$route.params.id
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -215,7 +215,7 @@
 				this.disabled = true
 				this.popoverModalStatus = false
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.disabled = false
 

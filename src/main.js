@@ -10,9 +10,11 @@ import '@/css/element-reset.css'
 import VueDraggableResizable from 'vue-draggable-resizable'
 
 import 'element-ui/lib/theme-chalk/index.css'
-import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker, Form, Breadcrumb, BreadcrumbItem, FormItem, Checkbox, Menu, Submenu, MenuItem, MenuItemGroup, Switch} from 'element-ui'
 
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
+
+import {Message, Button, Select, Option, Pagination, Input, InputNumber, Dropdown, DropdownMenu, DropdownItem, Table, TableColumn, Popover, DatePicker, Form, Breadcrumb, BreadcrumbItem, FormItem, CheckboxGroup, Checkbox, Menu, Submenu, MenuItem, MenuItemGroup, Switch} from 'element-ui'
+
 
 Vue.component(Switch.name, Switch)
 Vue.component(MenuItemGroup.name, MenuItemGroup)
@@ -20,6 +22,7 @@ Vue.component(MenuItem.name, MenuItem)
 Vue.component(Submenu.name, Submenu)
 Vue.component(Menu.name, Menu)
 Vue.component(Checkbox.name, Checkbox)
+Vue.component(CheckboxGroup.name, CheckboxGroup)
 Vue.component(Breadcrumb.name, Breadcrumb)
 Vue.component(BreadcrumbItem.name, BreadcrumbItem)
 Vue.component(Form.name, Form)

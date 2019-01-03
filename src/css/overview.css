@@ -1,8 +1,5 @@
 #overview-wrapper {
-	min-width: 1200px;
-	padding: 24px;
-	padding-bottom: 0;
-	box-sizing: border-box;
+	padding: 24px 24px 0;
 }
 .bootstrap {
 	padding: 48px;
@@ -276,6 +273,7 @@ p {
 	padding: 24px;
 	padding-top: 0;
 	margin-bottom: 24px;
+	box-sizing: border-box;
 	background-color: #FFF;
 
 	& .bar {

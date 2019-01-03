@@ -9,7 +9,6 @@
 .tabs {
 	margin-bottom: 10px;
 }
-
 .tab-wrapper {
 	display: flex;
 }
@@ -46,13 +45,14 @@
 				<tab-bar :list="tabs"></tab-bar><br />
 
 				<div class="tab-wrapper">
-					<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="switchIndex(index)"></div>
+					<div class="tab-item" :class="{actived: currentIndex === index}" v-for="(item, index) of tab" v-text="item" @click="currentIndex = index"></div>
 				</div>
 			</header>
 
 			<parking-space v-if="currentIndex === 0"></parking-space>
 			<car-list v-if="currentIndex === 1"></car-list>
 			<car-record v-if="currentIndex === 2"></car-record>
+			<car-chart v-if="currentIndex === 3"></car-chart>
 		</template>
 	</div>
 </template>
@@ -106,18 +106,18 @@
 		created() {
 			this.loading = true
 
-			this.getOverview().then(() => {
+			this.getData().then(() => {
 				this.loading = false
 			})
 		},
 
 		methods: {
-			async getOverview() {
+			async getData() {
 				const params = {
 					action: 'ParkingRental.queryAllCount'
 				}
 
-				const data = await axios.post('/api/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				if (! data) {
 					return
@@ -129,9 +129,6 @@
 				this.tabs[1].number = rentalParkingSpaceCount
 				this.tabs[2].number = temporaryUseParkingSpaceCount
 				this.tabs[3].number = unusedParkingSpaceCount
-			},
-			switchIndex(index) {
-				this.currentIndex = index
 			}
 		}
 	}

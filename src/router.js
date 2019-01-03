@@ -112,6 +112,8 @@ router.beforeEach((to, from, next) => {
 			} else {
 				store.dispatch('getUserInfo').then(() => {
 					next({... to, replace: true})
+				}).catch(() => {
+					next()
 				})
 			}
 		}

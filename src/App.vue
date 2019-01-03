@@ -31,7 +31,6 @@
 .container {
 	padding-top: 72px;
 	padding-left: 240px;
-	background-color: #F5F5F5;
 }
 .aside-list {
 	width: 240px;
@@ -104,60 +103,71 @@
 		<router-view v-if="$route.meta.login === true"/>
 
 		<template v-else>
-			<header class="header">
-				<div class="logo-wrapper">
-					<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
-					中宙物业 - 益展大厦
-				</div>
-				<div class="tab">
-					<router-link class="tab-item" :class="{actived: $route.path !== '/dashboard'}" to="/">管理后台</router-link>
-					<router-link class="tab-item" :class="{actived: $route.path === '/dashboard'}" to="/dashboard">数据大屏</router-link>
-				</div>
-				<el-dropdown trigger="click" @command="handleCommand">
-					<span class="el-dropdown-link">
-						{{accountName}}
-						<i class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="/modify-password">修改密码</el-dropdown-item>
-						<el-dropdown-item command="/logout">退出</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
-			</header>
+			<error-500 v-if="error500"></error-500>
 
-			<router-view v-if="$route.meta.dashboard === true"></router-view>
+			<template v-else>
+				<header class="header">
+					<div class="logo-wrapper">
+						<img class="logo" src="https://img04.sogoucdn.com/app/a/100520020/1315e8858e0d04c126463cfd6ff4171c">
+						中宙物业 - 益展大厦
+					</div>
+					<div class="tab">
+						<router-link class="tab-item" :class="{actived: $route.path !== '/dashboard'}" to="/">管理后台</router-link>
+						<router-link class="tab-item" :class="{actived: $route.path === '/dashboard'}" to="/dashboard">数据大屏</router-link>
+					</div>
+					<el-dropdown trigger="click" @command="handleCommand">
+						<span class="el-dropdown-link">
+							{{accountName}}
+							<i class="el-icon-arrow-down el-icon--right"></i>
+						</span>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item command="/modify-password">修改密码</el-dropdown-item>
+							<el-dropdown-item command="/logout">退出</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+				</header>
 
-			<div class="container" v-else>
-				<dl class="aside-list" @click="go">
-					<template v-for="item of aside">
-						<template v-if="item.items">
-							<dt class="title" v-text="item.title"></dt>
+				<router-view v-if="$route.meta.dashboard === true"></router-view>
 
-							<dd class="sub-title" :class="{actived: item.reg.test($route.path)}" :data-path="item.path" v-text="item.text" v-for="item of item.items"></dd>
+				<div class="container" v-else>
+					<dl class="aside-list" @click="go">
+						<template v-for="item of aside">
+							<template v-if="item.items">
+								<dt class="title" v-text="item.title"></dt>
+
+								<dd class="sub-title" :class="{actived: item.reg.test($route.path)}" :data-path="item.path" v-text="item.text" v-for="item of item.items"></dd>
+							</template>
+							<template v-else>
+								<dt class="title cursor" :class="{actived: item.reg.test($route.path)}" :data-path="item.path" v-text="item.title"></dt>
+							</template>
 						</template>
-						<template v-else>
-							<dt class="title cursor" :class="{actived: item.reg.test($route.path)}" :data-path="item.path" v-text="item.title"></dt>
-						</template>
-					</template>
-				</dl>
+					</dl>
 
-				<keep-alive include="parking-lot">
-					<router-view class="content-wrapper"></router-view>
-				</keep-alive>
-			</div>
+					<keep-alive include="parking-lot">
+						<router-view class="content-wrapper"></router-view>
+					</keep-alive>
+				</div>
+			</template>
 		</template>
 	</div>
 </template>
 
 <script>
 	import {mapState} from 'vuex'
+	import error500 from './views/error/error-500.vue'
 
 	export default {
-		computed: mapState(['aside', 'accountName']),
+		computed: mapState(['aside', 'accountName', 'error500']),
+
+		components: {
+			error500
+		},
 
 		methods: {
 			go(e) {
-				this.$router.push(e.target.dataset.path)
+				const path = e.target.dataset.path
+
+				path && this.$router.push(path)
 			},
 			handleCommand(command) {
 				if (command === '/logout') {

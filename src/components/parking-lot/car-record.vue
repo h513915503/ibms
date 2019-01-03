@@ -61,7 +61,7 @@
 						<span class="mr">-</span>
 						<el-date-picker v-model="endDate" type="date" value-format="yyyy-MM-dd HH:mm:ss" placeholder="出场时间"></el-date-picker>
 					</label>
-					<el-input class="car-number" v-model="number" placeholder="车牌号"></el-input>
+					<el-input class="car-number" v-model="number" placeholder="车牌号" @keyup.native.enter="search"></el-input>
 					<el-button type="primary" class="btn-search" :disabled="disabled" @click="search">查询</el-button>
 				</div>
 
@@ -122,12 +122,23 @@
 		},
 
 		created() {
-			this.loading = true
+			if (this.$parent.$cardRecordTempData) {
+				this.setData(this.$parent.$cardRecordTempData)
+			} else {
+				this.loading = true
 
-			this.getList().then(() => {
-				this.loading = false
-				this.loaded = true
-			})
+				this.getList().then((data) => {
+					this.loading = false
+
+					if (! data) {
+						return
+					}
+
+					// 保存数据
+					this.setData(data)
+					this.$parent.$cardRecordTempData = data
+				})
+			}
 		},
 
 		methods: {
@@ -135,7 +146,6 @@
 				const params = {
 					action: 'ParkingRental.queryCarAccessRecord',
 					pageNo: this.page,
-					//pageSize: 3,
 					condition: {}
 				}
 
@@ -164,7 +174,7 @@
 				params.condition = JSON.stringify(params.condition)
 				params.sortContent = JSON.stringify(params.sortContent)
 
-				const data = await axios.post('/capi/dispatcher.do', params)
+				const data = await axios.post('/api/field/dispatcher.do', params)
 
 				this.count++
 
@@ -172,8 +182,9 @@
 					return
 				}
 
-				const {total, detail} = data.data
-
+				return data.data
+			},
+			setData({total, detail}) {
 				this.pageTotal = total
 				this.list = detail
 			},
@@ -182,10 +193,26 @@
 				this.getList()
 			},
 			async search() {
+				if (this.$flag) {
+					return
+				}
+
+				this.$flag = true
 				this.disabled = true
 
-				await this.getList()
+				await this.getList().then((data) => {
+					this.loading = false
 
+					if (! data) {
+						return
+					}
+
+					// 保存数据
+					this.setData(data)
+					this.$parent.$cardRecordTempData = data
+				})
+
+				this.$flag = null
 				this.disabled = false
 			},
 			async sortChange(column) {
