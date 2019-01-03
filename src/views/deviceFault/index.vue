@@ -142,31 +142,31 @@
 		},
 
 		created() {
-			this.getData()
+			// this.getData()
 		},
 
 		methods: {
-			async getData() {
-				this.loading = true
+			// async getData() {
+			// 	this.loading = true
 
-				await this.getFaultList()
+			// 	await this.getFaultList()
 
-				this.loading = false
-			},
-			async getFaultList() {
-				const params = {
-					pageIndex: this.page
-				}
-				const data = await axios.post('/getDeviceFaultList', params)
+			// 	this.loading = false
+			// },
+			// async getFaultList() {
+			// 	const params = {
+			// 		pageIndex: this.page
+			// 	}
+			// 	const data = await axios.post('/getDeviceFaultList', params)
 
-				if (! data) {
-					return
-				}
+			// 	if (! data) {
+			// 		return
+			// 	}
 
-				this.page++
-				this.pageTotal = data.pageTotal
-				this.faultList = data.list
-			}
+			// 	this.page++
+			// 	this.pageTotal = data.pageTotal
+			// 	this.faultList = data.list
+			// }
 		}
 	}
 </script>
