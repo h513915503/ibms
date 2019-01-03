@@ -95,12 +95,24 @@
         font-weight: 100 !important;
     }
     #light-container .el-form-item {
-        margin-bottom: 10px;
+        margin-bottom: 0;
     }
 </style>
 <template>
     <div class="content" id="light-container">
-        <template v-if="editStatus === 0">
+        <template v-if="isEdit">
+            <p class="title add-title">
+                <template v-if="deviceInfo.id === 'device-new'">
+                    新增设备
+                </template>
+                <template v-else>
+                    编辑设备
+                </template>
+                <span class="cancel-add" @click="cancelEdit">×</span>
+                <span class="concern-btn" @click="submitEdit">√</span>
+            </p>
+        </template>
+        <template v-else>
             <p class="title add-title">
                 设备详情
                 <!-- <span class="icon-more" slot="reference"></span> -->
@@ -114,39 +126,52 @@
                     </div>
                 </el-popover>
             </p>
-            <el-form ref="form" :model="form" label-width="84px" label-position="left">
-                <el-form-item label="状态">
-                    <el-select v-model="form.status" size="mini">
-                        <el-option>w</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="品牌">
-                    <el-input v-model="form.brand" placeholder="" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item label="型号">
-                    <el-input v-model="form.mode" placeholder="" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item label="出场日期">
-                    <el-input v-model="form.date" placeholder="" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item label="使用年限(年)">
-                    <el-input v-model="form.long" placeholder="" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item label="累计故障次数">
-                    <el-input v-model="form.alltime" placeholder="" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item label="详细位置">
-                    <el-select v-model="form.status" size="mini">
-                        <el-option>w</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-input v-model="form.position" placeholder="" size="mini"></el-input>
-                </el-form-item>
-            </el-form>
         </template>
+        <el-form ref="form" :model="form" label-width="84px" label-position="left">
+            <el-form-item label="编号">
+                <el-input v-model="form.brand" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="品牌">
+                <el-input v-model="form.brand" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="灯数量">
+                <el-input v-model="form.mode" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="出场日期">
+                <el-input v-model="form.date" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="使用年限(年)">
+                <el-input v-model="form.long" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="累计故障次数">
+                <el-input v-model="form.alltime" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="详细位置">
+                <el-input v-model="form.detailPosition" placeholder="" size="mini"></el-input>
+            </el-form-item>
+            <el-form-item label="灯光模式">
+                <el-select v-model="form.status" size="mini">
+                    <el-option>w</el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="开/关灯">
+                <el-switch v-model="form.light"></el-switch>
+            </el-form-item>
+            <el-form-item label="定时开关">
+                <el-switch v-model="form.now"></el-switch>
+            </el-form-item>
+            <el-form-item label="定时开灯时间">
+                <el-date-picker v-model="form.time1" placeholder="" size="mini"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="定时关灯时间">
+                <el-date-picker v-model="form.time2" placeholder="" size="mini"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="重复(按星期)">
+                
+            </el-form-item>
+        </el-form>
 
-        <template v-else>
+        <!-- <template v-else>
             <p class="title add-title">
                 编辑设备
                 <span class="cancel-add" @click="cancelAdd">×</span>
@@ -186,7 +211,7 @@
                     <el-input v-model="form.detailLocation" placeholder="" size="mini"></el-input>
                 </el-formitem->
             </el-form>
-        </template>
+        </template> -->
         
 
         <popover name="close" title="确定要删除该设备么？" content="删除该设备后，该设备的所有数据将被清空。" :follow-target="followTarget" :offsetX="100" :offsetY="100" v-if="popoverModalStatus" @hide="popoverModalStatus = false">
@@ -198,9 +223,10 @@
 
 <script>
     export default {
-        porps:['detailInfo', 'floorId'],
+        props:['isEdit', 'deviceInfo'],
         data() {
             return {
+                positionList: [],
                 form: {
 
                 },
@@ -209,18 +235,19 @@
                 popoverModalStatus: false,
             }
         },
+        mounted() {
+            // console.log(this.deviceInfo)
+        },
         methods: {
-            // submitDeviceInfo() {
-            //     this.$root.isAdd = 1
-                
-            //     console.log(this.form)
-            // },
-            cancelAdd() {
-                this.$root.deviceStatus = 0
-                this.$emit('click', 0)
+            cancelEdit() {
+                this.$emit('edit:cancel')
+            },
+            submitEdit() {
+                // 校验数据完整性
+                this.$emit('edit:submit')
             },
             editDevice() {
-                this.editStatus = 1
+                this.$emit('detail:edit', true)
             },
             delDevice() {
                 this.popoverModalStatus = true
