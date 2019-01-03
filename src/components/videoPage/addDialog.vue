@@ -118,9 +118,9 @@
                             <svg class="svg-icon">
                                 <use xlink:href="#number"></use>
                             </svg>
-                            编号
+                            名称
                         </span>
-                        <el-input type="text" placeholder="请输入门禁编号" v-model="number" size="mini"></el-input>
+                        <el-input type="text" placeholder="监控点名称" v-model="number" size="mini"></el-input>
                     </div>
                     <div class="info-item">
                         <span class="label">
@@ -129,7 +129,7 @@
                             </svg>
                             位置
                         </span>
-                        <el-input type="text" placeholder="请输入电梯的详细位置" v-model="position" size="mini"></el-input>
+                        <el-input type="text" placeholder="监控点详细位置" v-model="position" size="mini"></el-input>
                     </div>
                 </div>
                 
