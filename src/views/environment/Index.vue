@@ -223,7 +223,6 @@
 				envLoading: false,
 
 				envType: 0,
-				chartData: [],
 				temperature: '',
 				weatherType: '',
 				weatherImage: '',
@@ -239,33 +238,15 @@
 					{
 						text: '大气压强',
 						data: '26%'
-					},],
-
-					// [{
-					// 	text: '',
-					// 	data: '450ppm',
-					// 	cname: 'co2'
-					// },
-					// {
-					// 	text: '',
-					// 	data: '8ppm',
-					// 	cname: 'co'
-					// },],
-					// [{
-					// 	text: '水压',
-					// 	data: '0.6MPa'
-					// },
-					// {
-					// 	text: '室外湿度',
-					// 	data: '70%'
-					// }]
+					}]
 				],
 
 				currentIndex: 0,
 				tabs: ['一氧化碳', '水压', '湿度', '温度'],
 
 				series: [],
-				unit: []
+				unit: [],
+				axisData: []
 			}
 		},
 
@@ -282,27 +263,9 @@
 			type() {
 				return this.tabs[this.currentIndex]
 			},
-			energyChartxAxisData() {
-				const dateType = this.dateType
-				let xAxisData = {}
-
-				// 设置当月天数
-				let days = []
-				const currentDate = new Date()
-				let day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 0).getDate()
-
-				while (day--) {
-					days.unshift(day + 1)
-				}
-
-				xAxisData = days
-
-
-				return xAxisData
-			},
 			chartConfig() {
 				return {
-					color: ['#1890FF', '#F14382', '#000', '#22CC22', '#9370DB'],
+					color: ['#1890FF', '#F14382', 'orange', '#22CC22', '#9370DB'],
 					grid: {
 						top: 20,
 						right: 30,
@@ -332,7 +295,7 @@
 							}
 						},
 						boundaryGap: false,
-						data: this.energyChartxAxisData
+						data: this.axisData
 					},
 					yAxis: {
 						type: 'value',
@@ -372,8 +335,6 @@
 				this.getAttrList()
 			},
 			checkList(value) {
-				//this.series =  this.series.filter((item) => value.includes(item.$attrId))
-
 				this.series = []
 				this.unit = ''
 				this.envLoading = true
@@ -383,7 +344,6 @@
 		},
 
 		mounted() {
-			this.getWeatherInfo()
 			this.getData()
 
 			this.$containerWidth = this.$refs.container.offsetWidth
@@ -394,13 +354,9 @@
 			async getData() {
 				this.loading = true
 
-				const [data] = await Promise.all([this.getAttrList()]).catch(() => {
-					this.loading = false
-				})
+				await Promise.all([this.getAttrList(), this.getWeatherInfo()])
 
 				this.loading = false
-
-				//this.chartData = data
 			},
 			async getAttrList() {
 				const params = {
@@ -416,8 +372,6 @@
 
 				this.attrList = data.data
 				this.checkList = data.data.map((item) => item.attrId).slice(0, 5)
-
-				//this.getEnvData()
 			},
 			async getEnvData() {
 				const params = {
@@ -460,6 +414,9 @@
 					})
 				})
 
+				// axis
+				this.axisData = [... new Set(data.data.map((item) => item.timestamp))].map((item) => item.split('-').pop())
+
 				this.envLoading = false
 			},
 			async getWeatherInfo() {
@@ -491,8 +448,6 @@
 					this.$disance += 300
 					this.$refs['attr-list'].$el.style.transform = `translateX(-${this.$disance}px)`
 				}
-
-
 			}
 		}
 	}
