@@ -77,10 +77,6 @@
 					{
 						text: '今日耗电设备',
 						number: 10
-					},
-					{
-						text: '今日耗水设备',
-						number: 10
 					}
 				],
 
@@ -231,17 +227,47 @@
 			this.$d = [0, 120, 140, 300, 500, 700, 800, 600, 800, 1008, 20, 500, 24, 300]
 			this.chartData  = this.$d
 
-			this.getData()
+			this.loading = true
+
+			Promise.all([this.getTabData(), this.getEnergyData()]).then(() => {
+				this.loading = false
+			})
 		},
 
 		methods: {
-			async getData() {
-				this.loading = true
+			async getTabData() {
+                const params = {
+                    action: 'ParkingRental.parkingRentalReportInfo'
+                }
 
-				setTimeout(() => {
-					this.loading = false
-				}, 200)
-			}
+                const data = await axios.post('/api/field/dispatcher.do', params)
+
+                if (! data) {
+                    return
+                }
+
+                return
+                const {a, b, c} = data.data
+
+                this.tabBarList[0].number = a
+                this.tabBarList[1].number = b
+                this.tabBarList[2].number = c
+            },
+			async getEnergyData() {
+                const params = {
+                    action: 'ParkingRental.parkingRentalReportInfo',
+                    flag: this.dateType + 1,
+                    type: 0
+                }
+
+                const data = await axios.post('/api/field/dispatcher.do', params)
+
+                if (! data) {
+                    return
+                }
+
+                return data.data
+            }
 		}
 	}
 </script>
